@@ -16,13 +16,13 @@ mode值为'production'默认开启以下插件：
 * NoEmitOnErrorsPlugin：在输出阶段时，遇到编译错误跳过；
 * OccurrenceOrderPlugin：给经常使用的ids更短的值；
 * SideEffectsFlagPlugin：识别 package.json 或者 module.rules 的 sideEffects 标志（纯的 ES2015 模块)，安全地删除未用到的 export 导出；
-* TerserPlugin：压缩代码
+* TerserPlugin：压缩代码<br>
 mode值为'development'时，默认开启以下插件：
 * NamedChunksPlugin：以名称固化chunkId；
-* NamedModulesPlugin：以名称固化moduleId
+* NamedModulesPlugin：以名称固化moduleId<br>
 mode值为'none'时，不开启任何插件<br>
 输出到dist文件夹中的 main.js,简化后文件内容如下：
-```$xslt
+```javascript
 //webpack编译单文件
 //一个IIFE（立即执行函数，避免函数执行时里面的变量和外面的冲突)，以对象{入口文件：入口文件的eval函数}为参数
 (function (modules) {
@@ -66,6 +66,3 @@ mode值为'none'时，不开启任何插件<br>
 简化后代码中的 __webpack_require__ 函数起到的就是加载模块的功能，IIFE函数接收的参数是个数组，第0项内容便是 src/index.js 中的代码语句，通过 __webpack_require__ 函数加载并执行模块，最终在浏览器控制台输出结果。
 ## 多文件引用分析
 修改src/index.js:
-```$xslt
-
-```
