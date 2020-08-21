@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="734b1697-74b8-4d5a-bfe2-0140896cb897" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/webpack/webpack5/asyncDemo/async.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webpack/webpack5/asyncDemo/dist/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webpack/webpack5/asyncDemo/dist/main.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webpack/webpack5/asyncDemo/dist/src_async_js.main.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webpack/webpack5/asyncDemo/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack/webpack5/output-file-analysis.md" beforeDir="false" afterPath="$PROJECT_DIR$/webpack/webpack5/output-file-analysis.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1gPZIs5cXYI2nas97nybVkhVAUr" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/webpack/webpack5" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/webpack/webpack5" />
+    </key>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="734b1697-74b8-4d5a-bfe2-0140896cb897" name="Default Changelist" comment="" />
+      <created>1598018110022</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1598018110022</updated>
+      <workItem from="1598018111920" duration="3565000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="385" y="175" width="670" height="676" key="search.everywhere.popup" timestamp="1598023477167">
+      <screen x="0" y="23" width="1440" height="828" />
+    </state>
+    <state x="385" y="175" width="670" height="676" key="search.everywhere.popup/0.23.1440.828/1440.-157.2560.1057@0.23.1440.828" timestamp="1598023477167" />
+  </component>
+</project>
