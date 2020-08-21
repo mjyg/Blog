@@ -1,10 +1,13 @@
 # Webpack5新特性尝鲜
+**目录**
+[TOC]
+***
 ![](/assets/webpack/webpack5.png)<br>
-上图截自github,截止目前2020.8.20日，Webpack5的开发进度到78%
+上图截自github,截止目前2020.8.20日，Webpack5的开发进度到78%<br>
 使用Webpack5:
 >* 升级Node到8
 >* npm install webpack@next —save-dev
->* npm install webpack-cli —save-dev
+>* npm install webpack-cli —save-dev<br>
 ## 单独使用await
 webpack5默认支持单独使用await,不需要和async配合使用
 创建src/data.js:
@@ -86,7 +89,7 @@ const data2 = '异步数据'
 export default data2
 ```
 编译后结果如下：<br>
-![](/assets/webpack/build-image.png)
+![](/assets/webpack/build-image.png)<br>
 可以看到每个动态引用的js都有自己真正的chunkId<br>
 webpack5可以在开发模式中启用了一个新命名的块 id 算法，该算法提供块(以及文件名)可读的引用。 模块 ID 
 由其相对于上下文的路径确定，而不是webpack4那样以0,1标志<br>

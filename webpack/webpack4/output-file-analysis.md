@@ -1,4 +1,7 @@
 # Webpack4输出文件分析
+**目录**
+[TOC]
+***
 ## 单文件分析
 首先创建src/index.js:
 ```javascript
@@ -63,7 +66,7 @@ mode值为'none'时，不开启任何插件<br>
   },
 });
 ```
-简化后代码中的 *__webpack_require__* 函数起到的就是加载模块的功能，IIFE函数接收的参数是个数组，第0项内容便是 src/index.js 中的代码语句，通过 __webpack_require__ 函数加载并执行模块，最终在浏览器控制台输出结果。
+简化后代码中的 **__webpack_require__** 函数起到的就是加载模块的功能，IIFE函数接收的参数是个数组，第0项内容便是 src/index.js 中的代码语句，通过 __webpack_require__ 函数加载并执行模块，最终在浏览器控制台输出结果。
 ## 多文件引用分析
 修改src/index.js:
 ```javascript
