@@ -1,9 +1,9 @@
 # Webpack5新特性尝鲜
-**❀目录❀**
+**目录**
 > * [单独使用await](#单独使用await)
 > * [指定静态资源输出目录](#指定静态资源输出目录)
 > * [真正的chunkId](#真正的chunkId)
-***
+
 ![](/assets/webpack/webpack5.png)<br>
 上图截自github,截止目前2020.8.20日，Webpack5的开发进度到78%<br>
 使用Webpack5:
