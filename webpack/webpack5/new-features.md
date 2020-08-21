@@ -1,6 +1,6 @@
 # Webpack5新特性尝鲜
-**目录**<br>
-[TOC]
+**目录**
+[单独使用await](#单独使用await)
 ***
 ![](/assets/webpack/webpack5.png)<br>
 上图截自github,截止目前2020.8.20日，Webpack5的开发进度到78%<br>
