@@ -367,12 +367,12 @@ function webpackJsonpCallback(data) {
   }
 }
 ```
-该函数和webpack4页基本一致<br>
+该函数和webpack4也基本一致<br>
 
-📚总结，对于异步文件引用webpack5和webpack4不同点在于：
+📚 总结，对于异步文件引用webpack5和webpack4不同点在于：
 > * window上挂载的用于存放webpack打包的json变量名由webpackJsonp变成了webpackJsonpwebpack5，多了
     webpack5后缀
 > * __webpack_require__.e方法（用来维护存放异步加载模块installedChunks和生成并插入chunk到html中）
    在webpack5中被拆成了三个方法，结构更加清晰
 
-⭐️本文完整demo见[asyncDemo](/webpack/webpack5/asyncDemo)<br>
+⭐️ 本文完整demo见[asyncDemo](/webpack/webpack5/asyncDemo)<br>

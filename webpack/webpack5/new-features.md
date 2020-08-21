@@ -91,7 +91,7 @@ const data2 = '异步数据'
 export default data2
 ```
 编译后结果如下：<br>
-![](/assets/webpack/build-image.png)<br>
+![](/assets/webpack/chunk-build.png)<br>
 可以看到每个动态引用的js都有自己真正的chunkId<br>
 webpack5可以在开发模式中启用了一个新命名的块 id 算法，该算法提供块(以及文件名)可读的引用。 模块 ID 
 由其相对于上下文的路径确定，而不是webpack4那样以0,1标志<br>
