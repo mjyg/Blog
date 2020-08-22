@@ -1,4 +1,8 @@
 # 自定义loader
+**目录**
+> * [markdown-loader](#markdown-loader)
+> * [babel-loader](#babel-loader)
+
 ## markdown-loader
 ```js
 "use strict";
@@ -20,7 +24,7 @@ module.exports = function (markdown) {
   return marked(markdown);
 };
 ```
-## 
+## babel-loader
 创建loader/babel-loader.js:
 ```js
 "use strict";

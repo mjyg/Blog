@@ -4,11 +4,12 @@
 > * [webpack-cli入口文件cli.js](#webpack-cli入口文件cli.js)
 > * [webpack加载入口文件'lib/webpack.js'](#webpack加载入口文件'lib/webpack.js')
 > * [webpack编译器Compiler.js](#webpack编译器Compiler.js)
-> * [webpack的核心依赖模块tapable.js](#wwebpack的核心依赖模块tapable)
+> * [webpack的核心依赖模块tapable.js](#webpack的核心依赖模块tapable)
+
 ## webpack启动文件'bin/webpack.js'
 当通过`nom run webpack`命令启动webpack时，会使用node去执行node_modules\.bin里面的webpack.js,这是
 启动webpack的入口文件，该文件是webpack包里bin目录下的webpack.js的软链接<br>
->📚通在package.json提供一个映射到本地本地文件名的bin字段,一旦被引入后,npm将软链接这个文件到prefix/bin里面,
+>📚 通过在package.json提供一个映射到本地本地文件名的bin字段,一旦被引入后,npm将软链接这个文件到prefix/bin里面,
 >以便于全局引入,或者在./node_modules/.bin/目录里,webpack里的package.json里的bin为`./bin/webpack.js`，
 >可以找到其入口文件为webpack里的bin目录下的webpack.js
 
