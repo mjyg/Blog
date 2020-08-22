@@ -375,4 +375,4 @@ function webpackJsonpCallback(data) {
 > * __webpack_require__.e方法（用来维护存放异步加载模块installedChunks和生成并插入chunk到html中）
    在webpack5中被拆成了三个方法，结构更加清晰
 
-⭐️ 本文完整demo见[asyncDemo](/webpack/webpack5/asyncDemo)<br>
+⭐️ 本文完整demo见[asyncDemo](/webpack/webpack5/demo/asyncDemo)<br>

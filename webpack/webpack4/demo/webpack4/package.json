@@ -1,0 +1,20 @@
+{
+  "name": "webpack4",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --mode development",
+    "pro": "webpack --mode production"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "acorn": "^8.0.1",
+    "acorn-walk": "^8.0.0",
+    "magic-string": "^0.25.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}

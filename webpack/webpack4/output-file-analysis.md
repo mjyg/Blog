@@ -355,7 +355,7 @@ sonpCallback方法：
 并 resolve 此模块加载的 Promise。就这样异步模块和同步模块一样, 被加载到了 __webpack_require__.m 
 这个对象中了，接着只需要对其调用__webpack_require__函数就可以按照同步模块的 load 流程进行初load了<br>
 
-☆本文完整demo见[asyncDemo](/webpack/webpack4/asyncDemo)<br>
+☆本文完整demo见[asyncDemo](/webpack/webpack4/demo/webpack4/src/asyncDemo)<br>
 
 ❀参考链接：
 >* [webpack输出文件分析以及编写一个loader](https://juejin.im/post/6844903907810869261)
