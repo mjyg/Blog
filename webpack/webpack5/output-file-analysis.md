@@ -155,7 +155,7 @@ export default data2
 ```
 这里和webpack4逻辑一样，不记得的话，可以再看看[Webpack4输出文件分析](../webpack4/output-file-analysis.md)，
 只不过window["webpackJsonp"]变成了window["webpackJsonpwebpack5"]<br>
-按照执行顺序,再来看比webpack4多出来的__webpack_require__.e方法：
+按照执行顺序,再来看比d多文件引用多出来的__webpack_require__.e方法：
 ```js
 // This file contains only the entry chunk.
 // The chunk loading function for additional chunks
