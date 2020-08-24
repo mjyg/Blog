@@ -1,8 +1,8 @@
 # webpack4源码分析
 **目录**
-> * [webpack启动文件'bin/webpack.js'](#webpack启动文件'bin/webpack.js')
+> * [webpack启动文件'bin/webpack.js'](#webpack启动文件'bin%2Fwebpack.js')
 > * [webpack-cli入口文件cli.js](#webpack-cli入口文件cli.js)
-> * [webpack加载入口文件'lib/webpack.js'](#webpack加载入口文件'lib/webpack.js')
+> * [webpack加载入口文件'lib/webpack.js'](#webpack加载入口文件'lib%2Fwebpack.js')
 > * [webpack编译器Compiler.js](#webpack编译器Compiler.js)
 > * [webpack的核心依赖模块tapable.js](#webpack的核心依赖模块tapable)
 
@@ -218,7 +218,7 @@ try {
 找到webpack里Package.json里的main属性，值为'lib/webpack.js'，接下来看webpack的加载入口文件
 'lib/webpack.js'。
 
-## ebpack的加载入口文件'lib/webpack.js
+## webpack的加载入口文件'lib/webpack.js
 先在demo中加入一个自己的plugin来分析后面的代码，创建/plugin/ConsoleLogOnBuildWebpackPlugin.js,
 这是一个webpack编译前可以想控制台输出信息的插件,在官网中可以找到它的代码如下
 ```js
@@ -286,7 +286,7 @@ const webpack = (options, callback) => {
 ```
 可看出关键部分代码是调用插件的apply方法，传入complier对象，下面分析webpack编译器Compiler.js
 
-## webpack编译器Compiler.js
+## webpack编译器Compiler
 由ConsoleLogOnBuildWebpackPlugin插件里的代码可知，调用的是compiler.hooks.run.tap方法，我们在Compiler
 的开始找到下面这部分代码：
 ```js
