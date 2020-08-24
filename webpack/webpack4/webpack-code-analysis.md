@@ -218,7 +218,7 @@ try {
 找到webpack里Package.json里的main属性，值为'lib/webpack.js'，接下来看webpack的加载入口文件
 'lib/webpack.js'。
 
-## webpack的加载入口文件
+## webpack加载入口文件
 先在demo中加入一个自己的plugin来分析后面的代码，创建/plugin/ConsoleLogOnBuildWebpackPlugin.js,
 这是一个webpack编译前可以想控制台输出信息的插件,在官网中可以找到它的代码如下
 ```js
