@@ -1,12 +1,12 @@
 # webpack4源码分析
 **目录**
-> * [webpack启动文件'bin/webpack.js'](#webpack启动文件'bin%2Fwebpack.js')
-> * [webpack-cli入口文件cli.js](#webpack-cli入口文件cli.js)
-> * [webpack加载入口文件'lib/webpack.js'](#webpack加载入口文件'lib%2Fwebpack.js')
-> * [webpack编译器Compiler.js](#webpack编译器Compiler.js)
-> * [webpack的核心依赖模块tapable.js](#webpack的核心依赖模块tapable)
+> * [webpack启动文件](#webpack启动文件)
+> * [webpack-cli入口文件cli](#webpack-cli入口文件cli)
+> * [webpack加载入口文件](#webpack加载入口文件)
+> * [webpack编译器Compiler](#webpack编译器Compiler)
+> * [webpack的核心依赖模块tapable](#webpack的核心依赖模块tapable)
 
-## webpack启动文件'bin/webpack.js'
+## webpack启动文件
 当通过`nom run webpack`命令启动webpack时，会使用node去执行node_modules\.bin里面的webpack.js,这是
 启动webpack的入口文件，该文件是webpack包里bin目录下的webpack.js的软链接<br>
 >📚 通过在package.json提供一个映射到本地本地文件名的bin字段,一旦被引入后,npm将软链接这个文件到prefix/bin里面,
@@ -164,7 +164,7 @@ if (installedClis.length === 0) {
   process.exitCode = 1; //退出Node.js的shell
 }
 ```
-## webpack-cli入口文件cli.js
+## webpack-cli入口文件cli
 上面再webpack.js中调用了webpack-cli的的入口文件cli.js,下面是它的基本结构：
 ```js
 (function (){
@@ -218,7 +218,7 @@ try {
 找到webpack里Package.json里的main属性，值为'lib/webpack.js'，接下来看webpack的加载入口文件
 'lib/webpack.js'。
 
-## webpack的加载入口文件'lib/webpack.js
+## webpack的加载入口文件
 先在demo中加入一个自己的plugin来分析后面的代码，创建/plugin/ConsoleLogOnBuildWebpackPlugin.js,
 这是一个webpack编译前可以想控制台输出信息的插件,在官网中可以找到它的代码如下
 ```js
