@@ -12,4 +12,4 @@
 * Vue
   * [手写MVVM实现Vue的双向绑定]()
 * 其他
-  * [Promise的链式调用]()
+  * [Promise的链式调用](/other/promise-call-chaining/promise.md)
