@@ -128,6 +128,7 @@ export default data
     __webpack_exports__,
     __webpack_require__
   ) {
+    //在这里加载依赖的模块
     var _data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
       "./src/data.js"
     );
@@ -256,7 +257,9 @@ __webpack_require__.e = function requireEnsure(chunkId) {
         document.head.appendChild(script); //把0.js追加到页面中，执行0.js
       }
     }
-    return Promise.all(promises);  //Promise.all(promises).then返回包含promises里所有元素执行结果的数组
+    
+    //Promise.all(promises).then返回参数包含promises里所有元素执行结果的数组的回调
+    return Promise.all(promises);  
   };
 
 ```
@@ -346,6 +349,7 @@ sonpCallback方法：
     if (parentJsonpFunction) parentJsonpFunction(data);
 
     // resolve 此模块的 chunk 对应的 Promise.
+    //resolve的时候会调用之后then里面第一个参数指定的函数,即__webpack_require__("./src/async.js")
     while (resolves.length) {
       resolves.shift()();
     }
@@ -356,6 +360,7 @@ sonpCallback方法：
 这个对象中了，接着只需要对其调用__webpack_require__函数就可以按照同步模块的 load 流程进行初load了<br>
 
 ☆本文完整demo见[asyncDemo](/webpack/webpack4/demo/webpack4/src/asyncDemo)<br>
+☆理解Promise链式调用可以参考[Promise链式调用](/other/promise-call-chaining/promise.md)
 
 ❀参考链接：
 >* [webpack输出文件分析以及编写一个loader](https://juejin.im/post/6844903907810869261)
