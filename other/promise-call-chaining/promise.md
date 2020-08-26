@@ -1,9 +1,10 @@
 # 理解promise链式调用
 **目录**
-> * [第一种链式调用写法：then里的参数指定的函数返回的是promise](#第一种链式调用写法：then里的参数指定的函数返回的是promise)
-> * [第二种链式调用写法：then里的参数指定的函数返回的是普通值](#第二种链式调用写法：then里的参数指定的函数返回的是普通值)
+> * [第一种链式调用写法：then里的参数指定的函数返回的是promise](#第一种链式调用写法)
+> * [第二种链式调用写法：then里的参数指定的函数返回的是普通值](#第二种链式调用写法)
 
-## 第一种链式调用写法：then里的参数指定的函数返回的是promise
+## 第一种链式调用写法
+then里的参数指定的函数返回的是promise
 ```js
 // 0.5秒后返回input*input的计算结果:
 function multiply(input) {
@@ -43,7 +44,8 @@ Got value: 18
 理解：multiply和add都返回一个promise,则下一个then函数里参数指定的函数需要上一个then里参数指定的
 函数resolve才能调用，即add需要在multiply执行resolve才会被调用
 
-## 第二种链式调用写法：then里的参数指定的函数返回的是普通值
+## 第二种链式调用写法
+then里的参数指定的函数返回的是普通值<br>
 multiply2和add2不用返回promise也可以实现链式调用，只不过这样写没有用setTimeout里的resolve，都是立即执行
 ```js
 // 0.5秒后返回input*input的计算结果:
