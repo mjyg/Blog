@@ -13,3 +13,4 @@
   * [手写MVVM实现Vue的双向绑定]()
 * 其他
   * [Promise的链式调用](/other/promise-call-chaining/promise.md)
+  * [你不知道的javascript继承](/other/js-inherit/js-inherit.md)
