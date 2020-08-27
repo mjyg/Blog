@@ -29,7 +29,7 @@ cruze.test();  //3000
 ~~~
 打印结果
 
-![](https://user-gold-cdn.xitu.io/2020/7/10/173396c3b8977b58?w=395&h=351&f=png&s=16925)
+![](assets/other/inherit.jpg)
 
 ## ES5的继承
 ~~~js
@@ -80,7 +80,7 @@ Cruze.prototype.constructor = Cruze  //修正constructor
 ~~~
 打印结果：
 
-![](https://user-gold-cdn.xitu.io/2020/7/10/173396dd97f83bf4?w=462&h=357&f=png&s=17788)
+![](assets/other/inherit.jpg)
 * 你不知道的新一代写法
 ~~~js
 Cruze.prototype = Object.create(Car.prototype, {  //直接修正contructor
@@ -102,4 +102,4 @@ cruze.test()
 ~~~
 打印结果：
 
-![](https://user-gold-cdn.xitu.io/2020/7/10/173396d3378ee20f?w=404&h=318&f=png&s=15503)
+![](assets/other/inherit.jpg)

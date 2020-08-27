@@ -15,7 +15,7 @@ console.log(Functor.of(3).map((x) => x + 1));
 ~~~
 打印结果:
 
-![](https://user-gold-cdn.xitu.io/2020/6/13/172ae3bf1f2c022e?w=255&h=170&f=png&s=6093)
+![](https://user-gold-cdn.xitu.io/2020/6/13/172ae3bf1f2c022e?w=255&h=170&f=png&s=6093)<br>
 ES6写法：
 ~~~js
 class Functor {
@@ -46,7 +46,7 @@ Functor.of(null).map(s=>s.toUpperCase()
 ~~~
 打印结果：
 
-![](https://user-gold-cdn.xitu.io/2020/6/13/172ae67fc61d094c?w=529&h=70&f=png&s=8717)
+![](https://user-gold-cdn.xitu.io/2020/6/13/172ae67fc61d094c?w=529&h=70&f=png&s=8717)<br>
 使用Maybe函子处理空值：
 ~~~js
  class Maybe extends Functor {
