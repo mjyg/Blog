@@ -128,7 +128,7 @@ const obj = {
     }}
 console.log(Object.getOwnPropertyDescriptors(obj))
  ```
-输出结果：
+输出结果：<br>
 ![](/assets/other/es7.jpg)
 
 ### 8.SharedArrayBufer 与Atomics
@@ -156,8 +156,7 @@ onmessage = function (e) {
     postMessage('hello, I am worker')
 }
 ```
-输出结果：
-
+输出结果：<br>
 ![](https://user-gold-cdn.xitu.io/2020/5/31/1726b2a2ed59acd5?w=484&h=43&f=png&s=2598)
 使用上述方法，如果数据量很大，来回传递，通讯效率很低
 
@@ -197,8 +196,7 @@ onmessage = function (e) {
     postMessage('hello. I am worker')  //不用传递共享数据，共享数据即被改变
 }
 ```
-输出结果：
-
+输出结果：<br>
 ![](https://user-gold-cdn.xitu.io/2020/5/31/1726b3a74b0e5092?w=473&h=388&f=png&s=29848)
 
 #### 给线程加锁
