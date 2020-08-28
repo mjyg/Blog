@@ -136,12 +136,12 @@ console.log(f('123 45'))  //["123", "45"]
 * 函数内部最后一个动作是函数调用
 * 递归需要保存大量的调用记录，很容易发生栈溢出
 
-![](assets/functional-programming/recursion.jpg)
+![](/assets/functional-programming/recursion.jpg)
 ## 尾递归
 * 函数运行最后一步调用自身
 * 函数最后一行调用其它函数并返回是尾调用
 
-![](assets/functional-programming/recursion2.jpg)
+![](/assets/functional-programming/recursion2.jpg)
 
 * 尾递归调用栈永远都是更新当前的栈帧，避免爆栈,即帧复用，只创建一个sum函数，每次调用只传入参数
 * 但是堆栈信息丢失了，开发者难以调试编程基本概念

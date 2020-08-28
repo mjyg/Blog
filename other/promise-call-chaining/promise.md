@@ -142,5 +142,5 @@ log: 外部第二个then
 log: 内部第二个then
  */
 ```
-☆ 本文demo见[demo](./demo)
+☆ 本文demo见[demo](./demo)<br>
 ❀ 参考文章：[Promise 链式调用顺序引发的思考](https://juejin.im/post/6844903972008886279)

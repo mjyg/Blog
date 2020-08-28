@@ -129,7 +129,7 @@ const obj = {
 console.log(Object.getOwnPropertyDescriptors(obj))
  ```
 输出结果：
-![](assets/other/es7.jpg)
+![](/assets/other/es7.jpg)
 
 ### 8.SharedArrayBufer 与Atomics
 给js带来了多线程的功能，高级特性，Js引擎核心改进<br>
