@@ -4,6 +4,8 @@
 * 函数式编程
     * [基本概念](functional-programming/base.md)
     * [各种函子&Monad](functional-programming/functor.md)
+* Redux
+    * [手写一个Redux](redux/redux.md)
 * Webpack
   * Webpack4
     * [输出文件分析](webpack/webpack4/output-file-analysis.md)
