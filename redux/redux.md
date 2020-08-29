@@ -2,7 +2,7 @@
 **目录**
 > * [Redux介绍](#Redux介绍)
 > * [源码分析](#源码分析)
-> * [手写Redux第一步：增加store基本方法（订阅、获取状态、改变状态）](#手写Redux第一步：增加store基本方法（订阅、获取状态、改变状态）)
+> * [手写Redux第一步：增加store基本方法（订阅、获取状态、改变状态）](#手写Redux第一步)
 
 ## Redux介绍
 Redux是一个用来管理管理数据状态和UI状态的JavaScript应用工具。随着JavaScript单页应用（SPA）开发日趋
@@ -34,7 +34,7 @@ Redux各部分分析：
 > * middleware -> IO functor （解决异步和脏操作）<br>
 接下来按照源码结构来一步一步实现一个Redux<br>
 >
-## 手写Redux第一步：增加store基本方法（订阅、获取状态、改变状态）
+## 手写Redux第一步
 在根目录新建Redux文件夹，建立createStore.js,写好store的基本三个方法：订阅、获取状态、改变状态
 ```js
 export default function createStore(initState) {
