@@ -4,7 +4,7 @@
 > * [指定静态资源输出目录](#指定静态资源输出目录)
 > * [真正的chunkId](#真正的chunkId)
 
-![](./image/webpack5.png)<br>
+![](../image/webpack5.png)<br>
 上图截自github,截止目前2020.8.20日，Webpack5的开发进度到78%<br>
 使用Webpack5:
 >* 升级Node到8
@@ -73,7 +73,7 @@ module.exports = {
 }
 ```
 执行命令，打包后图片便可放在指定目录images：<br>
-![](./image/build-image.png)
+![](../image/build-image.png)
 ## 真正的chunkId
 修改index.js:
 ```javascript
@@ -91,9 +91,9 @@ const data2 = '异步数据'
 export default data2
 ```
 编译后结果如下：<br>
-![](./image/chunk-build.png)<br>
+![](../image/chunk-build.png)<br>
 可以看到每个动态引用的js都有自己真正的chunkId<br>
 webpack5可以在开发模式中启用了一个新命名的块 id 算法，该算法提供块(以及文件名)可读的引用。 模块 ID 
 由其相对于上下文的路径确定，而不是webpack4那样以0,1标志<br>
-![webpack4打包结果](./image/chunk-build2.png)<br>
+![webpack4打包结果](../image/chunk-build2.png)<br>
 ❀参考链接：[Webpack5.0 新特性尝鲜实战 🦀🦀](https://juejin.im/post/6844903795286081550#heading-2)
