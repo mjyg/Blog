@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <script type="module">
+      import { createStore } from "./redux/index.js";
+      import reducer from './reducer.js'
+      let initState = {
+          count: 0,
+        info: {
+          name: "",
+          description: "",
+        },
+      };
+
+      //创建store,传入reducer
+      const store = createStore(reducer,initState);
+
+      //订阅，状态改变通知订阅者，把订阅者的方法存入到监听队列中
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log(state.count);
+      });
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log(state.info.name + state.info.description);
+      });
+
+      //通过派发改变状态
+      store.dispatch({
+        type: "INCREMENT",
+      });
+      store.dispatch({
+        type: "DECREMENT",
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+export default function createStore(reducer, initState) {
+  let state = initState; //状态
+  let listeners = []; //监听队列
+
+  //订阅
+  function subscribe(listener) {
+    listeners.push(listener);
+  }
+
+  //获取状态
+  function getState() {
+    return state;
+  }
+
+  //改变状态
+  function dispatch(action) {
+    //reducer负责更新数据
+    state = reducer(state, action);
+    //通知所有的订阅者
+    for (let i = 0; i < listeners.length; i++) {
+      const listener = listeners[i];
+      listener();
+    }
+  }
+
+  return {
+    subscribe,
+    getState,
+    dispatch,
+  };
+}

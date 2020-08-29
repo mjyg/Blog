@@ -2,7 +2,10 @@
 **目录**
 > * [Redux介绍](#Redux介绍)
 > * [源码分析](#源码分析)
-> * [手写Redux第一步：增加store基本方法（订阅、获取状态、改变状态）](#手写Redux第一步)
+> * [手写Redux](#手写Redux)
+>   * [第一步：增加store基本方法（订阅、获取状态、改变状态）](#手写Redux第一步)
+>   * [第二步：增加reducer，通过派发action改变状态](#手写Redux第二步)
+>   *
 
 ## Redux介绍
 Redux是一个用来管理管理数据状态和UI状态的JavaScript应用工具。随着JavaScript单页应用（SPA）开发日趋
@@ -26,6 +29,7 @@ Redux其实是一个比较典型的函数式编程的应用实例（[点击这�
 > * createStore.js  创建store
 > * index.js  导出模块
 > * utils工具文件夹，存放一些工具性的文件<br>
+>
 Redux各部分分析：
 > * store -> container
 > * currentState -> _value
@@ -34,7 +38,8 @@ Redux各部分分析：
 > * middleware -> IO functor （解决异步和脏操作）<br>
 接下来按照源码结构来一步一步实现一个Redux<br>
 >
-## 手写Redux第一步
+## 手写Redux
+### 第一步
 在根目录新建Redux文件夹，建立createStore.js,写好store的基本三个方法：订阅、获取状态、改变状态
 ```js
 export default function createStore(initState) {
@@ -135,11 +140,11 @@ export { createStore };
 ```
 从输出结果可以看出，每一次状态改变会通知到所有的订阅者，执行订阅者提供的方法<br>
 但是实际使用中不能随便用changeState改变状态，要遵循redux架构，通过一定的规则改变状态<br>
-🌰[点击这里查看本例demo](./demo/demo1)
+🌰 [点击这里查看本例demo](./demo/demo1)
 
-## 手写Redux第二步：增加reducer，通过派发action改变状态
+### 第二步
 在这一步优化changState,增加reducer,通过派发action改变状态<br>
-> 📚Reducers 指定了应用状态的变化如何响应 actions 并发送到 store 的，记住 actions 只是描述了有事情
+> 📚 Reducers 指定了应用状态的变化如何响应 actions 并发送到 store 的，记住 actions 只是描述了有事情
 > 发生了这一事实，并没有描述应用如何更新 state。<br>
 在根目录新建reducer.js:
 ```js
@@ -240,4 +245,7 @@ export default function createStore(reducer, initState) {
 </html>
 ```
 这样我们就能够通过使用特定的action来改变状态，而不是随意改变<br>
-但是，在实际项目中一定有很多的状态需要改变，那么就需要把reducer拆分成多个
+但是，在实际项目中一定有很多的状态需要改变，那么接下来就需要把reducer拆分成多个
+🌰 [点击这里查看本例demo](./demo/demo2)
+
+### 第三步
