@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <script type="module">
+      import { createStore, combineReducers } from "./redux/index.js";
+      import counterReducer from "./reducers/counter.js";
+      import infoReducer from "./reducers/info.js";
+
+      const reducer = combineReducers({
+        counter: counterReducer,
+        info: infoReducer,
+      });
+
+      //创建store,传入reducer
+      const store = createStore(reducer);
+
+      //订阅，状态改变通知订阅者，把订阅者的方法存入到监听队列中
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log(state.counter.count);
+      });
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log(state.info.name + state.info.description);
+      });
+
+      //通过派发改变状态
+      store.dispatch({
+        type: "INCREMENT",
+      });
+      store.dispatch({
+        type: "SET_NAME",
+        name:'改变后的名字',
+      });
+
+      /*输出
+       1
+       初始名字初始描述
+       1
+       改变后的名字初始描述
+      */
+
+      //下一步：替换reducer
+    </script>
+  </body>
+</html>

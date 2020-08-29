@@ -29,7 +29,7 @@ cruze.test();  //3000
 ~~~
 打印结果
 
-![](/assets/other/inherit.jpg)
+![](./image/inherit.jpg)
 
 ## ES5的继承
 ~~~js
@@ -80,7 +80,7 @@ Cruze.prototype.constructor = Cruze  //修正constructor
 ~~~
 打印结果：
 
-![](/assets/other/inherit.jpg)
+![](./image/inherit2.jpg)
 * 你不知道的新一代写法
 ~~~js
 Cruze.prototype = Object.create(Car.prototype, {  //直接修正contructor
@@ -102,4 +102,4 @@ cruze.test()
 ~~~
 打印结果：
 
-![](/assets/other/inherit.jpg)
+![](./image/inherit3.jpg)

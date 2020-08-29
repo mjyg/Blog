@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <script type="module">
+      //中间件
+      import exceptionMiddleware from "./middlewares/exceptionMiddleware.js";
+      import loggerMiddleware from "./middlewares/loggerMiddleware.js";
+      import timeMiddleware from "./middlewares/timeMiddleware.js";
+
+      import {
+        createStore,
+        combineReducers,
+        applyMiddleware,
+        bindActionCreators
+      } from "./redux/index.js";
+      import counterReducer from "./reducers/counter.js";
+      import infoReducer from "./reducers/info.js";
+
+      import { increment } from './actions/counter.js';
+      import { setName } from './actions/info.js';
+
+      const reducer = combineReducers({
+        counter: counterReducer,
+      });
+
+      const nextReducer = combineReducers({
+        counter: counterReducer,
+        info: infoReducer,
+      });
+
+      //初始化中间件
+      const rewriteCreateStoreFunc = applyMiddleware(
+        exceptionMiddleware,
+        timeMiddleware,
+        loggerMiddleware
+      );
+
+      const store = createStore(reducer, {}, rewriteCreateStoreFunc);
+
+      // //替换reducer，动态组合reducer
+      // store.replaceReducer(nextReducer);
+
+      //订阅，状态改变通知订阅者，把订阅者的方法存入到监听队列中
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log(state.counter.count);
+      });
+      store.subscribe(() => {
+        const state = store.getState();
+        console.log(state.info.name + state.info.description);
+      })(); //取消订阅
+
+      //通过派发改变状态
+      // store.dispatch();
+      const actions = bindActionCreators(
+        { increment, setName },
+        store.dispatch
+      );
+
+      actions.increment();
+      actions.setName();
+
+      //下一步：增加取消订阅
+    </script>
+  </body>
+</html>

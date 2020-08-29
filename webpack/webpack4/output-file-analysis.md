@@ -156,7 +156,7 @@ export default data2
 ```
 用webpack编译后生成main.js和0.js<br>
 先看main.js,简化后如下:<br>
-![](/assets/webpack/webpack4-code.png)<br>
+![](./image/webpack4-code.png)<br>
 先看这块比webpack4主程序多出来的代码：
 ```js
   //初始化 window.webpackJsonp 这个对象
