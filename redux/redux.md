@@ -702,7 +702,7 @@ export default timeMiddleware
 </html>
 ```
 打印结果：<br>
-![](./image/redux.jpg)
+![](./image/redux.jpg)<br>
 🌰 [点击这里查看本例demo](./demo/demo6)
 
 # 第七步
