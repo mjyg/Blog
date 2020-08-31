@@ -14,10 +14,11 @@
 >   * [第九步：增加取消订阅方法](#第九步)
 
 ## Redux介绍
-Redux是一个用来管理管理数据状态和UI状态的JavaScript应用工具。随着JavaScript单页应用（SPA）开发日趋
-复杂，JavaScript需要管理比任何时候都要多的state（状态），Redux就是用来降低管理难度的。（Redux支持
-React，Vue、Angular、jQuery甚至纯JavaScript）<br>
-Redux 就是 Flux 的升级版本，早期使用 React 都要配合 Flux 进行状态管理，但是在使用中，Flux 显露了很多
+Redux是函数式编程的经典写法，函数式编程首先是一个范畴，它是范畴论的一种应用，函数式编程没有if-else，
+只有函子。在写Redux的时候，首先函数式编程有一个container容器，这个容器由map接收一个变形关系，作用于每
+一个value，使该容器变成函数。因为有很多函子，但是函数式编程讲究纯，所以要用IO函子进行包裹，解决异步和
+脏操。[点击这里了解函数式编程](/functional-programming/base.md)）<br>
+Redux 是 Flux 的升级版本，早期使用 React 都要配合 Flux 进行状态管理，但是在使用中，Flux 显露了很多
 弊端，比如多状态管理的复杂和易错。所以 Redux 就诞生了，还吸取了部分精华，现在已经完全取代了 Flux。<br>
 举个🌰<br>
 ![](./image/redux_flow.png)<br>
@@ -26,8 +27,7 @@ Redux 就是 Flux 的升级版本，早期使用 React 都要配合 Flux 进行�
 借阅出去了，给反馈信息，还书也是一样
 
 ## 源码分析
-Redux其实是一个比较典型的函数式编程的应用实例（[点击这里了解函数式编程](/functional-programming/base.md)）<br>
-源码目录和基本功能如下:<br>
+Redux源码目录和基本功能如下:<br>
 > * applyMiddleware.js  中间件（IO函子）
 > * bindActionCreators.js  产生action
 > * combineReducers.js  合并reducer
