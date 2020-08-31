@@ -14,11 +14,12 @@
 >   * [第九步：增加取消订阅方法](#第九步)
 
 ## Redux介绍
-Redux是函数式编程的经典写法，函数式编程首先是一个范畴，它是范畴论的一种应用，函数式编程没有if-else，
+* Redux 是 JavaScript 状态容器，提供可预测化的状态管理。
+* Redux是函数式编程的经典写法，函数式编程首先是一个范畴，它是范畴论的一种应用，函数式编程没有if-else，
 只有函子。在写Redux的时候，首先函数式编程有一个container容器，这个容器由map接收一个变形关系，作用于每
 一个value，使该容器变成函数。因为有很多函子，但是函数式编程讲究纯，所以要用IO函子进行包裹，解决异步和
-脏操。[点击这里了解函数式编程](/functional-programming/base.md)）<br>
-Redux 是 Flux 的升级版本，早期使用 React 都要配合 Flux 进行状态管理，但是在使用中，Flux 显露了很多
+脏操。([点击这里了解函数式编程](/functional-programming/base.md))<br>
+* Redux 是 Flux 的升级版本，早期使用 React 都要配合 Flux 进行状态管理，但是在使用中，Flux 显露了很多
 弊端，比如多状态管理的复杂和易错。所以 Redux 就诞生了，还吸取了部分精华，现在已经完全取代了 Flux。<br>
 举个🌰<br>
 ![](./image/redux_flow.png)<br>
