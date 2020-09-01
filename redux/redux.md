@@ -605,7 +605,7 @@ index.html修改如下：
 ```
 🌰 [点击这里查看本例demo](./demo/demo5)
 
-## 第六步
+### 第六步
 在这一步中，我们使用中间件在执行订阅者方法前或后加一些额外的操作，在这里我们加错误报告、打印日志、记录
 时间三个中间件<br>
 在根目录新建middlewares文件夹，建立exceptionMiddleware.js，loggerMiddleware.js，timeMiddleware.js
@@ -706,7 +706,7 @@ export default timeMiddleware
 ![](./image/redux.jpg)<br>
 🌰 [点击这里查看本例demo](./demo/demo6)
 
-# 第七步
+### 第七步
 上一步我们使用`exception(time(logger(next)))`来组合中间件，写法太丑陋，这一步我们使用applyMiddleware
 来优化中间件的组合写法<br>
 在redux目录中新建applyMiddleware.js:
