@@ -37,7 +37,7 @@ Redux源码目录和基本功能如下:<br>
 > * index.js  导出模块
 > * utils工具文件夹，存放一些工具性的文件<br>
 
-Redux各部分分析：
+Redux各部份分析：
 > * store -> container
 > * currentState -> _value
 > * action -> f 变形关系
