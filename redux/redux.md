@@ -265,7 +265,7 @@ export default function createStore(reducer, initState) {
 
 ### 第三步
 在实际项目中一定有很多的状态需要改变，那么就需要把reducer拆分成多个,在本例子中，拆分成counter.js和
-info.js,并使用combineReducer来合并reducer
+info.js,并使用combineReducer来合并reducer<br>
 建立reducers目录，新建counter.js:
 ```js
 //负责接收action，根据action的type做具体的事,把状态管理按计划包含在reducer里
@@ -607,7 +607,7 @@ index.html修改如下：
 🌰 [点击这里查看本例demo](./demo/demo5)
 
 ### 第六步
-在这一步中，我们使用中间件在执行订阅者方法前或后加一些额外的操作，在这里我们加错误报告、打印日志、记录
+在这一步中，我们使用中间件在执行订阅者方法前或后加一些额外的操作，在这里我们加错误报告、打印日志、记录、
 时间三个中间件<br>
 在根目录新建middlewares文件夹，建立exceptionMiddleware.js，loggerMiddleware.js，timeMiddleware.js
 ```js
