@@ -2,7 +2,8 @@
 **目录**
 > * [自定义元素](#自定义元素)
 > * [template标签](#template标签)
-> * [Shadow DOM](#Shadow DOM)
+> * [使用Shadow DOM](#使用Shadow DOM)
+> * [添加事件](#添加事件)
 
 ## 介绍
 Web Components，一种实现浏览器的原生组件方式，可以只使用HTML、CSS、JavaScript来创建可以在任何现代
