@@ -16,6 +16,8 @@
     * [输出文件分析](webpack/webpack5/output-file-analysis.md)
 * Vue
   * [手写MVVM实现Vue的双向绑定]()
+*Web Components
+  * [Web Components小Demo](web-components/web-components.md)
 * 其他
   * [Promise的链式调用](other/promise-call-chaining/promise.md)
   * [你不知道的javascript继承](other/js-inherit.md)
