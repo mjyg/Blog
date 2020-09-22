@@ -8,7 +8,7 @@
 Web Components，一种实现浏览器的原生组件方式，可以只使用HTML、CSS、JavaScript来创建可以在任何现代
 浏览器运行的可复用组件，不使用类似React和Angular的框架，甚至可以无缝的接入到这些框架中。<br>
 Web Components可以创造一个定制的HTML标签，它将会继承HTM元素的所有属性，并且你可在任何支持的浏览器中
-通过简单的引入一个script，所有的HTML、CSS、JavaScript将会在组件内部局部定义。，这个组件在你的浏览器
+通过简单的引入一个script，所有的HTML、CSS、JavaScript将会在组件内部局部定义。这个组件在你的浏览器
 开发工具中显示为一个单独个HTML标签，并且它的样式和行为都是完全在组件内进行，不需要工作区，框架和一些
 前置的转换。<br>
 Web Components现在已经被主要的浏览器的较新版本所支持。下面实现一个简单的记事本<br>
@@ -89,7 +89,7 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
       }
 ```
 现在效果如下图：<br>
-![](image/note-book.png)
+![](image/note-book.png)<br>
 浏览器查看dom结构如下,可以看到直接使用了自定义标签<note-book>：<br>
 ![](image/note-book-dom.png)
 
