@@ -2,7 +2,7 @@
 **目录**
 > * [自定义元素](#自定义元素)
 > * [template标签](#template标签)
-> * [使用Shadow DOM](#使用Shadow DOM)
+> * [使用ShadowDOM](#使用ShadowDOM)
 > * [添加事件](#添加事件)
 
 ## 介绍
@@ -94,7 +94,7 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
 浏览器查看dom结构如下,可以看到直接使用了自定义标签<note-book>：<br>
 ![](image/note-book-dom.png)
 
-## Shadow DOM
+## 使用ShadowDOM
 有时候不希望用户能够看到<note-book>的内部代码，Web Component 允许内部代码隐藏起来，这叫做
  Shadow DOM，即这部分 DOM 默认与外部 DOM 隔离，内部任何代码都无法影响外部。<br>
 自定义元素的this.attachShadow()方法开启 Shadow DOM,修改NoteBook类：
