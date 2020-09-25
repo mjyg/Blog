@@ -222,8 +222,8 @@ readContent() {
 在点击读取内容的按钮时，会弹出读取内容的对话框：<br>
 ![](image/alert.png)<br>
 
-🌰 [点击这里查看本文完整demo](demo/index.html)
-📚 此文章系笔者原创，转载请注明来源
+🌰 [点击这里查看本文完整demo](demo/index.html)<br>
+📚 此文章系笔者原创，转载请注明来源<br>
 🌺 参考文章：
 >* [Web Component可以取代你的前端框架吗？](https://zhuanlan.zhihu.com/p/64619005)
 >* [Web Components](https://developer.mozilla.org/zh-CN/docs/Web/Web_Components)
