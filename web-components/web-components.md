@@ -1,4 +1,4 @@
-# Web Components 小Demo
+# Web Components 实现简单记事本
 **目录**
 > * [自定义元素](#自定义元素)
 > * [template标签](#template标签)
