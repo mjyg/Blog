@@ -63,11 +63,11 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
       </div>
     </template>
 ```
-使用<note-book>,传入参数date和content
+使用note-book,传入参数date和content
 ```html
 <note-book date="2020.9.22" content="成功的路上从来不拥挤，今天你进步了吗？"></note-book>
 ```
-然后修改NoteBook类，获取<template>节点以后，克隆它的所有子元素,并把<note-book>上的参数值传进去
+然后修改NoteBook类，获取<template>节点以后，克隆它的所有子元素,并把note-book上的参数值传进去
 ```js
  class NoteBook extends HTMLElement {
         //当时一个元素被创建时（好比document.createElement）将会调用构造函数
@@ -90,11 +90,11 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
 ```
 现在效果如下图：<br>
 ![](image/note-book.png)<br>
-浏览器查看dom结构如下,可以看到直接使用了自定义标签<note-book>：<br>
+浏览器查看dom结构如下,可以看到直接使用了自定义标签note-book：<br>
 ![](image/note-book-dom.png)
 
 ## 使用ShadowDOM
-有时候不希望用户能够看到<note-book>的内部代码，Web Component 允许内部代码隐藏起来，这叫做
+有时候不希望用户能够看到note-book的内部代码，Web Component 允许内部代码隐藏起来，这叫做
  Shadow DOM，即这部分 DOM 默认与外部 DOM 隔离，内部任何代码都无法影响外部。<br>
 自定义元素的this.attachShadow()方法开启 Shadow DOM,修改NoteBook类：
 ```js
@@ -121,7 +121,7 @@ class NoteBook extends HTMLElement {
   }
 }
 ```
-查看dom结构，可以看到此时<note-book>内部代码已经被隐藏了<br>
+查看dom结构，可以看到此时note-book内部代码已经被隐藏了<br>
 ![](image/not-book-dom2.png)
 
 ## 添加事件
