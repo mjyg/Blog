@@ -5,6 +5,7 @@
 > * [使用ShadowDOM](#使用ShadowDOM)
 > * [添加事件](#添加事件)
 > * [生命周期函数](#生命周期函数)
+> * [公共API](#公共API)
 
 ## 介绍
 Web Components，一种实现浏览器的原生组件方式，可以只使用HTML、CSS、JavaScript来创建可以在任何现代
@@ -37,9 +38,6 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
 ```html
 <template id="noteBookTemplate">
       <style>
-        body {
-          background: url(assets/bright.png);
-        }
         .button-wrapper {
           float: right;
           margin-top: 10px;
@@ -196,5 +194,36 @@ attributeChangedCallback(attr, oldVal, newVal) {
 ```
 现在界面如下：<br>
 ![](image/page.png)
-点击改变背景按钮，可以看到记事本背景变成了红色,控制台打印出了attributeChangedCallback里被改变的属性<br>
-![](image/page2.png)
+点击改变背景按钮，可以看到记事本背景变成了红色<br>
+![](image/page2.png)<br>
+控制台打印出了attributeChangedCallback里监听到的被改变的属性<br>
+![](image/page3.png)
+
+## 公共API
+除了生命周期方法，还可以定义可以从外部调用的方法，称为自定义组件的公共API
+* 首先在自定义组件中定义一个读取记事本内容的方法：
+```js
+readContent() {
+  alert( this.shadowRoot.querySelector(".content").innerText)
+}
+```
+* 在自定义组件外部添加一个读取内容的按钮：
+```html
+ <button class="read">读取内容</button>
+```
+* 为按钮添加点击事件，调用自定义组件的readContent方法：
+```js
+//调用自定义组件的公共API
+  var readBtn = document.querySelector('.read')
+  readBtn.onclick = function(){
+    noteBook.readContent(); //调用读取内容方法
+}
+```
+在点击读取内容的按钮时，会弹出读取内容的对话框：<br>
+![](image/alert.png)<br>
+
+🌰 [点击这里查看本文完整demo](demo/index.html)
+📚 此文章系笔者原创，转载请注明来源
+🌺 参考文章：
+>* [Web Component可以取代你的前端框架吗？](https://zhuanlan.zhihu.com/p/64619005)
+>* [Web Components](https://developer.mozilla.org/zh-CN/docs/Web/Web_Components)

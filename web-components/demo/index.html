@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Note Book</title>
+  </head>
+  <body>
+  <style>
+    .change,.read{
+      float: right;
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+  </style>
+    <note-book date="2020.9.22" content="成功的路上从来不拥挤，今天你进步了吗？" background="#ccc"></note-book>
+    <template id="noteBookTemplate">
+      <style>
+        .button-wrapper {
+          float: right;
+          margin-top: 10px;
+        }
+        .note {
+          border: 1px solid #ccc;
+          padding: 10px;
+        }
+        .wrapper {
+          width:800px;
+          margin: 0 auto;
+        }
+      </style>
+      <div class="wrapper">
+      <div class="note">
+        <p class="date" />
+        <div class="content"></div>
+      </div>
+      <div class="button-wrapper">
+        <button class="clear">清空</button>
+        <button class="save">保存</button>
+      </div>
+      </div>
+    </template>
+    <button class="change">改变背景</button>
+    <button class="read">读取内容</button>
+    <script>
+      class NoteBook extends HTMLElement {
+        //当时一个元素被创建时（好比document.createElement）将会调用构造函数
+        constructor() {
+          super();
+
+          //自定义元素的this.attachShadow()方法开启 Shadow DOM,隐藏Web Component内部代码
+          var shadow = this.attachShadow({ mode: "open" });
+
+          var template = document.getElementById("noteBookTemplate");
+          var dom = template.content.cloneNode(true);
+
+          dom.querySelector(".date").innerText = this.getAttribute("date");
+
+          dom.querySelector(".content").innerText = this.getAttribute(
+            "content"
+          );
+
+          dom.querySelector(".wrapper").style.background = this.getAttribute(
+            "background"
+          );
+
+          dom.querySelector('.save').addEventListener('click',function(){
+            alert('保存成功')
+          })
+
+          shadow.appendChild(dom);
+          console.log('note-book元素被初始化')
+        }
+
+        //当这个元素被插入DOM树的时候将会触发这个方法，所有的属性和子元素都已经可用
+        connectedCallback() {
+          console.log("note-book元素被插入");
+        }
+
+        //当元素从DOM中移除的时候将会调用它
+        disconnectCallback() {
+          console.log("note-book元素被移除");
+        }
+
+        static get observedAttributes() {
+          return ["date", "content","background"];
+        }
+
+        //当属性改变时就会调用这个函数，前提是被改变的属性在observedAttributes数组中。
+        //这个方法调用时参数分别为被改变的属性，旧值和新值。
+        attributeChangedCallback(attr, oldVal, newVal) {
+          console.log(attr,'属性被改变','原来的值',oldVal,'现在的值',newVal)
+          switch (attr) {
+            case "background":
+              this.shadowRoot.querySelector(".wrapper").style.background = newVal
+              break;
+          }
+        }
+
+        readContent() {
+          alert( this.shadowRoot.querySelector(".content").innerText)
+        }
+      }
+
+      //注册自定义元素
+      window.customElements.define("note-book", NoteBook);
+
+      //通过外部按钮改变自定义元素里的背景颜色，会自动调用自定义元素的attributeChangedCallback方法
+      var changeBtn = document.querySelector('.change')
+      var noteBook = document.getElementsByTagName('note-book')[0]
+      changeBtn.onclick = function(){
+        noteBook.setAttribute('background', 'red')
+      }
+
+      //调用自定义组件的公共API
+      var readBtn = document.querySelector('.read')
+      readBtn.onclick = function(){
+        noteBook.readContent(); //调用读取内容方法
+      }
+    </script>
+  </body>
+</html>
