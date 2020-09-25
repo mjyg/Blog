@@ -4,6 +4,7 @@
 > * [template标签](#template标签)
 > * [使用ShadowDOM](#使用ShadowDOM)
 > * [添加事件](#添加事件)
+> * [生命周期函数](#生命周期函数)
 
 ## 介绍
 Web Components，一种实现浏览器的原生组件方式，可以只使用HTML、CSS、JavaScript来创建可以在任何现代
@@ -66,7 +67,7 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
 ```
 使用<note-book>,传入参数date和content
 ```html
-<note-book date="2020.9.22" content="今天天气真好"></note-book>
+<note-book date="2020.9.22" content="成功的路上从来不拥挤，今天你进步了吗？"></note-book>
 ```
 然后修改NoteBook类，获取<template>节点以后，克隆它的所有子元素,并把<note-book>上的参数值传进去
 ```js
@@ -117,6 +118,8 @@ class NoteBook extends HTMLElement {
     );
 
     shadow.appendChild(dom);
+    
+    console.log('note-book元素被初始化')
   }
 }
 ```
@@ -130,3 +133,68 @@ dom.querySelector('.save').addEventListener('click',()=>{
   alert('保存成功')
 })
 ```
+
+## 生命周期函数
+这里说几个常用的生命周期函数：
+> * constructor: 自定义元素初始化时执行
+> * connectedCallback：自定义元素被插入DOM树的时候将会触发，所有的属性和子元素都已经可用
+> * attributeChangedCallback:自定义元素属性改变时触发该函数
+> * disconnectCallback：自定义元素从DOM中移除的时候触发<br>
+在NoteBook类加入如下代码如下,测试生命周期函数
+```js
+//当这个元素被插入DOM树的时候将会触发这个方法，所有的属性和子元素都已经可用
+connectedCallback() {
+  console.log("note-book元素被插入");
+}
+
+//当元素从DOM中移除的时候将会调用它
+disconnectCallback() {
+  console.log("note-book元素被移除");
+}
+
+static get observedAttributes() {
+  return ["date", "content"];
+}
+
+//当属性改变时就会调用这个函数，前提是被改变的属性在observedAttributes数组中。
+//这个方法调用时参数分别为被改变的属性，旧值和新值。
+attributeChangedCallback(attr, oldVal, newVal) {
+  console.log(attr,'属性被改变','原来的值',oldVal,'现在的值',newVal)
+}
+```
+控制台打印如下：<br>
+![](image/console.png)<br>
+可以看出生命周期函数执行的顺序是`constructor -> attributeChangedCallback -> connectedCallback`
+> 思考一下：attributeChangedCallback为什么会在connectedCallback之前被调用呢？<br>
+> 这是因为当组件被插入DOM时，自定义上的属性需要可以被访问了，因此attributeChangedCallback要在connectedCallback之前执行<br>
+
+现在在自定义元素外部增加一个改变背景的按钮，通过attributeChangedCallback方法检测自定义元素的属性变化，
+从而改变自定义元素内的背景<br>
+* 增加一个改变背景的Button
+```html
+ <button class="change">改变背景</button>
+```
+* 为button添加click方法，改变自定义元素的属性：
+```js
+//通过外部按钮改变自定义元素里的背景颜色，会自动调用自定义元素的attributeChangedCallback方法
+var changeBtn = document.querySelector('.change')
+changeBtn.onclick = function(){
+  var noteBook = document.getElementsByTagName('note-book')[0]
+  noteBook.setAttribute('background', 'red')
+}
+```
+* 改变自定义组件的attributeChangedCallback方法，监听background属性改变，改变记事本的背景色
+```js
+attributeChangedCallback(attr, oldVal, newVal) {
+  console.log(attr,'属性被改变','原来的值',oldVal,'现在的值',newVal)
+  switch (attr) {
+    case "background":
+      this.shadowRoot.querySelector(".wrapper").style.background = newVal
+      break;
+  }
+  }
+```
+现在界面如下：<br>
+![](image/page.png)
+点击改变背景按钮，可以看到记事本背景变成了红色,控制台打印出了attributeChangedCallback里被改变的属性<br>
+![](image/page2.png)
