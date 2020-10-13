@@ -194,7 +194,7 @@ attributeChangedCallback(attr, oldVal, newVal) {
 ```
 现在界面如下：<br>
 ![](image/page.png)
-点击改变背景按钮，可以看到记事本背景变成了红色<br>
+点击改变背景按钮，可以看到记事本背景变成红色<br>
 ![](image/page2.png)<br>
 控制台打印出了attributeChangedCallback里监听到的被改变的属性<br>
 ![](image/page3.png)
