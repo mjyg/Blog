@@ -24,3 +24,4 @@
   * [Promise的链式调用](other/promise-call-chaining/promise.md)
   * [你不知道的javascript继承](other/js-inherit.md)
   * [ES7&ES8新增语法](other/es7es8.md)
+  * [ES9新增语法](other/es9.md)
