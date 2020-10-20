@@ -25,3 +25,4 @@
   * [你不知道的javascript继承](other/js-inherit.md)
   * [ES7&ES8新增语法](other/es7es8.md)
   * [ES9新增语法](other/es9.md)
+  * [ES10新增语法](other/es10.md)
