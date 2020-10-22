@@ -22,6 +22,7 @@
   * [实现简单记事本](web-components/web-components.md)
 * 其他
   * [Promise的链式调用](other/promise-call-chaining/promise.md)
+  * [手写Promise](other/promise/promise.md)
   * [你不知道的javascript继承](other/js-inherit.md)
   * [ES7&ES8新增语法](other/es7es8.md)
   * [ES9新增语法](other/es9.md)
