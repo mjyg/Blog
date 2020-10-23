@@ -360,7 +360,7 @@ sonpCallback方法：
 这个对象中了，接着只需要对其调用__webpack_require__函数就可以按照同步模块的 load 流程进行初load了<br>
 
 ☆本文完整demo见[asyncDemo](/webpack/webpack4/demo/webpack4/src/asyncDemo)<br>
-☆理解Promise链式调用可以参考[Promise链式调用](/other/promise-call-chaining/promise.md)
+☆理解Promise链式调用可以参考[Promise链式调用](/promise/promise-call-chaining/promise.md)
 
 ❀参考链接：
 >* [webpack输出文件分析以及编写一个loader](https://juejin.im/post/6844903907810869261)
