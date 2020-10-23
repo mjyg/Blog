@@ -178,8 +178,8 @@ class myPromise {
 }
 ```
 
-## 第五步，then方法可以链式调用
-官方的Promise的then方法支持链式调用，后一个可以拿到前一个then的返回结果，如下：
+## 第五步，then的链式调用和值的穿透性
+官方的Promise的then方法支持链式调用，而且后一个可以拿到前一个then的返回结果，这叫做值的穿透性，如下：
 ```js
 new myPromise((resolve, reject) => {
   resolve("step1");
