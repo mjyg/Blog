@@ -10,7 +10,7 @@
   * [ES10新增语法](js-grammar/es10.md)
 * Promise
   * [Promise的链式调用](promise/promise-call-chaining/promise.md)
-  * [手写Promise](promise/handwrite-promise/promise.md)
+  * [十二步大白话手写一个Promise](promise/handwrite-promise/promise.md)
 * 函数式编程
     * [基本概念](functional-programming/base.md)
     * [各种函子&Monad](functional-programming/functor.md)
