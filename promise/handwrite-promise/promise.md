@@ -1,6 +1,22 @@
-# 手写Promise
+# 十一步大白话手写Promise
 
-## 第一步：包含成功回调
+**目录**
+> * [第一步：包含成功回调）](#第一步)
+> * [第二步：增加Promise的状态(state)](#第二步)
+> * [第三步：增加存放当前状态的值(value)](#第三步)
+> * [第四步：多次执行resolve时，只有第一次生效](#第四步)
+> * [第五步：then的链式调用和值的穿透性](#第五步)
+> * [第六步：实现空的then](#第六步)
+> * [第七步：实现thenable特性](#第七步)
+> * [第八步：支持resolve传递promise对象](#第八步)
+> * [第九步：处理then中的循环promise](#第九步)
+> * [第十步：支持静态方法Promise.all](#第十步)
+> * [第十一步：支持reject](#第十一步)
+> * [第十二步：支持处理完成态或失败态](#第十二步)
+
+
+## 第一步
+——包含成功回调
 先写一个仅包含成功回调的最简单的Promise:
 ```js
 new myPromise((resolve, reject) => {
@@ -29,7 +45,8 @@ class myPromise {
 }
 ```
 
-## 第二步：增加Promise的状态(state)
+## 第二步
+——增加Promise的状态(state)
 Promise包含三种状态：等待（pending），执行（fulfilled），拒绝（rejected）
 ```js
 const PENDING = 'PENDING'
@@ -59,7 +76,8 @@ class myPromise {
 }
 ```
 
-## 第三步：增加存放当前状态的值(value)
+## 第三步
+——增加存放当前状态的值(value)
 ```js
 const PENDING = 'PENDING'
 const FULFILLED = 'FULFILLED'
@@ -130,7 +148,8 @@ class myPromise {
 ```
 这样就会先执行then(),把onFulfilled先挂载到resolveCallbacks上,再执行resolve()
 
-## 第四步：多次执行resolve时，只有第一次生效
+## 第四步
+——多次执行resolve时，只有第一次生效
 在刚刚手写的promise中多次调用resolve：
 ```js
 new myPromise((resolve, reject) => {
@@ -178,7 +197,8 @@ class myPromise {
 }
 ```
 
-## 第五步，then的链式调用和值的穿透性
+## 第五步
+——then的链式调用和值的穿透性
 官方的Promise的then方法支持链式调用，而且后一个可以拿到前一个then的返回结果，这叫做值的穿透性，如下：
 ```js
 new myPromise((resolve, reject) => {
@@ -263,7 +283,8 @@ new myPromise((resolve, reject) => {
 > resolve开始
 > resolve里的setTimeout undefined
 
-## 第五步：实现空的then
+## 第六步
+——实现空的then
 官方的promise可以接空的thenl来实现值得透传：
 ```js
 new Promise((resolve, reject) => {
@@ -321,7 +342,8 @@ class myPromise {
   }
 }
 ```
-## 第六步：实现thenable特性
+## 第七步
+——实现thenable特性
 通过查阅官方文档，如果onFulFilled或者onRejected返回一个值x，则执行Promise解决过程<br>
 Promise解决过程是一个抽象操作，如果x有then方法且看上去像一个Promise，解决程序即尝试使promise
 接受x的状态，否则其用x的值来执行promise，这种thenable特性使得Promise的特性更具有通用性<br>
@@ -490,7 +512,8 @@ function promiseResolutionProcedure(promise2, x, resolve, reject) {
 }
 ```
 
-## 第七步：支持resolve传递promise对象
+## 第八步
+——支持resolve传递promise对象
 当resolve的参数为一个promise对象时，我们希望能传递该promise的resolve值
 ```js
 ew Promise((resolve, reject) => {
@@ -546,7 +569,8 @@ class myPromise {
 }
 ```
 
-## 第八步：处理then中的循环promise
+## 第九步
+——处理then中的循环promise
 使用原生的promise时，在then中循环引用promise会报错：
 ```js
 const promise = new Promise((resolve, reject) => {
@@ -594,7 +618,8 @@ function promiseResolutionProcedure(promise2, x, resolve, reject) {
 }
 ```
 
-## 第九步：支持静态方法Promise.all
+## 第十步
+——支持静态方法Promise.all
 原生的Promise.all方法如下：
 ```js
 const promise1 = new Promise((resolve, reject) => {
@@ -629,7 +654,8 @@ static all(promiseArray){
   }
 ```
 
-## 支持reject
+## 第十一步
+——支持reject
 使用官方的reject:
 ```js
 new myPromise((resolve, reject) => {
@@ -688,7 +714,8 @@ const reject = (val) => {
   }
 ```
 
-## 支持处理完成态或失败态
+## 第十二步
+——支持处理完成态或失败态
 当异步执行then方法时，需要能正常返回结果：
 ```js
 const promise = new Promise((resolve, reject) => {

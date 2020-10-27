@@ -48,6 +48,7 @@ Redux各部份分析：
 
 ## 手写Redux
 ### 第一步
+--增加store基本方法（订阅、获取状态、改变状态<br>
 在根目录新建Redux文件夹，建立createStore.js,写好store的基本三个方法：订阅、获取状态、改变状态
 ```js
 export default function createStore(initState) {
@@ -150,6 +151,7 @@ export { createStore };
 🌰 [点击这里查看本例demo](./demo/demo1)
 
 ### 第二步
+--增加reducer，通过派发action改变状态<br>
 实际使用中不能随便用changeState改变状态，要遵循redux架构，通过一定的规则改变状态<br>
 在这一步优化changState,增加reducer,通过派发action改变状态<br>
 > 📚 Reducers 指定了应用状态的变化如何响应 actions 并发送到 store 的，记住 actions 只是描述了有事情
@@ -264,6 +266,7 @@ export default function createStore(reducer, initState) {
 🌰 [点击这里查看本例demo](./demo/demo2)
 
 ### 第三步
+--使用combineReducer来合并多个reducer<br>
 在实际项目中一定有很多的状态需要改变，那么就需要把reducer拆分成多个,在本例子中，拆分成counter.js和
 info.js,并使用combineReducer来合并reducer<br>
 建立reducers目录，新建counter.js:
@@ -396,6 +399,7 @@ export default function combineReducers(reducers) {
 🌰 [点击这里查看本例demo](./demo/demo3)
 
 ### 第四步
+--使用reducer管理状态初始值<br>
 在前面都是在index.html中定义好state的初始值，在这一步中我们把初始状态的定义放在每个reducer中，即state的
 初始值的定义个改变规则都交给reducer来管理
 修改两个reducer，在里面加入初始状态定义：<br>
@@ -509,6 +513,7 @@ index.html中删掉初始状态定义：
 🌰 [点击这里查看本例demo](./demo/demo4)
 
 ### 第五步
+--使用replaceReducer动态组合Reducer<br>
 实际项目中由于需要管理的状态会很多，有时候我们需要替换reducer,这时候我们就需要在store中增加replaceReducer
 来动态组合reducer<br>
 createStore修改如下：
@@ -607,6 +612,7 @@ index.html修改如下：
 🌰 [点击这里查看本例demo](./demo/demo5)
 
 ### 第六步
+--使用中间件劫持dispatch<br>
 在这一步中，我们使用中间件在执行订阅者方法前或后加一些额外的操作，在这里我们加错误报告、打印日志、记录、
 时间三个中间件<br>
 在根目录新建middlewares文件夹，建立exceptionMiddleware.js，loggerMiddleware.js，timeMiddleware.js
@@ -708,6 +714,7 @@ export default timeMiddleware
 🌰 [点击这里查看本例demo](./demo/demo6)
 
 ### 第七步
+--使用applyMiddleware初始化中间件<br>
 上一步我们使用`exception(time(logger(next)))`来组合中间件，写法太丑陋，这一步我们使用applyMiddleware
 来优化中间件的组合写法<br>
 在redux目录中新建applyMiddleware.js:
@@ -814,6 +821,7 @@ export default function compose(...funcs) {
 🌰 [点击这里查看本例demo](./demo/demo7)
 
 ### 第八步
+--使用bindActionCreators提取action<br>
 在实际项目中，我们也会有很多action，这一步中提取出index.html中的action，并使用bindActionCreators来
 统一派发action<br>
 提取action,在根目录建立actions文件夹，新建counter.js和info.js:
@@ -930,6 +938,7 @@ export default function bindActionCreators(actionCreators, dispatch) {
 🌰 [点击这里查看本例demo](./demo/demo8)
 
 ### 第九步
+--增加取消订阅方法<br>
 最后一步了，在createStore.js中还需要增加个取消订阅的方法
 ```js
 export default function createStore(
