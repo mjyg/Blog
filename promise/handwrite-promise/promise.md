@@ -164,7 +164,7 @@ step2
 */
 ```
 可以看到打印了两次，但在官方的Promise中只有第一次会生效，在resolve的实现中加入状态判断，只有在Pending
-状态时才执行，便可保证只执行依次resolve()
+状态时才执行，便可保证只执行一次resolve()
 ```js
 class myPromise {
   constructor(fn) {
@@ -270,22 +270,26 @@ new myPromise((resolve, reject) => {
   });
 ```
 为了方便理解，加了些打印，结果如下：
-> resolve开始  
-> then undefined
-> then undefined
-> resolve里的setTimeout step1
-> onFulfilled1
-> step1
-> resolve开始
-> resolve里的setTimeout step2
-> onFulfilled2
-> step2
-> resolve开始
-> resolve里的setTimeout undefined
+```js
+/*
+resolve开始 
+then undefined
+then undefined
+resolve里的setTimeout step1
+onFulfilled1
+step1
+resolve开始
+resolve里的setTimeout step2
+onFulfilled2
+step2
+resolve开始
+resolve里的setTimeout undefined
+ */
+```
 
 ## 第六步
 **——实现空的then<br>**
-官方的promise可以接空的thenl来实现值得透传：
+官方的promise可以接空的then来实现值的透传：
 ```js
 new Promise((resolve, reject) => {
   resolve("step1");
@@ -459,8 +463,8 @@ then(onFulfilled = (val) => val) {
 }
 ```
 * 2.当x为promise对象时:
-> 如果x处于等待态，promise需保持为等待态直至x被执行或拒绝
-> 如果x处于执行态，用相同的值执行promise
+> 如果x处于等待态，promise需保持为等待态直至x被执行或拒绝<br>
+> 如果x处于执行态，用相同的值执行promise<br>
 > 如果x处于拒绝态，用相同的原因拒绝promise<br>
 
 使用如下：
@@ -496,7 +500,7 @@ function promiseResolutionProcedure(promise2, x, resolve, reject) {
     }
   }
   // 处理x为对象或者函数
-  if ((typeof x === "object" || typeof x === "function") && x !== null) {
+  else if ((typeof x === "object" || typeof x === "function") && x !== null) {
     //判断x.then是否是一个方法
     if (typeof x.then === "function") {
       x.then(
@@ -516,7 +520,7 @@ function promiseResolutionProcedure(promise2, x, resolve, reject) {
 **——支持resolve传递promise对象<br>**
 当resolve的参数为一个promise对象时，我们希望能传递该promise的resolve值
 ```js
-ew Promise((resolve, reject) => {
+new Promise((resolve, reject) => {
   resolve(new Promise(resolve=>resolve('step1')));
 })
   .then((data) => {
@@ -633,24 +637,27 @@ Promise.all([promise1, promise2]).then(data=>console.log(data))
 ```
 需要给myPromise类添加一个静态方法，并返回promise对象
 ```js
-static all(promiseArray){
-    return new Promise((resolve,reject)=>{
+ static all(promiseArray) {
+    return new Promise((resolve, reject) => {
       const resultArray = []; //保存结果
       let successTimes = 0;
 
-      function processResult(index,data){
+      function processResult(index, data) {
         resultArray[index] = data;
-        successTimes ++;
-        if(successTimes === promiseArray.length) {
+        successTimes++;
+        if (successTimes === promiseArray.length) {
           //所有的promise执行成功
-          resolve(resultArray)
+          resolve(resultArray);
         }
       }
 
-      for(let i =0; i < promiseArray.length;i++) {
-        promiseArray[i].then(data=>processResult(i,data),err=>reject(err))
+      for (let i = 0; i < promiseArray.length; i++) {
+        promiseArray[i].then(
+          (data) => processResult(i, data),
+          (err) => reject(err)
+        );
       }
-    })
+    });
   }
 ```
 
@@ -774,5 +781,5 @@ then(
     return promise2;
   }
 ```
-🌰 [点击这里查看本例demo](./promise.js)
+🌰 [点击这里查看本例demo](./promise.js)<br>
 📚 此文章系笔者原创，转载请注明来源

@@ -23,7 +23,7 @@ function promiseResolutionProcedure(promise2, x, resolve, reject) {
     }
   }
   // 处理x为对象或者函数
-  if ((typeof x === "object" || typeof x === "function") && x !== null) {
+  else if ((typeof x === "object" || typeof x === "function") && x !== null) {
     //判断x.then是否是一个方法
     if (typeof x.then === "function") {
       x.then(
@@ -142,7 +142,7 @@ class myPromise {
   }
 }
 
-const promise = new Promise((resolve, reject) => {
+const promise = new myPromise((resolve, reject) => {
   resolve("step1");
 });
 setTimeout(() => {
