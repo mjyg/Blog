@@ -30,3 +30,4 @@
   * [实现简单记事本](web-components/web-components.md)
 * 其他
   * [EventLoop](other/eventloop.md)
+  * [QA](qa/qa.md)

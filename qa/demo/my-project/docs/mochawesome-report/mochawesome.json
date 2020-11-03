@@ -1,0 +1,126 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 1,
+    "pending": 0,
+    "failures": 1,
+    "start": "2020-11-03T12:27:01.622Z",
+    "end": "2020-11-03T12:27:01.658Z",
+    "duration": 36,
+    "testsRegistered": 2,
+    "passPercent": 50,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "aecdd78c-beb5-4f00-bc03-4883119de10f",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "bcd3009b-fa82-4e77-8c9a-b20f3b267e8f",
+          "title": "NodeUii 自动化脚本",
+          "fullFile": "/Users/jie/Desktop/project/git/FrontendLearning/6.8qa/my-project/tests/service/app.spec.js",
+          "file": "/tests/service/app.spec.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "获取后台接口数据",
+              "fullTitle": "NodeUii 自动化脚本 获取后台接口数据",
+              "timedOut": false,
+              "duration": 26,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "request()\n    .get('/')\n    .set('Accept', 'application/json')\n    .expect('Content-Type', /json/)\n    .expect(200)\n    .end(function(err, res){\n        if (err) {\n            done(new Error('请求出错'));\n        } else {\n            console.log(res.body);\n            if (res.body.data == 'jie') {\n                done();\n            } else {\n                done(new Error('请求数据出错'));\n            }\n        }\n    })",
+              "err": {},
+              "uuid": "defa73d3-90bf-4e97-bf92-77d65119f24b",
+              "parentUUID": "bcd3009b-fa82-4e77-8c9a-b20f3b267e8f",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "404容错脚本",
+              "fullTitle": "NodeUii 自动化脚本 404容错脚本",
+              "timedOut": false,
+              "duration": 2,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "request().get('/user').expect(404, done)",
+              "err": {
+                "message": "Error: expected 404 \"Not Found\", got 200 \"OK\"",
+                "estack": "Error: expected 404 \"Not Found\", got 200 \"OK\"\n    at Test._assertStatus (node_modules/_supertest@4.0.2@supertest/lib/test.js:268:12)\n    at Test._assertFunction (node_modules/_supertest@4.0.2@supertest/lib/test.js:283:11)\n    at Test.assert (node_modules/_supertest@4.0.2@supertest/lib/test.js:173:18)\n    at localAssert (node_modules/_supertest@4.0.2@supertest/lib/test.js:131:12)\n    at /Users/jie/Desktop/project/git/FrontendLearning/6.8qa/my-project/node_modules/_supertest@4.0.2@supertest/lib/test.js:128:5\n    at Test.Request.callback (node_modules/_superagent@3.8.3@superagent/lib/node/index.js:716:12)\n    at /Users/jie/Desktop/project/git/FrontendLearning/6.8qa/my-project/node_modules/_superagent@3.8.3@superagent/lib/node/index.js:916:18\n    at IncomingMessage.<anonymous> (node_modules/_superagent@3.8.3@superagent/lib/node/parsers/json.js:19:7)\n    at endReadableNT (_stream_readable.js:1244:12)",
+                "diff": null
+              },
+              "uuid": "be611ddc-11bc-4288-9c42-86bef5503259",
+              "parentUUID": "bcd3009b-fa82-4e77-8c9a-b20f3b267e8f",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "defa73d3-90bf-4e97-bf92-77d65119f24b"
+          ],
+          "failures": [
+            "be611ddc-11bc-4288-9c42-86bef5503259"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 28,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "6.2.0"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "docs/mochawesome-report"
+      },
+      "version": "5.1.0"
+    }
+  }
+}
