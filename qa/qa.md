@@ -109,9 +109,9 @@ module.exports = function(config) {
 }
 ```
 * 运行`karma start`<br>
-![](image/qa1.jpg)
+![](image/qa1.jpg)<br>
 测试代码覆盖率，生成文档<br>
-![](image/qa2.jpg)
+![](image/qa2.jpg)<br>
 打开index.html，可查看报告,显示分支、语句、函数等的覆盖率：<br>
 ![](image/qa3.jpg)
 
@@ -175,10 +175,10 @@ module.exports = function(config) {
 }
 ```
 在backstop_data/bitmaps_reference路径里放置如下UI已经设计好的图片：<br>
-![](image/qa4.png)
+![](image/qa4.png)<br>
 * 运行`backstop test`
 自动生成下面的文件：<br>
-![](image/qa6.jpg)
+![](image/qa6.jpg)<br>
 打开index.html如下,可以看到两个图片的对比：<br>
 ![](image/qa5.jpg)
 
@@ -282,9 +282,9 @@ mocha.run(function(){
 })
 ```
 运行`node mochaRunner.js`，生成报告：<br>
-![](image/qa8.jpg)
+![](image/qa8.jpg)<br>
 打开mochawesome.html<br>
-![](image/qa9.jpg)
+![](image/qa9.jpg)<br>
 
 🌰 [点击这里查看本例demo](./demo/my-project)<br>
 📚 此文章系笔者原创，转载请注明来源
