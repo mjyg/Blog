@@ -31,3 +31,4 @@
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
+  * [二进制文件流下载和打印](other/export&download.md)
