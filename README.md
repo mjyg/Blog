@@ -28,7 +28,11 @@
   * 手写MVVM实现Vue的双向绑定
 * Web Components
   * [实现简单记事本](web-components/web-components.md)
+* 算法
+  * 二叉树
+    * [二叉搜索树节点最小距离](algorithm/tree/order.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
   * [二进制文件流下载和打印](other/export&download.md)
+* [笔记](note/note.md)
