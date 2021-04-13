@@ -28,10 +28,22 @@
   * 手写MVVM实现Vue的双向绑定
 * Web Components
   * [实现简单记事本](web-components/web-components.md)
+* 手写系列
+  * [手写call和apply](handwriting/call.md)
+  * [手写new操作符](handwriting/new.md)
+  * [手写promise](handwriting/promise.md)
 * 算法
   * [二叉树](algorithm/tree/README.md)
+  * [数组](algorithm/array/README.md)
+  * [字符串](algorithm/string/README.md)
+  * [链表](algorithm/linked-list/README.md)
+  * [栈和队列](algorithm/stack/README.md)
+  * [数学](algorithm/math/README.md)
+  * [排序](algorithm/sort/README.md)
+  * [动态规划](algorithm/dynamic-programming/README.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
   * [二进制文件流下载和打印](other/export&download.md)
+  * [A.name发⽣变化时⽴即执⾏A.getName](other/getName.md)
 * [笔记](note/note.md)
