@@ -31,7 +31,6 @@
 * 手写系列
   * [手写call和apply](handwriting/call.md)
   * [手写new操作符](handwriting/new.md)
-  * [手写promise](handwriting/promise.md)
 * 算法
   * [数组](algorithm/array/README.md)
   * [字符串](algorithm/string/README.md)
