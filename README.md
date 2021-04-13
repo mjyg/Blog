@@ -33,11 +33,11 @@
   * [手写new操作符](handwriting/new.md)
   * [手写promise](handwriting/promise.md)
 * 算法
-  * [二叉树](algorithm/tree/README.md)
   * [数组](algorithm/array/README.md)
   * [字符串](algorithm/string/README.md)
   * [链表](algorithm/linked-list/README.md)
   * [栈和队列](algorithm/stack/README.md)
+  * [二叉树](algorithm/tree/README.md)
   * [数学](algorithm/math/README.md)
   * [排序](algorithm/sort/README.md)
   * [动态规划](algorithm/dynamic-programming/README.md)
