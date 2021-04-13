@@ -29,8 +29,7 @@
 * Web Components
   * [实现简单记事本](web-components/web-components.md)
 * 算法
-  * 二叉树
-    * [二叉搜索树节点最小距离](algorithm/tree/order.md)
+  * [二叉树](algorithm/tree/README.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
