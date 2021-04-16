@@ -4,6 +4,7 @@
 
 ## 目录
 * JS语法
+  * [JS基础](js-grammar/base.md)
   * [你不知道的javascript继承](js-grammar/js-inherit.md)
   * [ES7&ES8新增语法](js-grammar/es7es8.md)
   * [ES9新增语法](js-grammar/es9.md)
