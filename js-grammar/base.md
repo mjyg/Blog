@@ -168,3 +168,22 @@ func();
 console.log(a)  // 1
 console.log(b)  //b is not defined
 ```
+🌰例3
+```js
+var x = 1,
+  y = 0,
+  z = 0;
+function add(x) {
+  return (x = x + 1);
+}
+y = add(x);
+console.log(y); //2
+{
+  function add(x) {
+    return (x = x + 3);
+  }
+}
+z = add(x);
+console.log(z);  //4
+console.log(x)  //1  只改变形参，外部的x 不会变
+```
