@@ -31,56 +31,32 @@ myQueue.empty(); // return false
 // 每次pop 或 peek 时，若输出栈为空则将输入栈的全部数据依次弹出并压入输出栈，这样输出栈从栈顶往栈底
 // 的顺序就是队列从队首往队尾的顺序。
 
-/**
- * Initialize your data structure here.
- */
-var MyQueue = function() {
-  this.inStack = []
-  this.outStack = []
+function MyQueue (){
+  this.stackIn = [];
+  this.stackOut = [];
+}
+
+MyQueue.prototype.push = function(val) {
+  this.stackIn.push(val)
 };
 
-/**
- * Push element x to the back of queue.
- * @param {number} x
- * @return {void}
- */
-MyQueue.prototype.push = function(x) {
-  this.inStack.push(x)
-};
-
-/**
- * Removes the element from in front of queue and returns that element.
- * @return {number}
- */
+// 每次出队列的时候先从出栈pop,如果出栈为空，把入栈的元素pop出来，再push到出栈中
 MyQueue.prototype.pop = function() {
-  if(!this.outStack.length) {
-    this.inToOut();
+  if(this.stackOut.length === 0) {
+    while (this.stackIn.length) {
+      this.stackOut.push(this.stackIn.pop())
+    }
   }
-  return this.outStack.pop()
+  return this.stackOut.pop();
 };
 
-/**
- * Get the front element.
- * @return {number}
- */
-MyQueue.prototype.peek = function() {
-  if(!this.outStack.length) {
-    this.inToOut();
-  }
-  return this.outStack[this.outStack.length - 1]
-};
-
-/**
- * Returns whether the queue is empty.
- * @return {boolean}
- */
 MyQueue.prototype.empty = function() {
- return this.inStack.length === 0 && this.outStack.length === 0
+  return this.stackIn.length === 0 && this.stackOut.length === 0;
 };
 
-MyQueue.prototype.inToOut = function() {
-  while(this.inStack.length)
-  this.outStack.push(this.inStack.pop())
+MyQueue.prototype.peek = function() {
+  if(this.stackOut.length !== 0) return this.stackOut[this.stackOut.length - 1]
+  return this.stackIn[0];
 }
 
 /**
