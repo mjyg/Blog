@@ -1,5 +1,6 @@
+# 手写call
+## 第一步
 ```js
-//一.手写call
 const foo = {
   value: 1,
 };
@@ -20,72 +21,113 @@ var foo2 = {
 foo2.bar(); // 1,这个时候 this 就指向了 foo
 */
 
-//第一步
-Function.prototype.call1 = function(context) {
-  context.fn = this;
-  context.fn();
-  delete context.fn;
+foo.call(bar);
+
+Function.prototype.call2 = function(bar) {
+  console.log(this)  // [Function: foo]
+  bar.foo = this;
+  bar.foo();  // 注：这里不能写成this(),this会指不到bar
+  delete bar.foo;
 };
 
-// bar.call1(foo)
+foo.call2(bar); //1
+```
 
+## 第二步:加上参数
+```js
+ const foo = function(b,c) {
+   console.log(this.a, b ,c);
+ };
+ 
+ const bar = {
+   a: 1
+ };
+ 
+ foo.call(bar);
+ 
+ Function.prototype.call2 = function(bar) {
+   console.log(this);  // [Function: foo]
+   bar.foo = this;
+ 
+   // 调用foo的时候把不定参数传进去
+   const args = [];
+   for(let i = 1; i < arguments.length; i++) {
+     args.push(arguments[i]);
+   }
+   eval("bar.foo(" + args+ ")");  //这里相当于调了args.toString()
+   console.log("bar.foo(" + args + ")");  //bar.foo(2,3)
+ 
+   delete bar.foo;
+ };
+ 
+ foo.call2(bar, 2,3);  //1 2 3
+```
 
-//第二步:加上参数
-Function.prototype.call2 = function(context) {
+## 第三步：this 参数可以传 null，当为 null 的时候，视为指向 window;函数可以有返回值
+```js
+ var a = 2;
+ const foo = function(b,c) {
+   console.log(this.a,b,c);
+   return {d:1};
+ };
+ 
+ const bar = {
+   a: 1
+ };
+ 
+ // foo.call(null);
+ 
+ Function.prototype.call2 = function(bar) {
+   var context = bar || window;
+   context.foo = this;
+ 
+   // 调用foo的时候把不定参数传进去
+   const args = [];
+   for(let i = 1; i < arguments.length; i++) {
+     args.push(arguments[i]);
+   }
+   var re = eval("context.foo(" + args+ ")");  //这里相当于调了args.toString()
+   delete context.foo;
+   return re;
+ };
+ 
+ foo.call2(null);  //2
+ console.log(foo.call2(bar,2,3));  //1 2 3 {d:1}
+```
 
-  //获取参数
-  let args = []
-  for(let i = 1; i < arguments.length; i ++) {
-    args.push('arguments[' + i + ']')
-  }
-  context.fn = this;
-
-  eval('context.fn('+args + ')');  //执行方法
-  delete context.fn;
+# 手写apply
+```js
+var a = 2;
+const foo = function(b,c) {
+  console.log(this.a,b,c);
+  return {d:1};
 };
 
-// bar.call2(foo, 'Alice', 10);  //1 Alice 10
-
-//第三步：this 参数可以传 null，当为 null 的时候，视为指向 window
- var AAA = 3;   //或AAA = 3都会挂到xindow对象上
-
-Function.prototype.call3 = function(context) {
-  context = context || window
-
-  //获取参数
-  let args = []
-  for(let i = 1; i < arguments.length; i ++) {
-    args.push('arguments[' + i + ']')
-  }
-  context.fn = this;
-
-  eval('context.fn('+args + ')');  //执行方法
-  delete context.fn;
+const bar = {
+  a: 1
 };
 
-function bar3(name, age) {
-  console.log(this.AAA);
-}
-bar3.call3(null);  //3
+// foo.call(null);
 
+Function.prototype.apply2 = function(bar, arr) {
+  var context = bar || window;
+  context.foo = this;
 
-//二.手写apply
-Function.prototype.apply1 = function(context) {
-  context = context || window
-
-  //获取参数
-  let args = []
-  if(arguments[1]) {
-    for (let i = 1; i < arguments[1]; i++) {
-      args.push('arguments[' + i + ']')
+  var re;
+  if(!arr) {
+    re = context.foo();
+  } else {
+    const args = [];
+    for(let i = 0; i < arr.length; i++) {
+      args.push(arr[i]);
     }
+    re = eval("context.foo(" + args+ ")");  //这里相当于调了args.toString()
   }
-  context.fn = this;
 
-  eval('context.fn('+args + ')');  //执行方法
-  delete context.fn;
+  delete context.foo;
+  return re;
 };
 
-bar.apply1(foo, [])
-
+foo.apply2(null);  //2
+console.log(foo.apply2(bar,[3,4]));  //1 3 4 {d:1}
 ```

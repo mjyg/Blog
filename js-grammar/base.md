@@ -79,7 +79,7 @@ function add(x) {
 }
 z = add(x);
 console.log(z);  //4
-console.log(x)  //1  只改变形参，外部的x 不会变
+console.log(x)  //1  只改变形参，外部的x不会变,函数的参数是按值传递的
 ```
 例5
 ```js
