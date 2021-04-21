@@ -33,7 +33,8 @@ Function.prototype.call2 = function(bar) {
 foo.call2(bar); //1
 ```
 
-## 第二步:加上参数
+## 第二步
+* 加上参数
 ```js
  const foo = function(b,c) {
    console.log(this.a, b ,c);
@@ -63,7 +64,9 @@ foo.call2(bar); //1
  foo.call2(bar, 2,3);  //1 2 3
 ```
 
-## 第三步：this 参数可以传 null，当为 null 的时候，视为指向 window;函数可以有返回值
+## 第三步
+* this 参数可以传 null，当为 null 的时候，视为指向 window
+* 函数可以有返回值
 ```js
  var a = 2;
  const foo = function(b,c) {
