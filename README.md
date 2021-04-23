@@ -44,6 +44,7 @@
   * [数学](algorithm/math/README.md)
   * [排序](algorithm/sort/README.md)
   * [动态规划](algorithm/dynamic-programming/README.md)
+  * [递归](algorithm/recursive/README.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
