@@ -33,6 +33,7 @@
   * [实现简单记事本](web-components/web-components.md)
 * 手写系列
   * [手写call和apply](handwriting/call.md)
+  * [手写bind](handwriting/bind.md)
   * [手写new操作符](handwriting/new.md)
 * 算法
   * [数组](algorithm/array/README.md)

@@ -135,3 +135,4 @@ Function.prototype.apply2 = function(bar, arr) {
 foo.apply2(null);  //2
 console.log(foo.apply2(bar,[3,4]));  //1 3 4 {d:1}
 ```
+❀ 参考文章：[JavaScript深入之call和apply的模拟实现](https://github.com/mqyqingfeng/Blog/issues/11)
