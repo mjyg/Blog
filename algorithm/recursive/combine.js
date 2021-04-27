@@ -17,28 +17,30 @@
  * @param {number} k
  * @return {number[][]}
  */
-var combine = function(n, k) {
+var combine = function (n, k) {
+  // 构造一棵树，用深度遍历方法
   const res = [];
-  const subset = [];
-  dfs(1)
+  const cur = [];
+  dfs(1);  //遍历第一层
   function dfs(index) {
-    // 剪枝：当subset的长度与k相等时，不需要再dps
-    if(subset.length === k) {
-      res.push([...subset])
+    // 剪枝：当cur的长度与k相等时，存入结果,同时不需要再dps
+    if (cur.length === k) {
+      res.push([...cur]);
       return;
     }
-    for(let i = index; i <=n; i++) {
-      //当前数字放入subset中
-      subset.push(i)
+
+    // 对每层的数字遍历，结果集不能出现相同字符不同顺序的组合，所以每层遍历从下一个元素开始
+    for (let i = index; i <= n; i++) {
+      //当前数字放入cur中
+      cur.push(i);
       // 继续dfs
-      dfs(i+1)
+      dfs(i + 1);  // 遍历下一层
       // pop当前数字
-      subset.pop()
+      cur.pop();
     }
   }
 
   return res;
 };
 
-
-console.log(combine(3,2))
+console.log(combine(3, 2));
