@@ -88,3 +88,4 @@ function myNew() {
   return typeof re === "object" ? re || obj : obj; //判断构造函数返回结果是否是对象,确保构造器总是返回一个对象
 }
 ```
+❀ 参考文章：[JavaScript深入之new的模拟实现](https://github.com/mqyqingfeng/Blog/issues/13)
