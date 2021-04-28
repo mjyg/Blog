@@ -93,3 +93,4 @@ data[0](); //0
 data[1](); //1
 data[2](); //2
 ```
+❀ 参考文章：[JavaScript深入之类数组对象与arguments](https://github.com/mqyqingfeng/Blog/issues/14)

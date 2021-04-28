@@ -9,6 +9,7 @@
   * [this](js-grammar/this.md)
   * [闭包](js-grammar/closuer.md)
   * [类数组对象](js-grammar/arryObject.md)
+  * [JS创建对象方法比较](js-grammar/createObject.md)
   * [你不知道的javascript继承](js-grammar/js-inherit.md)
   * [ES7&ES8新增语法](js-grammar/es7es8.md)
   * [ES9新增语法](js-grammar/es9.md)
