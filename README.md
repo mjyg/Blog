@@ -3,7 +3,7 @@
 > * 成功的道路从来不拥挤，今天你有进步吗？
 
 ## 目录
-* JS语法
+* JS基础
   * [变量提升、函数作用域、块级作用域](js-grammar/base.md)
   * [原型、原型链](js-grammar/prototype.md)
   * [this](js-grammar/this.md)

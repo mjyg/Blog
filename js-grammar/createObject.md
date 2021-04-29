@@ -98,3 +98,151 @@ console.log(p2.friends);  //[ 'a', 'b', 'c' ]  (p2的friends属性值也修改�
 
 ### 原型模式2
 原型模式的简单写法：使用对象字面量来重写整个原型对象，更好体现封装性
+```js
+function Person4() {
+}
+Person4.prototype = {
+  name: 'Ann',
+  age: 25,
+  sayName: function () {
+    console.log(this.name);
+  }
+};
+
+p1 = new Person4();
+
+console.log(p1 instanceof Person4);  //true
+console.log(p1.constructor);  //Object (无法指向原构造函数Person)
+```
+**产生的问题**:重写了默认的prototype对象为Object的prototype）<br>
+由于对象的constructor属性并非指向其构造函数,而是指向其构造函数的原型对象的constructor属性，因此p1的constructor
+属性为Object.prototype.constructor,即为Object
+
+### 原型模式3
+在重写原型时显示添加constructor属性指向原来的构造函数
+```js
+Person4.prototype = {
+  constructor: Person4,
+  name: 'Ann',
+  age: 25,
+  sayName: function () {
+    console.log(this.name);
+  }
+};
+p1 = new Person4();
+console.log(p1.constructor);  //Person4
+```
+**产生的问题**：如果先创建实例，再重新定义原型：
+```js
+Person4.prototype = {
+  constructor: Person4,
+  name: 'Ann',
+  age: 25,
+  sayName: function () {
+    console.log(this.name);
+  },
+  friends: ['a']
+};
+console.log(p1.__proto__); 
+// {constructor: [Function: Person4],name: 'Ann',age: 25, sayName: [Function: sayName] }  
+// (没有新定义原型里的friends属性)
+```
+把原型修改为另一个对象只是把构造函数(Person4)的原型修改了，而实例的原型还是老的原型，即会切断实例与新
+原型的联系，因此找不到新原型里的friends属性<br>
+
+**总结原型模式创建对象**
+* 优点：可以为实例提供共享的属性和方法，且有良好的封装性（写成简单模式时要注意会出现的两点问题，
+  加constructor属性和实例创建在原型定义之后即可避免）
+* 缺点:对每个实例无法一开始就定义自己的属性值，需要先定义好共享的属性值，再通过覆盖原型属性的方法修改成
+  自己的属性值
+
+## 组合使用构造函数模式和原型模式
+```js
+function Person5(name, age) {
+  this.name = name;
+  this.age = age;
+  this.privateFriends = ['a','b'];
+}
+Person5.prototype = {
+  constructor: Person5,
+  publicFriends: ['c','d'],
+  sayName: function () {
+    console.log(this.name);
+  }
+};
+
+p1 = new Person5('Ann', 22);
+p2 = new Person5('John', 26);
+p1.publicFriends.push('s');
+p1.privateFriends.push('v');
+
+console.log(p2.publicFriends);  //[ 'c', 'd', 's' ]
+console.log(p2.privateFriends);  //[ 'a', 'b' ]
+console.log(p1.sayName === p2.sayName);  //true
+```
+构造函数模式用来定义实例私有的属性，原型模式用来定义实例的方法和共享属性<br>
+每个实例都会有自己的一份实例属性的副本，但同时又共享着对方法的引用,最大限度的节省了内存<br>
+**该方法是目前最认可的一种创建对象的方法**
+
+## 动态原型模式
+```js
+function Person6(name, age) {
+  this.name = name;
+  this.age = age;
+  this.privateFriends = ['a','b'];
+  if (typeof this.sayName === 'undefined') {
+    console.log('create sayName');
+    Person6.prototype.sayName = function () {
+      console.log(this.name);
+    }
+  }
+  if (typeof this.publicFriends === 'undefined') {
+    console.log('create publicFriends');
+    Person6.prototype.publicFriends = ['c', 'd'];
+  }
+}
+
+p1 = new Person6('Ann', 22); //create sayName create publicFriends
+console.log('-------------');
+p2 = new Person6('John', 26); //未打印“create sayName create publicFriends”
+```
+方法和共享属性的创建只会在第一次创建实例的时候调用，因为第一次调用完以后，原型对象就存在了该方法和共享
+属性，后续实例会在原型对象中找到，便不会再次调用<br>
+**优点**：避免了上一个方法独立的构造函数和原型的写法，把所有信息都封装在构造函数之中
+**缺点**：如果方法和共享属性过多，则需要写多个if语句来判断
+
+## 寄生构造函数模式
+在已有的对象的基础上添加方法或属性创建满足需要的对象<br>
+例如创建一个数组对象，该数组需要有以'+'连接元素为字符串的方法,但是又不想直接修改Array构造函数
+```js
+function SpecialArr() {
+  let arr = new Array();
+  arr.push.apply(arr, arguments);
+  arr.splitArr = function () {
+    return arr.join('+');
+  };
+  return arr;
+}
+
+let specialArr = new SpecialArr('a','b','c');
+console.log(specialArr.splitArr()); //a+b+c
+console.log(specialArr instanceof Array);  //true
+```
+specialArr的构造函数不是SpecialArray,SpecialArray只能看作其名义上的构造函数，其真正的构造函数是
+SpecialArray里返回的对象的真正的构造函数Array
+
+## 稳妥构造函数模式
+所谓稳妥对象，指的是没有公共属性，而且其方法也不引用 this 的对象。
+新创建的实例方法不引用this，不使用new操作符构造函数
+```js
+function Person7(name, age) {
+  let o = new Object();
+  o.sayName = function () {
+    console.log(name);
+  };
+  return o;
+}
+p1 = Person7('Ann', 23);
+console.log(p1.sayName()); //Ann  (只能通过sayName方法访问name)
+```
+❀ 本文参考《JavaScript高级程序设计》
