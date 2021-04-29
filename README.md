@@ -10,6 +10,7 @@
   * [闭包](js-grammar/closuer.md)
   * [类数组对象](js-grammar/arryObject.md)
   * [JS创建对象方法比较](js-grammar/createObject.md)
+  * [JS继承方式比较](js-grammar/inherit.md)
   * [你不知道的javascript继承](js-grammar/js-inherit.md)
   * [ES7&ES8新增语法](js-grammar/es7es8.md)
   * [ES9新增语法](js-grammar/es9.md)
@@ -38,6 +39,7 @@
   * [手写call和apply](handwriting/call.md)
   * [手写bind](handwriting/bind.md)
   * [手写new操作符](handwriting/new.md)
+  * [手写instance操作符](handwriting/instance.md)
 * 算法
   * [数组](algorithm/array/README.md)
   * [字符串](algorithm/string/README.md)
