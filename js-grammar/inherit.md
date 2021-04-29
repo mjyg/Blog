@@ -31,6 +31,6 @@ console.log('sonIns.constructor：',sonIns.constructor); //[Function: Father]（
 console.log(sonIns instanceof Son) //true sonIns.__proto__ === Son.prototype
 ```
 打印如下：<br>
-![](image/16196869288401.png)
+![](image/16196869288401.png)<br>
 原型链关系如下图：<br>
-![](image/501610091359878659.jpg)
+![](image/16196884573155.png)
