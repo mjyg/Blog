@@ -2,6 +2,7 @@
 JS主要依靠原型链来实现继承
 
 ## 原型链继承
+### 重写子类原型
 ```js
 function Father() {
   this.pro = true;
@@ -16,9 +17,9 @@ Son.prototype.add = function () {
   return "继承之前子类原型添加的方法";
 };
 console.log('old Son.prototype: ',Son.prototype)
-Son.prototype = new Father(); //继承：父类的实例赋值给子类的原型对象
-// Son.prototype.__proto__ = Father.prototype; //a.
-// Son.prototype = Father.prototype; //b.
+Son.prototype = new Father(); //a.重写子类原型
+// Son.prototype.__proto__ = Father.prototype; //b.
+// Son.prototype = Father.prototype; //c.
 
 Son.prototype.getSonPro = function () {
   return this.pro;
@@ -34,6 +35,42 @@ console.log(sonIns instanceof Son) //true sonIns.__proto__ === Son.prototype
 打印如下：<br>
 ![](image/16196869288401.png)<br>
 原型链关系如下图：<br>
-![](image/16196884573155.png)
+![](image/16196884573155.png)<br>
+**缺点**
 可以看出Son.prototype中没有了constructor属性，这是因为在`Son.prototype = new Father()`时Son.prototype已经被
-重写了
+重写了，所以sonIns.constructor通过原型链指向了父类Father
+
+###
+把上面例子的a替换成b：
+```js
+function Father() {
+  this.pro = true;
+}
+Father.prototype.getFatherPro = function () {
+  return this.pro;
+};
+function Son() {
+  this.pro = false;
+}
+Son.prototype.add = function () {
+  return "继承之前子类原型添加的方法";
+};
+console.log('old Son.prototype: ',Son.prototype)
+// Son.prototype = new Father(); //a
+Son.prototype.__proto__ = Father.prototype; //b
+// Son.prototype = Father.prototype; //c
+
+Son.prototype.getSonPro = function () {
+  return this.pro;
+};
+let sonIns = new Son();
+console.log('Father.prototype：',Father.prototype);
+console.log('Son.prototype：', Son.prototype);
+console.log('Son.constructor：',Son.constructor);
+console.log('sonIns.constructor：',sonIns.constructor);
+```
+打印如下：<br>
+![](image/16197449488030.png)<br>
+
+原型链关系如下图(铅笔写的部分表示与上例的不同，手头没有其他颜色的笔了/(ㄒoㄒ)/~~)：<br>
+![](image/16197450951755.png)<br>
