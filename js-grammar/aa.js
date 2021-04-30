@@ -12,8 +12,8 @@ Son.prototype.add = function () {
 };
 console.log('old Son.prototype: ',Son.prototype)
 // Son.prototype = new Father(); //a
-Son.prototype.__proto__ = Father.prototype; //b
-// Son.prototype = Father.prototype; //c
+// Son.prototype.__proto__ = Father.prototype; //b
+Son.prototype = Father.prototype; //c
 
 Son.prototype.getSonPro = function () {
   return this.pro;
