@@ -1,43 +1,47 @@
-let father5 = {
-  publicFriends: ['f', 'g'],
-  name: 'f',
-  sayFriend: function () {
-    console.log('这是父类的方法');
-    return this.privateFriends + this.publicFriends;
-  }
+function Father(name) {
+  console.log('调用父类构造函数')
+  this.name = name;
+  this.privateFriends = ['a', 'b'];
+  this.age = 60
+}
+function Son(name) {
+  Father.call(this, name);
+  this.privateFriends = ['c', 'd'];//将会覆盖父类的同名属性
+}
+
+Father.prototype.sayName = function() {
+  return this.name;
+}
+
+Father.prototype.publicFriends=  ['f', 'g'];
+
+Father.prototype.sayFriend= function () {
+  console.log('这是父类的方法');
+  return this.privateFriends + this.publicFriends;
+}
+
+let prototype = Object.create(Father.prototype);  //只把父类的原型对象当做prototype的原型对象
+prototype.constructor = Son; //实现原型和构造函数的互相指引
+Son.prototype = prototype;
+
+console.log('prototype:',prototype); //Father {}
+
+Son.prototype.sayFriend = function () { //添加子类的方法,将会覆盖父类的方法
+  console.log('这是子类的方法');
+  return this.privateFriends + this.publicFriends;
 };
-let friend = 'a';
-let son6 = Object.create(father5,{
-  privateFriends: {
-    configurable: true,
-    enumerable: true,
-    writable: true,
-    value: ['g','h'],
-  },
-  sayFriend: {
-    configurable: true,
-    enumerable: true,
-    get: () => {
-      return friend;
-    },
-    set: (newValue) => {
-      console.log(this.privateFriends);
-      friend = newValue;
-    },
-  },
-  // add: () => {  //未报错，但是无效，只能加数据属性和访问器属性
-  //     console.log('新定义的方法');
-  // }
-});
-console.log(son6);//{ privateFriends: [ 'g', 'h' ], sayFriend: [Getter/Setter] }
-console.log(son6.prototype);//undefined (不是方法，没有该属性)
-console.log(son6.__proto__);//{ publicFriends: [ 'f', 'g' ],name: 'f',
-// sayFriend: [Function: sayFriend]
 
-son6.sayFriend = 'z';
-console.log(son6.sayFriend);  //undefined z (不知道为啥this.privateFriends是undefined)
-console.log(son6.publicFriends); //[ 'f', 'g' ]
+let son= new Son('Bob');  // 这一句son.__proto__ = Son.prototype
 
-let son7 = Object.create(father5);
-son6.publicFriends.push('l');
-console.log(son7.publicFriends);  //[ 'f', 'g', 'l' ] (不同对象共享的属性和方法引用地址相同)
+console.log('Son.prototype:',Son.prototype);
+console.log('Son.constructor：',Son.constructor);
+console.log('son.constructor：',son.constructor);
+console.log('son.__proto__:',son.__proto__);  //没有了父类构造函数里的属性和方法
+console.log('son instanceof Son:',son instanceof Son) //true sonIns.__proto__ === Son.prototype
+
+
+console.log('son:',son);
+console.log('prototype:',prototype);
+console.log('son.publicFriends',son.publicFriends);  //[ 'f', 'g' ] (依然可以根据原型链调到父类原型对象上的方法和属性)
+
+

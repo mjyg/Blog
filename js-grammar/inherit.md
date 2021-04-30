@@ -220,8 +220,119 @@ console.log('son1',son1);
 原型链关系如下图：<br>
 ![](image/16197629613294.png)<br>
 > **总结组合继承** <br>
-> * 优点：弥补了借用构造函数的两个缺点，能传递参数，复用了父类的方法，且有继承的原型链，是最常用的继承模式
+> * 优点：弥补了借用构造函数的两个缺点，能传递参数，复用了父类的方法，且有继承的原型链，**是最常用的继承模式**
 > * 缺点：会调用两次父类构造函数，一次是在子类继承父类创建子类原型的时候调用了父类构造函数，另一次是在实例
 >   化子类的时候，在子类构造函数内部调用了父类构造函数，于是实例化的子类对象在其本身和原型对象里都有
 >   一份父类构造函数里有的属性和方法
 
+## 4 原型式继承
+采用Object.create(protoObj,extendObj)<br>
+参数说明：protoObj:用作新对象原型的对象；extendObj:为新对象定义额外属性的对象通过描述符定义（可选）
+```js
+let father5 = {
+  publicFriends: ['f', 'g'],
+  name: 'f',
+  sayFriend: function () {
+    console.log('这是父类的方法');
+    return this.privateFriends + this.publicFriends;
+  }
+};
+let friend = 'a';
+let son6 = Object.create(father5,{
+  privateFriends: {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: ['g','h'],
+  },
+  sayFriend: {
+    configurable: true,
+    enumerable: true,
+    get: function() {
+      return friend;
+    },
+    set: function(newValue) {
+      friend = newValue;
+    },
+  },
+  add: () => {  //未报错，但是无效，只能加数据属性和访问器属性
+      console.log('新定义的方法');
+  }
+});
+console.log('son6:',son6);
+console.log('son6.constructor:',son6.constructor);
+console.log('son6.__proto__:',son6.__proto__);
+
+
+son6.sayFriend = 'z';
+console.log('son6.sayFriend:',son6.sayFriend);  //z
+console.log('son6.publicFriends:',son6.publicFriends); //[ 'f', 'g' ]
+
+let son7 = Object.create(father5);
+son6.publicFriends.push('l');
+console.log('son7.publicFriends',son7.publicFriends);  //[ 'f', 'g', 'l' ] (不同对象共享的属性和方法引用地址相同)
+```
+打印如下：<br>
+![](image/16197656869624.png)<br>
+原型链关系如下图：<br>
+![](image/16197658603381.png)<br>
+> **总结原型式继承** <br>
+> * 优点：如果子类对象与父类对象非常相似，没必要重新构建子类构造函数，可以采用此种模式，把子类新增的属性放create方法的第二个属性中
+> * 缺点：
+>   * 1.新增的属性只能通过描述符定义，无法直接新增方法
+>   * 2.引用类型属性为不同对象的共享属性
+
+## 5 寄生组合式继承
+弥补组合继承调用两次父类构造函数的问题
+```js
+function Father(name) {
+  console.log('调用父类构造函数')
+  this.name = name;
+  this.privateFriends = ['a', 'b'];
+  this.age = 60
+}
+function Son(name) {
+  Father.call(this, name);
+  this.privateFriends = ['c', 'd'];//将会覆盖父类的同名属性
+}
+
+Father.prototype.sayName = function() {
+  return this.name;
+}
+
+Father.prototype.publicFriends=  ['f', 'g'];
+
+Father.prototype.sayFriend= function () {
+  console.log('这是父类的方法');
+  return this.privateFriends + this.publicFriends;
+}
+
+let prototype = Object.create(Father.prototype);  //只把父类的原型对象当做prototype的原型对象
+prototype.constructor = Son; //实现原型和构造函数的互相指引
+Son.prototype = prototype;
+
+console.log('prototype:',prototype); //Father {}
+
+Son.prototype.sayFriend = function () { //添加子类的方法,将会覆盖父类的方法
+  console.log('这是子类的方法');
+  return this.privateFriends + this.publicFriends;
+};
+
+let son= new Son('Bob');  // 这一句son.__proto__ = Son.prototype
+
+console.log('Son.prototype:',Son.prototype);
+console.log('Son.constructor：',Son.constructor);
+console.log('son.constructor：',son.constructor);
+console.log('son.__proto__:',son.__proto__);  //没有了父类构造函数里的属性和方法
+console.log('son instanceof Son:',son instanceof Son) //true sonIns.__proto__ === Son.prototype
+
+
+console.log('son:',son);
+console.log('prototype:',prototype);
+console.log('son.publicFriends',son.publicFriends);  //[ 'f', 'g' ] (依然可以根据原型链调到父类原型对象上的方法和属性)
+```
+打印如下：<br>
+![](image/16197725647838.png)<br>
+原型链关系如下图：<br>
+![](image/16197727013293.png)<br>
+可以看出子类的原型对象上没有了父类构造函数里的属性和方法，且继承的原型链存在，**该继承模式是最理想的继承方式**
