@@ -1,25 +1,43 @@
-function Father() {
-  this.pro = true;
-}
-Father.prototype.getFatherPro = function () {
-  return this.pro;
+let father5 = {
+  publicFriends: ['f', 'g'],
+  name: 'f',
+  sayFriend: function () {
+    console.log('这是父类的方法');
+    return this.privateFriends + this.publicFriends;
+  }
 };
-function Son() {
-  this.pro = false;
-}
-Son.prototype.add = function () {
-  return "继承之前子类原型添加的方法";
-};
-console.log('old Son.prototype: ',Son.prototype)
-// Son.prototype = new Father(); //a
-// Son.prototype.__proto__ = Father.prototype; //b
-Son.prototype = Father.prototype; //c
+let friend = 'a';
+let son6 = Object.create(father5,{
+  privateFriends: {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: ['g','h'],
+  },
+  sayFriend: {
+    configurable: true,
+    enumerable: true,
+    get: () => {
+      return friend;
+    },
+    set: (newValue) => {
+      console.log(this.privateFriends);
+      friend = newValue;
+    },
+  },
+  // add: () => {  //未报错，但是无效，只能加数据属性和访问器属性
+  //     console.log('新定义的方法');
+  // }
+});
+console.log(son6);//{ privateFriends: [ 'g', 'h' ], sayFriend: [Getter/Setter] }
+console.log(son6.prototype);//undefined (不是方法，没有该属性)
+console.log(son6.__proto__);//{ publicFriends: [ 'f', 'g' ],name: 'f',
+// sayFriend: [Function: sayFriend]
 
-Son.prototype.getSonPro = function () {
-  return this.pro;
-};
-let sonIns = new Son();
-console.log('Father.prototype：',Father.prototype);
-console.log('Son.prototype：', Son.prototype);
-console.log('Son.constructor：',Son.constructor);
-console.log('sonIns.constructor：',sonIns.constructor);
+son6.sayFriend = 'z';
+console.log(son6.sayFriend);  //undefined z (不知道为啥this.privateFriends是undefined)
+console.log(son6.publicFriends); //[ 'f', 'g' ]
+
+let son7 = Object.create(father5);
+son6.publicFriends.push('l');
+console.log(son7.publicFriends);  //[ 'f', 'g', 'l' ] (不同对象共享的属性和方法引用地址相同)
