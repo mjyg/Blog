@@ -9,6 +9,7 @@
 > * [3 组合继承](#3-组合继承)
 > * [4 原型式继承](#4-原型式继承)
 > * [5 寄生组合式继承](#5-寄生组合式继承)
+> * [6 ES6的继承](#6-ES6的继承)
 
 JS主要依靠原型链来实现继承
 
@@ -347,4 +348,41 @@ console.log('son.publicFriends',son.publicFriends);  //[ 'f', 'g' ] (依然可�
 原型链关系如下图：<br>
 ![](image/16197727013293.png)<br>
 > 可以看出子类的原型对象上没有了父类构造函数里的属性和方法，且继承的原型链存在，**该继承模式是最理想的继承方式**<br>
+
+## 6 ES6的继承
+```js
+class Car {
+  static color = 1;
+  constructor(price){
+    this.price = price
+  }
+  test(){
+    console.log(this.price)
+  }
+}
+
+class Cruze extends Car {
+  constructor(price){
+    super(price)
+  }
+}
+
+const cruze = new Cruze(3000)
+
+console.log('Car.prototype', Car.prototype)
+console.log('Cruze.prototype:',Cruze.prototype);
+console.log('Cruze.constructor：',Cruze.constructor);
+console.log('cruze.constructor：',cruze.constructor);
+console.log('cruze.__proto__:',cruze.__proto__);
+console.log('cruze instanceof Son:',cruze instanceof Cruze)
+
+
+console.log(Cruze.color)  //1 继承静态属性
+cruze.test();  //3000
+```
+打印如下：<br>
+![](image/16197742819449.png)<br>
+原型链关系如下图：<br>
+![](image/16197744525949.png)<br>
+
 ❀ 本文参考《JavaScript高级程序设计》
