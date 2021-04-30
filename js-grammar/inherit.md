@@ -1,8 +1,8 @@
 # JS继承方式比较
 JS主要依靠原型链来实现继承
 
-## 原型链继承
-### 重写子类原型为父类的实例
+## 1.原型链继承
+### 1.1重写子类原型为父类的实例
 ```js
 function Father() {
   this.pro = true;
@@ -36,11 +36,11 @@ console.log(sonIns instanceof Son) //true sonIns.__proto__ === Son.prototype
 ![](image/16196869288401.png)<br>
 原型链关系如下图：<br>
 ![](image/16196884573155.png)<br>
-**缺点**
+**缺点**<br>
 可以看出Son.prototype中没有了constructor属性，这是因为在`Son.prototype = new Father()`时Son.prototype已经被
 重写了，所以sonIns.constructor通过原型链指向了父类Father
 
-### 子类原型的__proto__属性指向父类原型
+### 1.2子类原型的__proto__属性指向父类原型
 把第一个例子的继承语句a替换成b，子类原型的__proto__属性指向父类原型
 ```js
 function Father() {
@@ -75,7 +75,7 @@ console.log('sonIns.constructor：',sonIns.constructor);
 ![](image/16197450951755.png)<br>
 可以看作是不严格的继承，没有重新定义子类的原型对象，所以子类的构造函数不变
 
-### 重写子类原型为父类原型
+### 1.3重写子类原型为父类原型
 把第一个例子的继承语句a替换成c，重写子类原型为父类原型
 ```js
 function Father() {
@@ -112,5 +112,7 @@ console.log('sonIns.constructor：',sonIns.constructor);
 是父类的 原型对象,子类实例的构造函数指向父类<br>
 重新定义了子类的原型对象，子类实例的构造函数指向父类的constructor属性
 
-> **总结**
+> **总结** <br>
 > 原型链继承在创建子类的实例时，无法向父类构造函数传递参数
+
+## 2.借用构造函数
