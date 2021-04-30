@@ -47,9 +47,9 @@ console.log(sonIns instanceof Son) //true sonIns.__proto__ === Son.prototype
 ![](image/16196869288401.png)<br>
 原型链关系如下图：<br>
 ![](image/16196884573155.png)<br>
-**缺点**<br>
-可以看出Son.prototype中没有了constructor属性，这是因为在`Son.prototype = new Father()`时Son.prototype已经被
-重写了，所以sonIns.constructor通过原型链指向了父类Father
+> **缺点:**<br>
+>可以看出Son.prototype中没有了constructor属性，这是因为在`Son.prototype = new Father()`时Son.prototype已经被
+>重写了，所以sonIns.constructor通过原型链指向了父类Father
 
 ### 1-2 子类原型的__proto__属性指向父类原型
 把第一个例子的继承语句a替换成b，子类原型的__proto__属性指向父类原型
@@ -84,7 +84,7 @@ console.log('sonIns.constructor：',sonIns.constructor);
 ![](image/16197449488030.png)<br>
 原型链关系如下图(红色部分表示与上例的不同)：<br>
 ![](image/16197450951755.png)<br>
-可以看作是不严格的继承，没有重新定义子类的原型对象，所以子类的构造函数不变
+>可以看作是不严格的继承，没有重新定义子类的原型对象，所以子类的构造函数不变
 
 ### 1-3 重写子类原型为父类原型
 把第一个例子的继承语句a替换成c，重写子类原型为父类原型
@@ -119,9 +119,9 @@ console.log('sonIns.constructor：',sonIns.constructor);
 ![](image/16197461676529.png)<br>
 原型链关系如下图(红色部分表示与上例的不同)：<br>
 ![](image/1619746424556.png)<br>
-可以看作是直接用父类的原型对象替换子类的原型对象，子类和父类的原型对象指向同一地址，即子类的原型对象就
-是父类的 原型对象,子类实例的构造函数指向父类<br>
-重新定义了子类的原型对象，子类实例的构造函数指向父类的constructor属性
+>可以看作是直接用父类的原型对象替换子类的原型对象，子类和父类的原型对象指向同一地址，即子类的原型对象就
+>是父类的 原型对象,子类实例的构造函数指向父类<br>
+>重新定义了子类的原型对象，子类实例的构造函数指向父类的constructor属性
 
 > **总结** <br>
 > 原型链继承在创建子类的实例时，无法向父类构造函数传递参数
@@ -346,4 +346,5 @@ console.log('son.publicFriends',son.publicFriends);  //[ 'f', 'g' ] (依然可�
 ![](image/16197725647838.png)<br>
 原型链关系如下图：<br>
 ![](image/16197727013293.png)<br>
-可以看出子类的原型对象上没有了父类构造函数里的属性和方法，且继承的原型链存在，**该继承模式是最理想的继承方式**
+> 可以看出子类的原型对象上没有了父类构造函数里的属性和方法，且继承的原型链存在，**该继承模式是最理想的继承方式**<br>
+❀ 本文参考《JavaScript高级程序设计》
