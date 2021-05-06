@@ -10,6 +10,7 @@
 > * [4 原型式继承](#4-原型式继承)
 > * [5 寄生组合式继承](#5-寄生组合式继承)
 > * [6 ES6的继承](#6-ES6的继承)
+> * [7 可以继承静态属性的ES5的继承](#7-可以继承静态属性的ES5的继承)
 
 JS主要依靠原型链来实现继承
 
@@ -319,9 +320,8 @@ Father.prototype.sayFriend= function () {
   return this.privateFriends + this.publicFriends;
 }
 
-let prototype = Object.create(Father.prototype);  //只把父类的原型对象当做prototype的原型对象
-prototype.constructor = Son; //实现原型和构造函数的互相指引
-Son.prototype = prototype;
+Son.prototype = Object.create(Father.prototype);  //只把父类的原型对象当做Son.prototype的原型对象
+Son.prototype.constructor = Son; //实现原型和构造函数的互相指引
 
 console.log('prototype:',prototype); //Father {}
 
@@ -375,14 +375,101 @@ console.log('Cruze.constructor：',Cruze.constructor);
 console.log('cruze.constructor：',cruze.constructor);
 console.log('cruze.__proto__:',cruze.__proto__);
 console.log('cruze instanceof Son:',cruze instanceof Cruze)
-
+console.log('cruze:',cruze)
+console.log('Cruze:',Cruze)
+console.log('cruze.__proto__.__proto__ === Car.prototype:',cruze.__proto__.__proto__ === Car.prototype);
 
 console.log(Cruze.color)  //1 继承静态属性
 cruze.test();  //3000
 ```
 打印如下：<br>
-![](image/16197742819449.png)<br>
+![](image/16202688474716.png)<br>
 原型链关系如下图：<br>
-![](image/16197744525949.png)<br>
+![](image/16202688914958.png)<br>
+> 可以看出ES6的继承实际上实现的也是基于原型链的继承，但是它多了一个功能，就是**子类可以继承父类的静态属性**，
+> 这在前面光有基于原型链的继承是无法实现的<br>
+
+## 7 可以继承静态属性的ES5的继承
+~~~js
+'use strict'
+function Car(price){
+  this.price = price
+}
+
+//静态属性
+Car.color = 'red'
+
+//原型上的方法
+Car.prototype.test = function(){
+  console.log(this.price)
+}
+
+function Cruze(price){
+  Car.call(this, price)  //严格模式要加this，否则传window
+}
+~~~
+
+### 继承静态属性
+~~~js
+var staticKeys = Object.entries(Car)
+console.log(staticKeys) //[["color", "red"]] //取到静态属性
+
+for(var i =0; i < staticKeys.length;i++){
+  var key = staticKeys[i][0]
+  var value = staticKeys[i][1]
+  Cruze[key] = value
+}
+
+console.log(Cruze.color)  //red 继承静态属性
+~~~
+
+### 继承原型链
+* 错误写法
+~~~js
+Cruze.prototype = Car.prototype  //错误，子类会污染父类
+Cruze.prototype = new Car()  //错误，父类构造函数会执行两遍
+~~~
+
+* 寄生组合式继承写法
+~~~js
+Cruze.prototype = Object.create(Car.prototype)
+Cruze.prototype.constructor = Cruze  //修正constructor
+~~~
+
+* 新写法
+~~~js
+Cruze.prototype = Object.create(Car.prototype, {
+  constructor:{ //直接修正constructor
+    value:Cruze,
+    writable: false,  //不让别人修正
+  },
+  test:{  //继承原型链上的test
+    value: function(){
+      console.log(this.price)
+    }
+  }
+})
+Cruze.prototype.constructor = {} // 非严格模式下无效，严格模式下报错 cannot assign to read only property 'constructor' of object '#<Cruze>'
+
+var cruze = new Cruze(3000)
+
+console.log('Car.prototype', Car.prototype)
+console.log('Cruze.prototype:',Cruze.prototype);
+console.log('Cruze.constructor：',Cruze.constructor);
+console.log('cruze.constructor：',cruze.constructor);
+console.log('cruze.__proto__:',cruze.__proto__);
+console.log('cruze instanceof Son:',cruze instanceof Cruze)
+console.log('cruze:',cruze)
+console.log('Cruze:',Cruze)
+console.log('cruze.__proto__.__proto__ === Car.prototype:',cruze.__proto__.__proto__ === Car.prototype);
+
+console.log(cruze)
+cruze.test()
+~~~
+打印结果：<br>
+![](image/inherit3.jpg)<br>
+原型链关系如下图：<br>
+![](image/16202706421830.png)<br>
+> 可以看出子类构造函数也具有了父类的静态属性color，且子类的原型上也有test方法
 
 ❀ 本文参考《JavaScript高级程序设计》
