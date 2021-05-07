@@ -4,6 +4,9 @@
 > * [第一步：基本功能](#第一步基本功能)
 > * [第二步：修正this](#第二步修正this)
 > * [第三步：获取event对象](#第三步获取event对象)
+> * [第四步：可以立刻执行](#第四步可以立刻执行)
+> * [第五步：返回值](#第五步返回值)
+> * [第六步：可以取消防抖函数](#第六步可以取消防抖函数)
 
 在函数频繁被调用时有时需要用到防抖函数，比如事件频繁触发时，一定要在触发事件的n秒后再执行，如果n秒内又触发了
 事件，则以新的事件时间为准，再等待秒后再执行
@@ -74,3 +77,93 @@ function debounce(func, wait) {
   }
 }
 ```
+
+## 第四步：可以立刻执行
+如果时间触发后需要立即执行一次，而不用等到触发后再等待1秒再执行，就需要加个是否立即执行的参数
+```js
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function() {
+    const context = this
+    const args = arguments
+    clearTimeout(timeout)
+    if(immediate) {
+      //timeout为null，则表示停止触发了n秒后的第一次触发，可以立即执行一次
+      if(!timeout) func.apply(context, args)
+      timeout = setTimeout(function(){  //单独控制timeout是否为null的定时器
+        timeout = null;  //当等待n秒后，可以再一次立即执行
+      }, wait)
+    } else {
+      timeout = setTimeout(function () {
+        func.apply(context, args);
+      }, wait);
+    }
+  }
+}
+```
+
+## 第五步：返回值
+由于getUserAction可能会有返回值，所以需要在防抖函数中加上返回值，这里只考虑immediate为true时加返回值，
+因为immediate为false时，函数会在setTimeout里延迟执行，返回值只会返回undefined
+```js
+function debounce(func, wait, immediate) {
+  let timeout, re;
+  return function() {
+    const context = this
+    const args = arguments
+    clearTimeout(timeout)
+    if(immediate) {
+      //timeout为null，则表示停止触发了n秒后的第一次触发，可以立即执行一次
+      if(!timeout) re = func.apply(context, args)
+      timeout = setTimeout(function(){  //单独控制timeout是否为null的定时器
+        timeout = null;  //当等待n秒后，可以再一次立即执行
+      }, wait)
+    } else {
+      timeout = setTimeout(function () {
+        func.apply(context, args)
+      }, wait);
+    }
+    return re;
+  }
+}
+```
+
+## 第六步：可以取消防抖函数
+```js
+const getUserActionDebounce = debounce(getUserAction, 5000, true);
+
+container.onmousemove = getUserActionDebounce;
+
+document.getElementById("button").onclick = getUserActionDebounce.cancel;
+
+function debounce(func, wait, immediate) {
+  let timeout, re;
+  const debounced = function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeout);
+    if (immediate) {
+      //timeout为null，则表示停止触发了n秒后的第一次触发，可以立即执行一次
+      if (!timeout) re = func.apply(context, args);
+      timeout = setTimeout(function () {
+        //单独控制timeout是否为null的定时器
+        timeout = null; //当等待n秒后，可以再一次立即执行
+      }, wait);
+    } else {
+      timeout = setTimeout(function () {
+        func.apply(context, args);
+      }, wait);
+    }
+    return re;
+  };
+
+  // 取消计时，立即执行一次
+  debounced.cancel = function () {
+    clearTimeout(timeout); //清除定时器
+    timeout = null; //下次调用可以立即执行
+  };
+
+  return debounced;
+}
+```
+调用debounced.cancel可以立即执行一次getUserAction

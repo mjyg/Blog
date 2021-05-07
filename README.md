@@ -40,7 +40,7 @@
   * [手写new操作符](handwriting/new.md)
   * [手写instance操作符](handwriting/instance.md)
   * [手写防抖函数](handwriting/debounce.md)
-* 算法
+* 算法和数据结构
   * [数组](algorithm/array/README.md)
   * [字符串](algorithm/string/README.md)
   * [链表](algorithm/linked-list/README.md)
