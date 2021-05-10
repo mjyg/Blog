@@ -2,24 +2,24 @@
 call() 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。
 ## 第一步
 ```js
-const foo = {
+const bar = {
   value: 1,
 };
-//
-function bar(name, age) {
+
+function foo(name, age) {
   console.log(this.value, name, age);
 }
 //
-// bar.call(foo, 'Alice', 10);
+// foo.call(bar, 'Alice', 10);
 /*
-//试想当调用 call 的时候，把 foo 对象改造成如下：
-var foo2 = {
+//试想当调用 call 的时候，把 bar 对象改造成如下：
+var bar2 = {
   value: 1,
-  bar: function() {
+  foo: function() {
     console.log(this.value);
   },
 };
-foo2.bar(); // 1,这个时候 this 就指向了 foo
+bar2.foo(); // 1,这个时候 this 就指向了 foo
 */
 
 foo.call(bar);
