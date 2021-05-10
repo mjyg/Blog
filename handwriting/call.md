@@ -1,33 +1,39 @@
 # 手写call
 call() 方法在使用一个指定的 this 值和若干个指定的参数值的前提下调用某个函数或方法。
 ## 第一步
+原生call:
 ```js
 const bar = {
   value: 1,
 };
 
 function foo(name, age) {
+  this.fooValue = 'foo value'
   console.log(this.value, name, age);
 }
-//
-// foo.call(bar, 'Alice', 10);
-/*
-//试想当调用 call 的时候，把 bar 对象改造成如下：
+
+foo.call(bar, 'Alice', 10);
+```
+试想当调用 call 的时候，把 bar 对象改造成如下：
+```js
 var bar2 = {
   value: 1,
   foo: function() {
+    this.fooValue = 'foo value'
     console.log(this.value);
   },
 };
-bar2.foo(); // 1,这个时候 this 就指向了 foo
-*/
-
-foo.call(bar);
-
+bar2.foo(); // 1 (这个时候 this 就指向了 foo)
+console.log('bar2:', bar2)
+```
+打印如下，可以看到bar2里面有了foo的属性fooValue：<br>
+![](image/16206287101980.png)<br>
+实现如下：
+```js
 Function.prototype.call2 = function(bar) {
   console.log(this)  // [Function: foo]
   bar.foo = this;
-  bar.foo();  // 注：这里不能写成this(),this会指不到bar
+  bar.foo();  // 注：这里不能写成this(),this会指不到bar;通过这一步bar有了foo的fooValue属性
   delete bar.foo;
 };
 
