@@ -29,10 +29,10 @@ function myNew() {
   return obj
 }
 
-const p2 = myNew(Person)
-console.log(p.name); //Alice
-console.log(p.age); //20
-console.log(p.sayName()); //Alice
+const p2 = myNew(Person, 'Alice')
+console.log(p2.name); //Alice
+console.log(p2.age); //20
+console.log(p2.sayName()); //Alice
 
 ```
 
