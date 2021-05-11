@@ -94,3 +94,35 @@ console.log(cache.get(4));   //(12)
 ```
 keys数组变化如下：<br>
 ![](./image/16206966058787.png)
+
+* 用Map实现
+```js
+function LRUCache(max) {
+ this.cache = new Map()
+ this.max = max
+}
+
+LRUCache.prototype.put = function(key, value) {
+  if(this.cache.has(key)) {
+    this.cache.delete(key)
+  }
+  if(this.cache.size === this.max) {
+    this.cache.delete(this.cache.keys().next().value)  //this.cache.keys().next().value获取map第一个元素的key
+  }
+  this.cache.set(key, value)
+}
+
+LRUCache.prototype.get = function(key) {
+  if(this.cache.has(key)) {
+    const value = this.cache.get(key)
+    this.cache.delete(key)
+    this.cache.set(key, value)
+    return value
+  }
+  return -1
+}
+```
+在leetcode中使用Map要比使用Object的性能好很多，通过查看MDN得知Map'**在频繁增删键值对的场景下表现更好**',
+而Object'**在频繁添加和删除键值对的场景下未作出优化**'<br>
+下图截自MDN：<br>
+![](./image/16206999678183.png)
