@@ -1,4 +1,4 @@
-# LRU缓存算法
+# LRU缓存机制
 ## 缓存淘汰策略的应用
 * 浏览器缓存
 当我们打开一个网页时，例如 https://github.com/sisterAn/JavaScript-Algorithms ，它会在发起真正的

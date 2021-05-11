@@ -1,4 +1,5 @@
 ## 数组
+* [LRU缓存机制](LRU.md)
 * [每日温度](dailyTemperatures.md)
 * [下一个排列](nextPermutation.md)
 * [在排序数组中查找元素的第一个和最后一个位置](searchRange.md)
@@ -33,6 +34,5 @@
 * [移除重复元素](removeDuplicates.md)
 * [递增数组中消失的数字](missingNumber.md)
 * [高度检查器](heightChecker.md)
-* [LRU缓存机制](LRU.js)
 
  
