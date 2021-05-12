@@ -125,4 +125,6 @@ LRUCache.prototype.get = function(key) {
 在leetcode中使用Map要比使用Object的性能好很多，通过查看MDN得知Map'**在频繁增删键值对的场景下表现更好**',
 而Object'**在频繁添加和删除键值对的场景下未作出优化**'<br>
 下图截自MDN：<br>
-![](./image/16206999678183.png)
+![](./image/16206999678183.png)<br>
+
+❀ 参考文章：[前端进阶算法3：从浏览器缓存淘汰策略和Vue的keep-alive学习LRU算法](https://github.com/sisterAn/JavaScript-Algorithms/issues/9)
