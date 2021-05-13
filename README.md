@@ -52,6 +52,7 @@
   * [动态规划](algorithm/dynamic-programming/README.md)
   * [递归](algorithm/recursive/README.md)
   * [滑动窗口](algorithm/slideWindow/README.md)
+  * [哈希表](algorithm/hash/README.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
