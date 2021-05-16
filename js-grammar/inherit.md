@@ -443,7 +443,7 @@ Cruze.prototype = Object.create(Car.prototype, {
     value:Cruze,
     writable: false,  //不让别人修正
   },
-  test:{  //继承原型链上的test
+  test:{  //重写原型链上的test
     value: function(){
       console.log(this.price)
     }
