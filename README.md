@@ -53,6 +53,7 @@
   * [递归](algorithm/recursive/README.md)
   * [滑动窗口](algorithm/slideWindow/README.md)
   * [哈希表](algorithm/hash/README.md)
+  * [堆](algorithm/heap/README.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
