@@ -38,6 +38,7 @@
   * [手写call和apply](handwriting/call.md)
   * [手写bind](handwriting/bind.md)
   * [手写new操作符](handwriting/new.md)
+  * [手写Object.create函数](handwriting/create.md)
   * [手写instance操作符](handwriting/instance.md)
   * [手写防抖函数](handwriting/debounce.md)
   * [手写节流函数](handwriting/throttle.md)
