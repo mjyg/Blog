@@ -14,6 +14,7 @@
   * [ES7&ES8新增语法](js-grammar/es7es8.md)
   * [ES9新增语法](js-grammar/es9.md)
   * [ES10新增语法](js-grammar/es10.md)
+  * [JS里分号的作用](js-grammar/semicolon.md)
 * Promise
   * [Promise的链式调用](promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](promise/handwrite-promise/promise.md)
