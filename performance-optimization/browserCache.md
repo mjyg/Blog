@@ -1,7 +1,7 @@
 # 浏览器缓存
 
 **目录**
-> * [1 HTTP缓存](#1-HTTP缓存)
+> * [1 HTTP缓存](#1-http缓存)
 >   * [1-1 强缓存](#1-1-强缓存)
 >       * [1-1-1 expires](#1-1-1-expires)
 >       * [1-1-2 cache-control](#1-1-2-cache-control)
@@ -11,8 +11,8 @@
 >           * [1-1-2-4 no-store与no-cache](#1-1-2-4-no-store与no-cache)
 >   * [1-2 协商缓存](#1-2-协商缓存)
 >       * [1-2-1 Last-Modified](#1-2-1-Last-Modified)
->       * [1-2-2 Last-Etag](#1-2-2-Last-Etag)
-> * [2 HTTP缓存决策](#2-HTTP缓存决策)
+>       * [1-2-2 Etag](#1-2-2-etag)
+> * [2 HTTP缓存决策](#2-http缓存决策)
 
 浏览器缓存有多种形式，持久化或者会话存储。以chrome为例，打开调试面板，找到Application选项卡，就可以看到它所支持的各种缓存模式<br>
 ![](./image/16221715671463.png)<br>
