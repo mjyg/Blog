@@ -57,6 +57,8 @@
   * [哈希表](algorithm/hash/README.md)
   * [堆](algorithm/heap/README.md)
   * [图](algorithm/matrix/README.md)
+* 性能优化
+    * [浏览器缓存](performance-optimization/browserCache.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
