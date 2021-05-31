@@ -6,7 +6,7 @@
 >       * [1-1-1 expires](#1-1-1-expires)
 >       * [1-1-2 cache-control](#1-1-2-cache-control)
 >           * [1-1-2-1 max-age](#1-1-2-1-max-age)
->           * [1-1-2-2 s-maxage](#1-1-2-2-maxage)
+>           * [1-1-2-2 s-maxage](#1-1-2-2-s-maxage)
 >           * [1-1-2-3 public与private](#1-1-2-3-public与private)
 >           * [1-1-2-4 no-store与no-cache](#1-1-2-4-no-store与no-cache)
 >   * [1-2 协商缓存](#1-2-协商缓存)
@@ -121,5 +121,5 @@ Chrome 官方图：<br>
 * 然后考虑该资源的过期时间，设置max-age和s-maxage;
 * 最后，配置协商缓存需要用到的Etag、Last-Modified
 
-❀ 本文参考[前端网络高级篇（三）浏览器缓存](https://www.jianshu.com/p/82ddd017f79a)
+❀ 本文参考[前端网络高级篇（三）浏览器缓存](https://www.jianshu.com/p/82ddd017f79a)<br>
 ❀ 本文参考[浏览器缓存机制介绍与缓存策略剖析](https://juejin.cn/book/6844733750048210957/section/6844733750106931214)
