@@ -1,0 +1,21 @@
+{
+  "name": "doit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "doit": "./bin/init.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0",
+    "inquirer": "^8.1.0",
+    "ora": "^5.4.0",
+    "vue-cli": "^2.9.6"
+  }
+}

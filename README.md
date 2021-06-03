@@ -34,6 +34,9 @@
     * [输出文件分析](webpack/webpack5/output-file-analysis.md)
 * Vue
   * 手写MVVM实现Vue的双向绑定
+  * [vue-cli](web-components/vue-cli.md)
+* Node
+  * 手写MVVM实现Vue的双向绑定
 * Web Components
   * [实现简单记事本](web-components/web-components.md)
 * 手写系列
@@ -65,4 +68,5 @@
   * [QA](qa/qa.md)
   * [二进制文件流下载和打印](other/export&download.md)
   * [A.name发⽣变化时⽴即执⾏A.getName](other/getName.md)
+  * [V8垃圾回收机制(other/garbage.md)
 * [笔记](note/note.md)
