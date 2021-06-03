@@ -47,6 +47,7 @@
   * [手写instance操作符](handwriting/instance.md)
   * [手写防抖函数](handwriting/debounce.md)
   * [手写节流函数](handwriting/throttle.md)
+  * [手写parseInt](handwriting/parseInt.md)
 * 算法和数据结构
   * [数组](algorithm/array/README.md)
   * [字符串](algorithm/string/README.md)
