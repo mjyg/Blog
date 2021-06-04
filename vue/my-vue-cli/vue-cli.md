@@ -244,7 +244,7 @@ vue init的工作流程如下：
 确定一些修改。
 *根据模板内容以及开发者的回答，渲染出项目结构并生成到指定目录。
 
-下面分开看代码：
+下面分开看代码：<br>
 初始化usage:
 ```js
 /**
@@ -387,3 +387,5 @@ function downloadAndGenerate (template) {
   })
 }
 ```
+
+📚 参考文章：[走进Vue-cli源码，自己动手搭建前端脚手架工具](https://segmentfault.com/a/1190000013975247)
