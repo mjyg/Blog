@@ -33,8 +33,8 @@
     * [新特性](webpack/webpack5/new-features.md)
     * [输出文件分析](webpack/webpack5/output-file-analysis.md)
 * Vue
-  * 手写MVVM实现Vue的双向绑定
-  * [vue-cli](web-components/vue-cli.md)
+  * [手写MVVM实现Vue的双向绑定](vue/mvvm-hand-writing.md)
+  * [vue-cli源码分析](vue/my-vue-cli/vue-cli.md)
 * Node
   * 手写MVVM实现Vue的双向绑定
 * Web Components
