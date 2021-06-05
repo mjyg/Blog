@@ -1,6 +1,9 @@
 # 实现简单的脚手架工具
 
-实现了用脚手架从github上下载项目和后端接口返回数据转TS接口的功能，主要代码如下：
+实现了以下功能：
+* 用脚手架从github上下载项目
+* 后端接口返回数据转TS接口的功能
+
 ```js
 #!/usr/bin/env node
 
@@ -101,7 +104,9 @@ program.parse(process.argv); //处理用户的参数
 运行效果：<br>
 * 查看帮助 `jie -h`<br>
 ![](../image/1622905937693.jpg)
+
 * 从github上下载项目 `jie init template-test`<br>
 ![](../image/1622906047479.jpg)
+
 * 后端接口返回数据转TS接口 `jie json2ts http://xxx`<br>
 ![](../image/1622906211679.jpg)
