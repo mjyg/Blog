@@ -35,8 +35,8 @@
 * Vue
   * [手写MVVM实现Vue的双向绑定](vue/mvvm-hand-writing.md)
   * [vue-cli源码分析](vue/my-vue-cli/vue-cli.md)
+  * [实现简单的脚手架工具](vue/simple-cli/simple-cli.md)
 * Node
-  * 手写MVVM实现Vue的双向绑定
 * Web Components
   * [实现简单记事本](web-components/web-components.md)
 * 手写系列
