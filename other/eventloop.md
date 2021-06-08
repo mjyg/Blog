@@ -186,8 +186,8 @@ setImmediate4
 ```
 
 ## 宏任务和微任务
-```js
-/*事件循环是通过任务队列的机制来进行协调的。一个 Event Loop 中，可以有一个或者多个任务队列
+```
+事件循环是通过任务队列的机制来进行协调的。一个 Event Loop 中，可以有一个或者多个任务队列
 (task queue)，一个任务队列便是一系列有序任务(task)的集合；每个任务都有一个任务源(task source)，
 源自同一个任务源的 task 必须放到同一个任务队列，从不同源来的则被添加到不同队列。 setTimeout/Promise
 等API便是任务源，而进入任务队列的是他们指定的具体执行任务。
@@ -202,8 +202,8 @@ MessageChannel、setImmediate(Node.js 环境)
 在渲染之前。所以它的响应速度相比setTimeout（setTimeout是task）会更快，因为无需等渲染。也就是说，
 在某一个macrotask执行完后，就会将在它执行期间产生的所有microtask都执行完毕（在渲染前）。
 微任务(源)主要包含：Promise.then、MutaionObserver、process.nextTick(Node.js 环境)
- */
-
+ ```
+ ```js
 //练习1：
 async function async1() {
   console.log('async1 start')

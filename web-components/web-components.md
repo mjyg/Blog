@@ -1,4 +1,5 @@
 # Web Components 实现简单记事本
+
 **目录**
 > * [自定义元素](#自定义元素)
 > * [template标签](#template标签)
@@ -223,7 +224,9 @@ readContent() {
 ![](image/alert.png)<br>
 
 🌰 [点击这里查看本文完整demo](demo/index.html),如果对你有帮助，请帮我点亮一个小星星✨<br>
+
 📚 此文章系笔者原创，转载请注明来源<br>
+
 🌺 参考文章：
 >* [Web Component可以取代你的前端框架吗？](https://zhuanlan.zhihu.com/p/64619005)
 >* [Web Components](https://developer.mozilla.org/zh-CN/docs/Web/Web_Components)

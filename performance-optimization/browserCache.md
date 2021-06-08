@@ -134,5 +134,6 @@ Chrome 官方图：<br>
 * 然后考虑该资源的过期时间，设置max-age和s-maxage;
 * 最后，配置协商缓存需要用到的Etag、Last-Modified
 
-❀ 本文参考[前端网络高级篇（三）浏览器缓存](https://www.jianshu.com/p/82ddd017f79a)<br>
-❀ 本文参考[浏览器缓存机制介绍与缓存策略剖析](https://juejin.cn/book/6844733750048210957/section/6844733750106931214)
+❀ 本文参考：<br>
+* [前端网络高级篇（三）浏览器缓存](https://www.jianshu.com/p/82ddd017f79a)
+* [浏览器缓存机制介绍与缓存策略剖析](https://juejin.cn/book/6844733750048210957/section/6844733750106931214)
