@@ -58,7 +58,7 @@ getRemoteData({"result":"我是远程js带来的数据"});
 >JSONP优点是简单兼容性好，可用于解决主流浏览器的跨域数据访问的问题。<br>
 >缺点是仅支持get方法具有局限性,不安全可能会遭受XSS攻击
 
-## 跨域资源共享
+### 跨域资源共享
 跨域资源共享CORS的全称是Cross-Origin Resource Sharing。<br>
 
 CORS 需要浏览器和后端同时支持。<br>
@@ -156,3 +156,6 @@ server {
 }
 ```
 把项目放入nginx的html目录下，通过命令行`nginx -s reload`启动nginx
+
+🌺 参考文章：
+>* [九种跨域方式实现原理（完整版）](https://juejin.cn/post/6844903767226351623#heading-17)

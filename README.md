@@ -4,18 +4,19 @@
 
 ## 目录
 * JS基础
-  * [变量提升、函数作用域、块级作用域](js-grammar/base.md)
-  * [原型、原型链](js-grammar/prototype.md)
-  * [this](js-grammar/this.md)
-  * [闭包](js-grammar/closuer.md)
-  * [类数组对象](js-grammar/arryObject.md)
-  * [JS创建对象方法比较](js-grammar/createObject.md)
-  * [JS继承方式比较](js-grammar/inherit.md)
-  * [ES7&ES8新增语法](js-grammar/es7es8.md)
-  * [ES9新增语法](js-grammar/es9.md)
-  * [ES10新增语法](js-grammar/es10.md)
-  * [JS里分号的作用](js-grammar/semicolon.md)
-  * [JS元编程](js-grammar/meta_programming.md)
+  * [变量提升、函数作用域、块级作用域](grammar/base.md)
+  * [原型、原型链](grammar/prototype.md)
+  * [this](grammar/this.md)
+  * [闭包](grammar/closuer.md)
+  * [类数组对象](grammar/arryObject.md)
+  * [JS创建对象方法比较](grammar/createObject.md)
+  * [JS继承方式比较](grammar/inherit.md)
+  * [ES7&ES8新增语法](grammar/es7es8.md)
+  * [ES9新增语法](grammar/es9.md)
+  * [ES10新增语法](grammar/es10.md)
+  * [JS里分号的作用](grammar/semicolon.md)
+  * [JS元编程](grammar/meta_programming.md)
+  * [深拷贝](grammar/deep_copy.md)
 * Promise
   * [Promise的链式调用](promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](promise/handwrite-promise/promise.md)
@@ -48,6 +49,12 @@
   * [手写防抖函数](handwriting/debounce.md)
   * [手写节流函数](handwriting/throttle.md)
   * [手写parseInt](handwriting/parseInt.md)
+* 性能优化
+  * [浏览器缓存](performance-optimization/browserCache.md)
+* web安全
+  * [跨站脚本攻击(XSS)](security/xss.md)
+  * [跨站请求伪造(CSRF)](security/csrf.md)
+  * [跨域](security/cross-domain.md)
 * 算法和数据结构
   * [数组](algorithm/array/README.md)
   * [字符串](algorithm/string/README.md)
@@ -62,12 +69,6 @@
   * [哈希表](algorithm/hash/README.md)
   * [堆](algorithm/heap/README.md)
   * [图](algorithm/matrix/README.md)
-* 性能优化
-    * [浏览器缓存](performance-optimization/browserCache.md)
-* web安全
-  * [跨站脚本攻击(XSS)](security/xss.md)
-  * [跨站请求伪造(CSRF)](security/csrf.md)
-  * [跨域](security/cross-domain.md)
 * 其他
   * [EventLoop](other/eventloop.md)
   * [QA](qa/qa.md)
