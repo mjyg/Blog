@@ -38,7 +38,7 @@ console.log('aa_' + obj);  //default aa_default
 ```
 
 * Proxy和Reflect
-例1：
+例：生成树形结构
 ```js
 function Tree(){
   return new Proxy({}, handler)
@@ -56,4 +56,22 @@ const handler={
 let tree = Tree()
 tree.a.b.c=1
 console.log(tree)  // { a: { b: { c: 1 } } }
+```
+换一种写法：
+```js
+function Tree() {
+  const proxy = new Proxy({}, {
+      get(target, key) {
+        target[key] = Tree();
+        return target[key];
+      },
+    }
+  );
+
+  return proxy;
+}
+
+let tree = Tree();
+tree.a.b.c = 1;
+console.log(tree); // { a: { b: { c: 1 } } }
 ```

@@ -15,8 +15,10 @@
   * [ES9新增语法](grammar/es9.md)
   * [ES10新增语法](grammar/es10.md)
   * [JS里分号的作用](grammar/semicolon.md)
-  * [JS元编程](grammar/meta_programming.md)
-  * [深拷贝](grammar/deep_copy.md)
+  * [Proxy](grammar/proxy.md)
+  * [Reflect](grammar/reflect.md)
+  * [JS元编程](grammar/metaProgramming.md)
+  * [深拷贝](grammar/deepCopy.md)
 * Promise
   * [Promise的链式调用](promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](promise/handwrite-promise/promise.md)
