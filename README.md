@@ -51,6 +51,7 @@
   * [手写防抖函数](handwriting/debounce.md)
   * [手写节流函数](handwriting/throttle.md)
   * [手写parseInt](handwriting/parseInt.md)
+  * [手写proxy的get和set](handwriting/proxy.md)
 * 性能优化
   * [浏览器缓存](performance-optimization/browserCache.md)
 * web安全

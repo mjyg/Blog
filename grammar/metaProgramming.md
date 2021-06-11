@@ -57,7 +57,7 @@ let tree = Tree()
 tree.a.b.c=1
 console.log(tree)  // { a: { b: { c: 1 } } }
 ```
-换一种写法：
+另一种写法：
 ```js
 function Tree() {
   const proxy = new Proxy({}, {
