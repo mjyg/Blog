@@ -2,7 +2,7 @@
 
 实现了以下功能：
 * 用脚手架从github上下载项目
-* 后端接口返回数据转TS接口的功能
+* 后端接口返回数据转TS接口
 
 ```js
 #!/usr/bin/env node
@@ -21,8 +21,8 @@ const re = figlet.textSync("Jie") + "\n" + "Jie的脚手架";
 const txt = Printer.default.fromString(re);
 
 program.version(txt, "-v,--version");
-program.option("init", "🌺初始化项目");
-program.option("json2ts", "🌺将后端接口返回数据生成ts接口");
+program.option("init", "🌺 初始化项目");
+program.option("json2ts", "🌺 将后端接口返回数据生成ts接口");
 
 const bindHandler = {
   init() {
