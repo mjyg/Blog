@@ -20,7 +20,7 @@ export default class Dep {
     this.subs = []
   }
 
-  addSub (sub: Watcher) {
+  addSub (sub: Watcher) {  //添加watcher(具体要做的事情)添加到依赖
     this.subs.push(sub)
   }
 
@@ -43,7 +43,7 @@ export default class Dep {
       // order
       subs.sort((a, b) => a.id - b.id)
     }
-    for (let i = 0, l = subs.length; i < l; i++) {
+    for (let i = 0, l = subs.length; i < l; i++) {  //循环所有电话，通知watcher
       subs[i].update()
     }
   }

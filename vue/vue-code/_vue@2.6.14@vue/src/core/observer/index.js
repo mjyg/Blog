@@ -45,10 +45,10 @@ export class Observer {
     this.vmCount = 0
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
-      if (hasProto) {
-        protoAugment(value, arrayMethods)
+      if (hasProto) {  //是否有原型链
+        protoAugment(value, arrayMethods)   //value的原型置为arrayMethods
       } else {
-        copyAugment(value, arrayMethods, arrayKeys)
+        copyAugment(value, arrayMethods, arrayKeys) // 把arrayMethods上的方法定义到value上
       }
       this.observeArray(value)
     } else {
@@ -121,7 +121,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
-    ob = new Observer(value)
+    ob = new Observer(value)  //如果是对象，继续observer
   }
   if (asRootData && ob) {
     ob.vmCount++
@@ -157,7 +157,7 @@ export function defineReactive (
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
-    get: function reactiveGetter () {
+    get: function reactiveGetter () {  //触发get，收集依赖
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
         dep.depend()

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>入口文件</title>
+</head>
+
+<body>
+    <script src="./element.js"></script>
+    <script>
+        let ul1 = createElement("ul", { class: "list" }, [
+            createElement("li", { class: "item" }, [
+                "1"
+            ]),
+            createElement("li", { class: "item" }, [
+                "2"
+            ]),
+            createElement("li", { class: "item" }, [
+                "3"
+            ])
+        ]);
+        console.log(ul1);
+        let root = ul1.render();
+        document.body.appendChild(root);
+    </script>
+</body>
+
+</html>

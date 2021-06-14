@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<head></head>
+
+<body>
+  <div id="app">
+    <input type="text" id="a" v-model="text">
+    {{text}}
+  </div>
+
+
+
+  <script>
+    window.batcher = "";
+  </script>
+
+
+  <script src="src/Batcher.js"></script>
+  <script src="src/Dep.js"></script>
+  <script src="src/Observe.js"></script>
+  <script src="src/Watcher.js"></script>
+  <script src="src/Compile.js"></script>
+  <script src="src/MVVM.js"></script>
+  <script>
+
+    var vm = new Vue({
+      el: 'app',
+      data: {
+        text: 'hello world'
+      }
+    });
+    
+    for(var i=0;i<100;i++){
+      vm["text"] = i;
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+大纲
+  vue2 + vue3
+
+vue   react
+
+redux(dva) + mobx
+
+面试
+
+
+vue2
+1. 整体架构
+2. 双向数据绑定的原理
+3. vue的整体流程
+4. vue运行时的优化
+
+jest ==>
+
+flow   ts
+
+flow==>js框架
+ts ==>一门语言
+ts ==>webAssembly
+
+
+
+.vue ==>打包编译（词法分析、语法分析、构建AST、转义js）==>输出  render()
+
+
+运行时
+编译时
+
+complier  模板编译==》 render
+core  数据改变==》？？？视图更新   视图改变==>数据变化
+    component-->keep-alive
+    global-api   全局api  .use  .mixin .extend
+    instance   生命周期、事件绑定处理
+    observer  双向数据绑定的逻辑
+    util  帮助方法
+    vdom  虚拟dom  snabbdom
+platforms  ==>  web  移动端 小程序
+server  服务端渲染
+
+
+Object.defineProperty   不能监听新增的key    (不管是对象、还是数组)
+
+    get  ==>数据获取，渲染视图？？
+
+数组的变更 会导致频繁的移动位置   ==》视图频繁的更新
+Object.defineProperty  (如果触发了数据的修改和数据的获取，都可以监听到)
+
+<div v-if={sasas}> {time}</div>
+
+
+v-on
+
+数据Observer(如果触发了数据的修改和数据的获取，都可以监听到)
+指令（根据不同的数据渲染视图、改变数据）--》wathcer （衔接数据和指令===>视图）链接
+
+
+
+Observer
+
+Watcher (一个指令对应一个Watcher||实际是一个模板对应一个watcher)
+
+dep
+
+Directive
+
+运行时 (内存装载了这个程序) 保存当前程序运行的数据
+
+
+mounted（）{
+
+}
+
+new Vue({
+  data:{
+    a:1, b:2, c:3, d:4
+  },
+  teamplate:'<div>{a}</div>'
+});
+
+js  with(){
+
+}
+
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/with
+
+.vue  ==>js
+
+Runtime   当前程序运行过程中，保留的状态和数据
+
+Runtime+compiler  当前程序运行过程中，保留的状态和数据
+
+vue 在线编译 离线编译
+
+compiler  -->在线解析vue模板
+
+
+
+
+.vue  ==>js  ==> 运行时 ==
+
+teamplate  =>js在线编译-->js  ==> 运行时 ==>
+
+var _c=document.createElement;
+//<div><p>{name}</p></div>
+
+
+new Vue({
+  data:{
+    name:32323
+  }
+});
+
+
+Object.defineProperty  --》get  -->[watcher]
+
+this.name
+
+with(this){
+  return _c(
+    'div',
+    [
+      _c(
+        'p',
+        [
+          _v(_s(name))
+        ]
+      )
+    ]
+  );
+}
+
+https://vue-template-explorer.netlify.app
+
+
+flutter + RN + OC（swift）+ C++
+
+
+
+模板渲染的时候 -->触发get
+input 双向改变数据 -->触发set
+
+get with --> get  addDep  -->watcher
+set 触发 notify，通知 wathcer，watcher 通知指令 更新 dom
+
+arr
+1. 重写原型链 重写数组继承的对象
+2. 获取到数组的原型对象
+3. 基于原型对对象构建新对象
+4. 定义要重写的方法（修改数组序号排序的方法）
+5.  遍历方法
+  a. 获取该方法的原始方
+  b.重新定义基于原型对对象构建新对象的方法
+  c.执行最原始的方法
+
+object.defineProperty 怎么重写数组的  -》 数组会触发多次
+
+新增加的key ？？==》no
+
+对于数组==》many
+
+
+__ob__==>响应式数据
+Observer==>object.defineProperty
+  1.array ==>[{},{a:{}}]==>arr[1].a==>是否对象 继续Observer
+  2.object ==>object.keys==>object.defineProperty(get\set)
+dep
+[]  ==>
+  get ==>把watcher（具体要做的事情）添加到依赖 添加到数组
+  set  (修改数据)==>  notify  ==>循环所有times电话，通知干事情（wctaher）
+
+1. new vue  ==>observe
+2. object。defineProperty  ==》监听数据  但是还没有触发setter||getter
+  ？？什么时候出发set get
+    set  ==> dep.notify (通知watcher)
+    get   ==>Dep.target  ==?watcher  ？？？
+3. 初始化收集依赖的东西
+      addSub
+      notify
+4. Compile  ？？对原始模板做了处理
+  编译节点 （with）
+  dep.target=watcher
+  执行with  ==> get  ==>dep.target ==>收集起来watcher
+  返回获取到的数据 更新don
+
+
+watcher==>vue component
+
+虚拟dom js obj ==》js 运行时
+
+
+teamplate  {data}
+component  {data}
+
+
+
+function render() {
+  with(this) {
+    return _c('div', {
+      attrs: {
+        "id": "app"
+      }
+    }, [_v("\n  " + _s(msg) + "\n\n  "), (isShow) ? _c('div', [_v(
+      "yideng")]) : _e()])
+  }
+}
+==>虚拟dom {
+  tagName:'div',
+  。。。。
+}
+
+dom diff
+
+
+
+缓存算法==> LRU

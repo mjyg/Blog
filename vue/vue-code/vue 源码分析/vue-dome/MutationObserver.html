@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+<div id="some-id" data-test="123">
+	为了让 flush 动作能在当前 Task 结束后尽可能早的开始，Vue 会优先尝试将任务 micro-task 队列，具体来说，在浏览器环境中 Vue 会优
+先尝试使用 MutationObserver API 或 Promise，如果两者都不可用，则 fallback 到 setTimeout。
+<hr/>
+
+</div>
+    <script type="text/javascript">
+    // Firefox和Chrome早期版本中带有前缀
+    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
+        // 选择目标节点
+    var target = document.querySelector('#some-id');
+    console.log(MutationObserver);
+    // 创建观察者对象
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            console.log(mutation.type);
+        });
+    });
+    // 配置观察选项:
+    var config = {
+            attributes: true,
+            childList: true,
+            characterData: true
+        }
+        // 传入目标节点和观察选项
+    observer.observe(target, config);
+    // 随后,你还可以停止观察
+    document.querySelector('#some-id').setAttribute("data-test","xxx");  
+    // observer.disconnect();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="test"></div>
+
+    <ul id="js-ul">
+        <li>1</li>
+        <li>2</li>
+        <li id="">3</li>
+    </ul>
+    <script>
+        // $.ajax({
+        //     url: "",
+        //     success() {
+        //         var html = "";
+        //         for (var i = 0; i < 4; i++) {
+        //             html = "<li>"+i+"</li/>"
+        //         }
+        //         $("#js-ul").html(html);
+        //     }
+        // })
+
+        //ui > microtask > macrotask
+        var i = 0;
+        //microtask
+        new Promise((function (resolve, reject) {
+            resolve("ok")
+        })).then(function () {
+            i++;
+            console.log("2⃣️", i);
+        })
+        //UI
+        $("#test").html(i);
+        //macrotask
+        setTimeout(function () {
+            i++;
+            console.log("3⃣️", i);
+        }, 0)
+    </script>
+</body>
+
+</html>
