@@ -19,7 +19,7 @@
   * [Reflect](./src/grammar/reflect.md)
   * [JS元编程](./src/grammar/metaProgramming.md)
   * [深拷贝](./src/grammar/deepCopy.md)
-  * [深拷贝](./src/grammar/deepCopy.md)
+  * [V8垃圾回收机制](./src/other/garbage.md)
 * Promise
   * [Promise的链式调用](./src/promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](./src/promise/handwrite-./src/promise/promise.md)
