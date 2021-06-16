@@ -48,7 +48,7 @@ function checkscope(){
 var foo = checkscope();
 foo();
 ```
-下面分析上面这段代码的执行过程：
+下面分析上面这段代码的执行过程：<br>
 1.执行全局代码，创建全局执行上下文，全局上下文被被压入执行上下文栈
 ```js
 ECStack = [
