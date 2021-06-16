@@ -19,6 +19,7 @@
   * [Reflect](./src/grammar/reflect.md)
   * [JS元编程](./src/grammar/metaProgramming.md)
   * [深拷贝](./src/grammar/deepCopy.md)
+  * [深拷贝](./src/grammar/deepCopy.md)
 * Promise
   * [Promise的链式调用](./src/promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](./src/promise/handwrite-./src/promise/promise.md)
@@ -76,5 +77,4 @@
   * [EventLoop](./src/other/eventloop.md)
   * [二进制文件流下载和打印](./src/other/export&download.md)
   * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
-  * [V8垃圾回收机制](./src/other/garbage.md)
 * [笔记](./src/note/note.md)
