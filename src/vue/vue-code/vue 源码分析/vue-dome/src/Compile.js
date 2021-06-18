@@ -36,11 +36,14 @@ Compile.prototype = {
     {{text}}
     **/
 
-    while (child = node.firstChild) {
+    while (node.firstChild) {
+
+      child = node.firstChild
+      console.log('11111',node, child)
 
       self.compileElement(child, vm);// <input type="text" id="a" v-model="text">
 
-      frag.append(child);
+      frag.appendChild(child);
     }
 
     return frag;
@@ -59,7 +62,8 @@ Compile.prototype = {
           var name = attr[i].nodeValue;//text
 
           node.addEventListener('input', function (e) {
-            vm[name] = e.target.value;
+            console.log('1111111111111111')
+            vm[name] = e.target.value;   //调用set
           });
 
           new Watcher(vm, node, name, 'value');

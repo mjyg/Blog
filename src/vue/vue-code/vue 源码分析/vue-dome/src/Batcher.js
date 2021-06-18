@@ -14,8 +14,8 @@ Batcher.prototype.reset = function () {
 };
 
 
-Batcher.prototype.push = function (job) {
-    let id = job.id;//watcher
+Batcher.prototype.push = function (job) {  // job就是watcher
+    let id = job.id;
     if (!this.has[id]) {
         console.log(batcher);
         this.queue.push(job);

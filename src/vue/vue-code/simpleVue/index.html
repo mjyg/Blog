@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Vue</title>
+</head>
+<body>
+<div id="app">
+  <input type="text" v-model="text"/>{{text}}
+</div>
+<script src="src/Dep.js"></script>
+<script src="src/Observe.js"></script>
+<script src="src/Compile.js"></script>
+<script src="src/index.js"></script>
+<script>
+const vue = new Vue({
+  el: "app",
+  data: {
+    text: 0
+  }
+})
+</script>
+</body>
+</html>

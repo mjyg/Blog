@@ -8,7 +8,7 @@ function defineReactive(vm, key, val) {
 
     get: function () {
       if (Dep.target) {  //watcher
-        dep.addSub(Dep.target);//Dep.target==?watcher
+        dep.addSub(Dep.target);//Dep.target==watcher
       }
       return val;
     },

@@ -1,12 +1,24 @@
-let testLet = 1;
-var apple = 2
+const obj = {}
 
-console.dir((() => {
-  let test2Let = 3;
-  var apple2 = 4;
-  return function() {
-    return test2Let, apple2
-  }
-})())
+let a = '1'
+
+function f(val){
+  let b
+  Object.defineProperty(obj, 'age', {
+    get(){
+      return b
+    },
+    set(newVal) {
+      console.log('1111', newVal)
+      b=newVal
+    }
+  })
+}
 
 
+
+f(a)
+
+obj.age = '3'
+
+console.log(a,obj.age)
