@@ -37,7 +37,7 @@
     * [新特性](./src/webpack/webpack5/new-features.md)
     * [输出文件分析](./src/webpack/webpack5/output-file-analysis.md)
 * Vue
-  * [手写MVVM实现Vue的双向绑定](./src/vue/mvvm-hand-writing.md)
+  * [手写MVVM实现Vue的双向绑定](./src/vue/vue2-code/mvvm-hand-writing.md)
   * [vue-cli源码分析](./src/vue/my-vue-cli/vue-cli.md)
   * [实现简单的脚手架工具](./src/vue/simple-cli/simple-cli.md)
 * Node
