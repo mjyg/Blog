@@ -77,4 +77,5 @@
   * [EventLoop](./src/other/eventloop.md)
   * [二进制文件流下载和打印](./src/other/export&download.md)
   * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
+  * [虚拟dom转化为真实dom](./src/other/render.js)
 * [笔记](./src/note/note.md)
