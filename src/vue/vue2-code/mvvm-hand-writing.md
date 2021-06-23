@@ -1,12 +1,12 @@
 # 手写MVVM实现Vue2的双向绑定
 
 > * [第一步:建立入口文件](#第一步建立入口文件)
-> * [第二步:创建Observe，挂载data到vue实例并监听get和set](#第二步创建Observe，挂载data到vue实例并监听get和set)
-> * [第三步:创建Compile，用data来渲染dom](#第三步创建Compile，用data来渲染domt)
-> * [第四步:创建Watcher,定义依赖项](#第四步创建Watcher,定义依赖项)
-> * [第五步:创建Dep,收集依赖项](#第五步创建Dep,收集依赖项)
-> * [第六步:手动设置vue实例的data,更新dom](#第六步手动设置vue实例的data,更新dom)
-> * [第七步:创建Batcher,增加批处理](#第七步创建Batcher,增加批处理)
+> * [第二步:创建Observe，挂载data到vue实例并监听get和set](#第二步创建Observe挂载data到vue实例并监听get和set)
+> * [第三步:创建Compile，用data来渲染dom](#第三步创建Compile用data来渲染domt)
+> * [第四步:创建Watcher,定义依赖项](#第四步创建Watcher定义依赖项)
+> * [第五步:创建Dep,收集依赖项](#第五步创建Dep收集依赖项)
+> * [第六步:手动设置vue实例的data,更新dom](#第六步手动设置vue实例的data更新dom)
+> * [第七步:创建Batcher,增加批处理](#第七步创建Batcher增加批处理)
 
 
 实现如下功能：修改input框输入值的时候，后面的文本一起改变<br>
