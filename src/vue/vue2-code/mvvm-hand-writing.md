@@ -1,5 +1,13 @@
 # 手写MVVM实现Vue2的双向绑定
 
+> * [第一步:建立入口文件](#第一步:建立入口文件)
+> * [第二步:创建Observe，挂载data到vue实例并监听get和set](#第二步:创建Observe，挂载data到vue实例并监听get和set)
+> * [第三步:创建Compile，用data来渲染dom](#第三步:创建Compile，用data来渲染domt)
+> * [第四步:创建Watcher,定义依赖项](#第四步:创建Watcher,定义依赖项)
+> * [第五步:创建Dep,收集依赖项](#第五步:创建Dep,收集依赖项)
+> * [第六步:手动设置vue实例的data,更新dom](#第六步:手动设置vue实例的data,更新dom)
+> * [第七步:创建Batcher,增加批处理](#第七步:创建Batcher,增加批处理)
+
 实现如下功能：修改input框输入值的时候，后面的文本一起改变<br>
 ![](../image/16240055184716.png)
 
@@ -43,7 +51,7 @@ function Vue(options) {
 * Observe：把data里的属性挂载到实例上，并重写get和set方法，监听属性的读取
 * Compile: 处理dom里的每一个节点，根据data渲染dom
 
-## 第二步 创建Observe，挂载data到vue实例并监听get和set
+## 第二步:创建Observe，挂载data到vue实例并监听get和set
 新建Observe.js:
 ```js
 function Observe(data, vm){
@@ -65,7 +73,7 @@ function defineReactive(vm, key, val) {
 }
 ```
 
-## 第三步 创建Compile，用data来渲染dom
+## 第三步:创建Compile，用data来渲染dom
 新建compile.js:
 ```js
 function Compile(node, vm){
@@ -124,7 +132,7 @@ data里的属性就是依赖项，要想建立这个对应关系，就需要先�
 
 通过阅读源码，可以知道每一个依赖项是一个Watcher实例，通过Dep来管理依赖项<br>
 
-## 第四步 创建Watcher,定义依赖项
+## 第四步:创建Watcher,定义依赖项
 每一个依赖项都有vm,name,type,node以及update方法：
 ```js
 function Watcher(vm, node, name, type) {
@@ -164,7 +172,7 @@ if (node.nodeType === 3) {
 }
 ```
 
-## 第五步 创建Dep,收集依赖项
+## 第五步:创建Dep,收集依赖项
 Dep需要一个静态属性subs来维护依赖项，并要有添加依赖项和通知所有依赖项更新的方法：
 ```js
 function Dep() {
@@ -215,8 +223,7 @@ function defineReactive(vm, key, val) {
 ```
 到这里就实现了在输入框中输入数据，后面的文本节点动态更新的效果<br>
 
-
-## 第六步 手动设置vue实例的data,更新dom
+## 第六步:手动设置vue实例的data,更新dom
 如果在外部设置vm.test = 1：
 ```js
 const vm = new Vue({
@@ -250,7 +257,7 @@ if (node.nodeType === 1) {
 此时，打印subs，可以看到有两个依赖项：<br>
 ![](../image/16242666658073.png)
 
-## 第七步 创建Batcher,增加批处理
+## 第七步:创建Batcher,增加批处理
 在index.html中更新vm.test100次:
 ```js
 const vm = new Vue({
