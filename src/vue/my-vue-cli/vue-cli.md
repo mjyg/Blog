@@ -235,6 +235,7 @@ request({
 ### vue init
 再来看vue-init.js，“vue init”是用来构建项目的命令，也是vue-cli的核心文件<br>
 ![](../image/1622821861067.jpg)
+
 vue init的工作流程如下：
 * 先判断你的模板在远程github仓库上还是在你的本地某个文件里面，若是本地文件夹则会立即跳到第3步，反之则
 走第2步。

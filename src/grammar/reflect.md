@@ -159,3 +159,15 @@ function print(obj) {
 observe(print);
 person.name = '李四';  //李四, 20
 ```
+
+📚 扩展：<br>
+Reflect.get(target,key,proxy)和target[key]的区别：<br>
+* 在业务代码里，十分确定target是个什么，可以用target[key]的写法，性能一般会更好，因为没有call的开销；
+* Reflect.get(target,key,proxy)常见于工具库或框架，做最后不拦截的穿透逻辑时,不知道target是什么，
+  如果target本身是另一层proxy，或target上的key是一个getter而不是普通属性用target[key]可能会出bug
+* Proxy里的get等还有一个“多余的传入参数”：receiver，它和Reflect.get的第三个参数是配套的，
+  如果那个Proxy里的target还是一个proxy，并且对receiver有自己的用途，那么只能用
+  Reflect.get(target,prop,receiver)，将receiver正确地传递进去。
+* 还是关于receiver，一般来说receiver是表达式proxy[key]中的这个proxy，而如果你直接使用target[key]，
+  那么等于把this给篡改了。而正确使用Reflect.get(target,prop,receiver)，还能确保this仍然是proxy.
+  
