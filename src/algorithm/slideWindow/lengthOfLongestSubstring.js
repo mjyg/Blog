@@ -27,6 +27,22 @@ function lengthOfLongestSubstring(str) {
   return max
 }
 
+//解法二：以空间换时间，使用一个map来维护遍历过的字符下标，充当滑动窗口的角色，如果存在该字符，更新下标，且start + 1
+function lengthOfLongestSubstring2(str) {
+  const map = new Map();
+  let re = 0,start = -1;
+  for(let i = 0; i < str.length; i ++) {
+    const ch = str[i]
+    if(map.has(ch)) {
+      start =  start + 1
+    }
+    map.set(ch, i)
+    re = Math.max(i - start, re)
+  }
+  return re;
+}
+
+
 
 console.log(lengthOfLongestSubstring("abcabcbb"))
 
