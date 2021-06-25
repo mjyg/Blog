@@ -37,14 +37,16 @@ export function toggleObserving (value: boolean) {
 export class Observer {
   value: any;
   dep: Dep;
-  vmCount: number; // number of vms that have this object as root $data
+  vmCount: number; // 把该对象作为root $data的vm个数
 
   constructor (value: any) {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
-    def(value, '__ob__', this)
+    def(value, '__ob__', this)   // 添加__ob__来标示value有对应的Observer
+
     if (Array.isArray(value)) {
+      // 处理数组
       if (hasProto) {  //是否有原型链
         protoAugment(value, arrayMethods)   //value的原型置为arrayMethods
       } else {
@@ -52,6 +54,7 @@ export class Observer {
       }
       this.observeArray(value)
     } else {
+      // 处理对象
       this.walk(value)
     }
   }
@@ -62,6 +65,7 @@ export class Observer {
    * value type is Object.
    */
   walk (obj: Object) {
+    // 给每个属性添加getter/setters
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i])
@@ -72,6 +76,7 @@ export class Observer {
    * Observe a list of Array items.
    */
   observeArray (items: Array<any>) {
+    // 观察数组的每一项
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i])
     }
@@ -85,6 +90,7 @@ export class Observer {
  * the prototype chain using __proto__
  */
 function protoAugment (target, src: Object) {
+  // 执行了value.__proto__ = arrayMethods
   /* eslint-disable no-proto */
   target.__proto__ = src
   /* eslint-enable no-proto */
@@ -96,6 +102,7 @@ function protoAugment (target, src: Object) {
  */
 /* istanbul ignore next */
 function copyAugment (target: Object, src: Object, keys: Array<string>) {
+  // 循环把arrayMethods上的arrayKeys方法添加到value上
   for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i]
     def(target, key, src[key])
@@ -160,7 +167,7 @@ export function defineReactive (
     get: function reactiveGetter () {  //触发get，收集依赖
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
-        dep.depend()
+        dep.depend() // 增加依赖
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
@@ -188,7 +195,7 @@ export function defineReactive (
         val = newVal
       }
       childOb = !shallow && observe(newVal)
-      dep.notify()
+      dep.notify()  //通知更新
     }
   })
 }

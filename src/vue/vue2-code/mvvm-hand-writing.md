@@ -75,7 +75,7 @@ function defineReactive(vm, key, val) {
 ```
 
 ## 第三步:创建Compile，用data来渲染dom
-新建compile.js:
+新建compile.js（对于编译这块vue分了两种类型，一种是文本节点，一种是元素节点）:
 ```js
 function Compile(node, vm){
  if(node) {
