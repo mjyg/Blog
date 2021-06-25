@@ -41,6 +41,7 @@
   * [实现简单的脚手架工具](./src/vue/simple-cli/simple-cli.md)
   * [手写MVVM实现Vue的双向绑定](./src/vue/vue2-code/mvvm-hand-writing.md)
   * [vue2双向绑定源码分析](./src/vue/vue2-code/vue2-code-analysis.md)
+  * [vue3数据响应源码分析](./src/vue/vue3-code/vue3-code-analysis.md)
   * [vue3和vue2对比](./src/vue/vue3-code/vue3-vs-vue2.md)
 * Node
 * Web Components
