@@ -45,7 +45,7 @@
   * [vue3和vue2对比](./src/vue/vue3-code/vue3-vs-vue2.md)
 * React
   * [React Hook](./src/react/react-hook/note.md)
-  * [React Router(./src/react/react-router/note.md)
+  * [React Router](./src/react/react-router/note.md)
 * Node
 * Web Components
   * [实现简单记事本](./src/web-components/web-components.md)
