@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="btn">点击</button>
+<script>
+  const btnDom = document.getElementById('btn')
+  btnDom.addEventListener('click', ()=>{
+    location.href = '#' +Math.floor((Math.random()*10))
+  })
+  window.addEventListener('hashchange', e=>{
+    const {oldURL,newURL} = e;
+    console.log('老url',oldURL)
+    console.log('新url',newURL)
+    console.log('hash值',location.hash)
+  })
+</script>
+</body>
+</html>
