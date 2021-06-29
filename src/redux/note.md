@@ -7,7 +7,7 @@ state:组件内部管理<br>
 由于react是单向数据流，当数据状态非常复杂时，很难让两个组件进行通信<br>
 解决办法：把所有的state集中到组件的顶部，这就是Redux，集中管理组件状态的数据仓库
 
-react和react是没有任何关系的，redux是一个独立的状态管理的库（mobx，相比于redux更方便使用的库）
+react和react是没有任何关系的，redux是一个独立的状态管理的库（mobx，相比于redux上手容易，学习成本低）
 
 action: 一个描述发生了什么的对象，动作，行为<br>
 reducer:描述action如何改变state树<br>
@@ -166,4 +166,6 @@ export default ReduxComponent;
 即可正常使用store里的count：<br>
 ![](./image/1624978838645.jpg)
 
+
+Redux === useReducer
 
