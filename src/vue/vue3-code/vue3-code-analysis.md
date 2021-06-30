@@ -258,3 +258,6 @@ const block = {
 ```
 由于 ​10​ 和 ​'abc'​ 是常量，所有这两个 Fragment 是不会变化的，因此它是稳定的，对于稳定的 Fragment
  是不需要回退到传统 Diff 的，这在性能上会有一定的优势。
+ 
+📚 参考文章：
+* [Vue3 Compiler 优化细节，如何手写高性能渲染函数](https://zhuanlan.zhihu.com/p/150732926)
