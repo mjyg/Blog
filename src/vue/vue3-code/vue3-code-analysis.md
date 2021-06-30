@@ -248,7 +248,7 @@ const block = {
     ]
 }
 ```
-这样，对于 <p> 标签及其子代节点的 Diff 将恢复 Block Tree 的 Diff 模式。
+这样，对于标签及其子代节点的 Diff 将恢复 Block Tree 的 Diff 模式。
 
 什么样的 Fragment 是稳定的呢？例如v-for 的表达式是常量：
 ```
