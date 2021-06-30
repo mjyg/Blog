@@ -35,9 +35,9 @@ class ReduxCounter extends React.Component {
   };
 
   componentDidMount() {
-    this.props.fetchData().then((res) => {
-      console.log("获取到接口数据");
-    });
+    // this.props.fetchData().then((res) => {
+    //   console.log("获取到接口数据");
+    // });
   }
 
   render() {

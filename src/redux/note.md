@@ -1,4 +1,4 @@
-# Redux入门
+# Redux基础
 
 什么是Redux?<br>
 props:从父级传下来的属性，一级一级的<br>
@@ -31,7 +31,7 @@ Redux流程如下：
     *  reducer是纯函数，固定的输入一定有固定的输出，不能执行副作用的操作（如ajax请求结果不可预测，不能修改参数）
 * store：数据仓库
     * redux只有一个单一的store
-    * 如果项目很大，不应该拆分store，应该拆分reducer(通过combineReducers)
+    * 如果项目很大，不应该拆分store，应该拆分reducer(通过combineReducers合并)
     
 Redux三大原则：
 * 单一数据源（单一store）
@@ -44,9 +44,57 @@ Redux三大原则：
 例子：
 先下载依赖包`cnpm i -S redux react-redux redux-thunk`
 
-创建store文件夹，新建index.js:
+创建store文件夹，下面分别建立actions和reducers文件夹<br>
+actions文件夹下建立counterAction.js和dataAction.js<br>
+
+counterAction.js:存放普通action
 ```js
-import { createStore } from "redux";
+//普通action
+export const ADD = 'ADD'
+export const REDUCE = 'REDUCE'
+
+export const add = ()=>({type:ADD})
+export const reduce = ()=>({type:REDUCE})
+```
+dataAction.js:存放一些带有副作用的thunk action
+```js
+// thunk action: 存放一些带有副作用的action
+export const FETCH_DATA_BEGIN = 'FETCH_DATA_BEGIN';
+export const FETCH_DATA_SUCCESS = 'FETCH_DATA_SUCCESS';
+export const FETCH_DATA_FAIL = 'FETCH_DATA_FAIL';
+
+export const fetchDataBegin = () => ({ type: FETCH_DATA_BEGIN });
+export const fetchDataSuccess = (data) => ({
+  type: FETCH_DATA_SUCCESS,
+  payLoad: { data },
+});
+export const fetchDataFail = (error) => ({
+  type: FETCH_DATA_FAIL,
+  payLoad: { error },
+});
+
+export function fetchData() {
+  return (dispatch, getState) => {
+    dispatch(fetchDataBegin());
+    return fetch("http://xxx")
+      .then((res) => res.json)
+      .then((json) => {
+        console.log("获取到接口数据", json);
+        dispatch(fetchDataSuccess(json));
+        return json;
+      })
+      .catch((err) => {
+        // 捕获到错误
+        dispatch(fetchDataFail(err));
+      });
+  };
+}
+```
+reducers文件夹下建立counterReducer.js,dataReducer.js和rootReducer.js
+
+counterReducer.js:
+```js
+import { ADD, REDUCE } from "../actions/counterAction";
 
 //定义初始值
 const initialState = {
@@ -56,13 +104,13 @@ const initialState = {
 // 创建reducer
 // 当state变化时，需要返回全新的state，不是修改原来的state
 // 必须是纯的
-function reducer(state = initialState, action) {
+export default function counterReducer(state = initialState, action) {
   switch (action.type) {
-    case 'ADD':
+    case ADD:
       return {
         count: state.count + 1,
       };
-    case 'REDUCE':
+    case REDUCE:
       return {
         count: state.count - 1,
       };
@@ -70,29 +118,87 @@ function reducer(state = initialState, action) {
       return state;
   }
 }
+```
+dataReducer.js:
+```js
+import {
+  FETCH_DATA_FAIL,
+  FETCH_DATA_SUCCESS,
+  FETCH_DATA_BEGIN,
+} from "../actions/dataAction";
 
-const store = createStore(reducer);
+//定义初始值
+const initialState = {
+  data: [],
+  loading: false,
+  error: null,
+};
+
+// 创建reducer
+// 当state变化时，需要返回全新的state，不是修改原来的state
+// 必须是纯的
+export default function dataReducer(state = initialState, action) {
+  switch (action.type) {
+    case FETCH_DATA_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        err: null,
+      };
+    case FETCH_DATA_SUCCESS:
+      return {
+        ...state,
+        loading: true,
+        data: action.payLoad.data,
+      };
+    case FETCH_DATA_FAIL:
+      return {
+        ...state,
+        loading: true,
+        error: action.payLoad.error,
+      };
+    default:
+      return state;
+  }
+}
+```
+rootReducer.js:用combineReducers把counterReducer和dataReducer合并
+```js
+import { combineReducers } from "redux";
+import counter from './counterReducer'
+import data from './dataReducer'
+
+export default combineReducers({
+  counter,data
+})
+```
+
+在store文件夹下新建index.js，创建store，并导出
+```js
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import rootReducer from "./reducers/rootReducer"
+
+//将redux-thunk包裹在applyMiddleware中使用redux-thunk中间件
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default store;
 ```
-在store中创建actions.js:
-```js
-export const ADD = 'ADD'
-export const REDUCE = 'REDUCE'
 
-export const add = ()=>({type:ADD})
-export const reduce = ()=>({type:REDUCE})
-```
-创建ReduxCounter组件：
+新建ReduxCounter组件，并把它用connect函数包裹后导出：
 ```js
 import React from "react";
 import { connect } from "react-redux";
-import { add, reduce } from "../store/actions";
+import { add, reduce } from "../store/actions/counterAction";
+import { fetchData } from "../store/actions/dataAction";
 
 //state到props的映射,建立组件和state的映射关系
 function mapStateToProps(state) {
   return {
-    count: state.count,
+    count: state.counter.count,
+    data: state.data.data,
+    loading: state.data.loading,
+    error: state.data.error,
   };
 }
 
@@ -100,6 +206,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   add,
   reduce,
+  fetchData,
 };
 
 class ReduxCounter extends React.Component {
@@ -116,10 +223,24 @@ class ReduxCounter extends React.Component {
     this.props.reduce();
   };
 
+  componentDidMount() {
+    this.props.fetchData().then((res) => {
+      console.log("获取到接口数据");
+    });
+  }
+
   render() {
+    const { error, loading, data } = this.props;
+    if (error) {
+      return <div>页面加载出错:{error}</div>;
+    }
+    if (loading) {
+      return <div>页面加载中...</div>;
+    }
     return (
       <div>
         <h3>我是counter组件</h3>
+        <div>{data}</div>
         <div>
           {/*通过props拿到count值*/}
           <p>{this.props.count}</p>
@@ -136,7 +257,8 @@ class ReduxCounter extends React.Component {
 // connect是高阶函数
 export default connect(mapStateToProps, mapDispatchToProps)(ReduxCounter);
 ```
-创建ReduxComponent组件，引入ReduxCounter组件：
+
+新建ReduxComponent组件来使用ReduxCounter，通过Provider把store传入ReduxCounter中：
 ```js
 import React from "react";
 import store from "../store";
@@ -161,11 +283,10 @@ class ReduxComponent extends React.Component {
 }
 
 export default ReduxComponent;
-
 ```
+
+
 即可正常使用store里的count：<br>
 ![](./image/1624978838645.jpg)
 
-
-Redux === useReducer
-
+📚 [本项目源码](../react/react-hook)

@@ -26,8 +26,6 @@
 * 函数式编程
     * [基本概念](./src/functional-programming/base.md)
     * [各种函子&Monad](./src/functional-programming/functor.md)
-* Redux
-    * [九步大白话手写一个Redux](./src/redux/redux.md)
 * Webpack
   * Webpack4
     * [输出文件分析](./src/webpack/webpack4/output-file-analysis.md)
@@ -41,11 +39,14 @@
   * [实现简单的脚手架工具](./src/vue/simple-cli/simple-cli.md)
   * [手写MVVM实现Vue的双向绑定](./src/vue/vue2-code/mvvm-hand-writing.md)
   * [vue2双向绑定源码分析](./src/vue/vue2-code/vue2-code-analysis.md)
-  * [vue3数据响应源码分析](./src/vue/vue3-code/vue3-code-analysis.md)
+  * [vue3数据响应式系统分析](./src/vue/vue3-code/vue3-code-analysis.md)
   * [vue3和vue2对比](./src/vue/vue3-code/vue3-vs-vue2.md)
 * React
   * [React Hook](./src/react/react-hook/note.md)
   * [React Router](./src/react/react-router/note.md)
+* Redux
+  * [Redux基础](./src/redux/note.md)
+  * [九步大白话手写一个Redux](./src/redux/redux.md)
 * Node
 * Web Components
   * [实现简单记事本](./src/web-components/web-components.md)
