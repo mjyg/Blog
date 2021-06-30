@@ -39,7 +39,7 @@
   * [实现简单的脚手架工具](./src/vue/simple-cli/simple-cli.md)
   * [手写MVVM实现Vue的双向绑定](./src/vue/vue2-code/mvvm-hand-writing.md)
   * [vue2双向绑定源码分析](./src/vue/vue2-code/vue2-code-analysis.md)
-  * [vue3浅析](./src/vue/vue3-code/vue3-code-analysis.md)
+  * [vue3原理浅析](./src/vue/vue3-code/vue3-code-analysis.md)
 * React
   * [React Hook](./src/react/react-hook/note.md)
   * [React Router](./src/react/react-router/note.md)
