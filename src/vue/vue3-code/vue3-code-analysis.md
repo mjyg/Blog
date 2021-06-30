@@ -1,5 +1,12 @@
 # vue3浅析
 
+**目录**
+> * [vue2 vue3对比](#vue2-vue3对比)
+> * [vue3 Compiler优化](#vue3-Compiler优化)
+>   * [传统 Diff 算法](#传统-Diff-算法)
+>   * [Block 配合 PatchFlags 做到靶向更新](#Block-配合-PatchFlags-做到靶向更新)
+>   * [Block Tree](#Block-Tree)
+
 ## vue2 vue3对比
 
 1. vue2通过正则匹配把template替换成with语句(因为with可以提升作用域链)，但是文档匹配次数越多执行越慢
