@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function(){
+      console.log('DOMContentLoaded') //1
+    })
+  </script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<h1>标题</h1>
+<script>
+  console.log('到我没')//有这句，1不会打印；没这句1才会打印
+</script>
+如果页面中同时存在css和js，并且存在js在css后面，DOMContentLoaded就会在加载css后执行
+如果js在css前面，则DOMContentLoaded不会等待css，也不会等待图片，资源，视频加载
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .container{
+      position:relative;
+      min-height:400px;
+    }
+    .ball{
+      position:absolute;
+      /*top:0;*/
+      /*left:0;*/
+      width:100px;
+      height:100px;
+      border-radius: 50%;
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+    }
+    .ball-running{
+      animation: run-around 4s infinite;
+    }
+    @keyframes run-around {
+      0% {
+        /*top:0;*/
+        /*left:0;*/
+        transform: translate(0,0);  //改成transform，使用GPU加速
+      }
+      25% {
+        /*top:0;*/
+        /*left:200px;*/
+        transform: translate(200px,0);
+      }
+      50% {
+        /*top:200px;*/
+        /*left:200px;*/
+        transform: translate(200px,200px);
+      }
+      75% {
+        /*top:200px;*/
+        /*left:0;*/
+        transform: translate(0,200px);
+      }
+      100% {
+        /*top:0;*/
+        /*left:0;*/
+        transform: translate(0,0);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="ball" id="ball"></div>
+</div>
+<script>
+  var ball = document.getElementById('ball')
+  ball.classList.add('ball-running')
+</script>
+</body>
+</html>

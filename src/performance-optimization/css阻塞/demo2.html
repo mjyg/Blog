@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    h1{
+      color:red!important;
+    }
+  </style>
+  <script type="text/javascript">
+    console.log('before css')  // 只打印这个
+    var startDate = new Date()
+  </script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<h1>标题</h1>
+CSS加载会阻塞后面JS语句执行（后面的js可能会操作css，所以需要等待）
+<script type="text/javascript">
+  console.log('after css')  //这个没打印
+  var endDate = new Date()
+  console.log(endDate-startDate)
+</script>
+</body>
+</html>
