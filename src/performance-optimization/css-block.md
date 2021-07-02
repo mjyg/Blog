@@ -1,11 +1,11 @@
 # CSS阻塞
 
-> * [js会影响DOM解析](#js会影响DOM解析)
+> * [js会影响dom解析](#js会影响dom解析)
 > * [css加载不会影响dom树的解析，但是会影响dom树的渲染](#css加载不会影响dom树的解析，但是会影响dom树的渲染)
-> * [CSS加载会阻塞后面JS语句执行](#CSS加载会阻塞后面JS语句执行)
+> * [css加载会阻塞后面JS语句执行](#css加载会阻塞后面JS语句执行)
 > * [DOMContentLoaded真的不会被css阻塞吗](#DOMContentLoaded真的不会被css阻塞吗)
 
-## js会影响DOM解析
+## js会影响dom解析
 看如下代码：
 ```html
 <!DOCTYPE html>
@@ -60,7 +60,7 @@
 
 所以css加载不会影响dom树的解析，但是会影响dom树的渲染
 
-## CSS加载会阻塞后面JS语句执行
+## css加载会阻塞后面JS语句执行
 看如下代码：
 ```html
 <!DOCTYPE html>
