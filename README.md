@@ -1,5 +1,6 @@
 # Jie's Blog
 > * 持续学习，不忘初心
+> * '临渊羡鱼，不如退而结网'
 > * 成功的道路从来不拥挤，今天你有进步吗？
 
 ## 目录
@@ -46,7 +47,6 @@
 * Redux
   * [Redux基础](./src/redux/note.md)
   * [九步大白话手写一个Redux](./src/redux/redux.md)
-* Node
 * Web Components
   * [实现简单记事本](./src/web-components/web-components.md)
 * 手写系列
