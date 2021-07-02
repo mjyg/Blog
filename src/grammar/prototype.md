@@ -29,7 +29,7 @@ constructor 属性 :每个实例对象都从原型中继承了一个constructor�
 
 所有构造函数都是Function的实例，所有原型对象都是Object的实例除了Object.prototype
 
-万能图：
+万能图：<br>
 ![](./image/1625117918952.png)
 
 例子：

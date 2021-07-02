@@ -60,7 +60,9 @@
   * [手写parseInt](./src/handwriting/parseInt.md)
   * [手写proxy的get和set](./src/handwriting/proxy.md)
 * 性能优化
+  * [基本概念](./src/performance-optimization/base.md)
   * [浏览器缓存](./src/performance-optimization/browserCache.md)
+  * [CSS阻塞](./src/performance-optimization/css-block.md)
 * web安全
   * [跨站脚本攻击(XSS)](./src/security/xss.md)
   * [跨站请求伪造(CSRF)](./src/security/csrf.md)
