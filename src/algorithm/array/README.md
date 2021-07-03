@@ -1,5 +1,4 @@
 ## 数组
-* [LRU缓存机制](LRU.md)
 * [每日温度](dailyTemperatures.md)
 * [下一个排列](nextPermutation.md)
 * [在排序数组中查找元素的第一个和最后一个位置](searchRange.md)

@@ -62,6 +62,7 @@
 * 性能优化
   * [基本概念](./src/performance-optimization/base.md)
   * [浏览器缓存](./src/performance-optimization/browserCache.md)
+  * [LRU缓存机制](./src/performance-optimization/LRU.md)
   * [CSS阻塞](./src/performance-optimization/css-block.md)
 * web安全
   * [跨站脚本攻击(XSS)](./src/security/xss.md)
