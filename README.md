@@ -44,6 +44,7 @@
 * React
   * [React Hook](./src/react/react-hook/note.md)
   * [React Router](./src/react/react-router/note.md)
+  * [React性能优化](./src/react/react-router/performance.md)
 * Redux
   * [Redux基础](./src/redux/note.md)
   * [九步大白话手写一个Redux](./src/redux/redux.md)
