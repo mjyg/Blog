@@ -133,8 +133,6 @@ render-props:抽离业务逻辑，子组件通过属性传递进来
 3.this不好维护，class编译之后的代码太多，
 4.热重载的时候会有不稳定的情况
 
-class的继承和es5的继承有什么不一样
-
 使用useState的变量：存到fiberNode的hook对象上以链表的形式存放
 
 useEffect:

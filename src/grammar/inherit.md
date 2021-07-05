@@ -342,6 +342,8 @@ console.log('son instanceof Son:',son instanceof Son) //true sonIns.__proto__ ==
 console.log('son:',son);
 console.log('prototype:',prototype);
 console.log('son.publicFriends',son.publicFriends);  //[ 'f', 'g' ] (依然可以根据原型链调到父类原型对象上的方法和属性)
+
+console.log(Son.__proto__ === Father) // false
 ```
 打印如下：<br>
 ![](image/16197725647838.png)<br>
@@ -379,6 +381,7 @@ console.log('cruze:',cruze)
 console.log('Cruze:',Cruze)
 console.log('cruze.__proto__.__proto__ === Car.prototype:',cruze.__proto__.__proto__ === Car.prototype);
 
+console.log(Cruze.__proto__ === Car)  // true
 console.log(Cruze.color)  //1 继承静态属性
 cruze.test();  //3000
 ```
@@ -386,7 +389,8 @@ cruze.test();  //3000
 ![](image/16202688474716.png)<br>
 原型链关系如下图：<br>
 ![](image/16202688914958.png)<br>
-> 可以看出ES6的继承实际上实现的也是基于原型链的继承，但是它多了一个功能，就是**子类可以继承父类的静态属性**，
+> 可以看出ES6的继承实际上实现的也是基于原型链的继承，但是它多了一个功能，就是**子类可以继承父类的静态
+< 属性**，因为子类__proto__是指向父类的，所以子类可以使用父类上的方法和属性
 > 这在前面光有基于原型链的继承是无法实现的<br>
 
 ## 7 可以继承静态属性的ES5的继承
@@ -422,6 +426,12 @@ for(var i =0; i < staticKeys.length;i++){
 
 console.log(Cruze.color)  //red 继承静态属性
 ~~~
+* 或者这样写
+```js
+Cruze.__proto__ = Car
+
+console.log(Cruze.color)  //red 继承静态属性
+```
 
 ### 继承原型链
 * 错误写法
@@ -472,4 +482,30 @@ cruze.test()
 ![](image/16202706421830.png)<br>
 > 可以看出子类构造函数也具有了父类的静态属性color，且子类的原型上也有test方法
 
-❀ 本文参考《JavaScript高级程序设计》
+### 总结ES5和ES6继承方式不同点
+* 两者继承机制不同
+ * ES5 中，子类对于父类构造函数的继承时，子类的 this 已经存在，通过 SuperType.call(this, ...args) 的方式来修改子类的 this
+ * ES6 的子类必须要调用 super(...args) 来生成 this
+
+* 两者构造函数的原型链指向不同
+ * ES5 的子类和父类的构造函数函数的原型链都指向 Function.prototype
+ * ES6 的子类的构造函数的原型链指向父类的构造函数
+ 
+看看下面这段代码babel编译的ES6类继承为ES5代码是什么样子的：
+```js
+class Car {
+}
+class Cruze extends Car {
+  constructor(price){
+    super(price)
+  }
+}
+```
+如图所示, 可以看出babel 也是通过 A.call(this) 来模拟实现 super() 的<br>
+![](./image/1625465397701.png)
+
+
+❀ 本文参考:
+*《JavaScript高级程序设计》
+* [ES6 与 ES5 继承的区别](https://juejin.cn/post/6844903924015120397#heading-2)
+* [ES6 与 ES5 的"类"继承机制](https://segmentfault.com/a/1190000023475151)
