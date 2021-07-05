@@ -290,5 +290,3 @@ export default ReduxComponent;
 ![](./image/1624978838645.jpg)
 
 📚 [本项目源码](../react/react-hook)
-
-111
