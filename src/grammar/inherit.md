@@ -484,12 +484,13 @@ cruze.test()
 
 ### 总结ES5和ES6继承方式不同点
 * 两者继承机制不同
- * ES5 中，子类对于父类构造函数的继承时，子类的 this 已经存在，通过 SuperType.call(this, ...args) 的方式来修改子类的 this
- * ES6 的子类必须要调用 super(...args) 来生成 this
+  * ES5 中，子类对于父类构造函数的继承时，子类的 this 已经存在，通过 SuperType.call(this, ...args) 
+  的方式来修改子类的 this
+  * ES6 的子类必须要调用 super(...args) 来生成 this
 
 * 两者构造函数的原型链指向不同
- * ES5 的子类和父类的构造函数函数的原型链都指向 Function.prototype
- * ES6 的子类的构造函数的原型链指向父类的构造函数
+  * ES5 的子类和父类的构造函数函数的原型链都指向 Function.prototype
+  * ES6 的子类的构造函数的原型链指向父类的构造函数
  
 看看下面这段代码babel编译的ES6类继承为ES5代码是什么样子的：
 ```js
