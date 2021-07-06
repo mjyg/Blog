@@ -9,7 +9,7 @@ for (let i = 0; i < colNum; i++) {
 ```
 注意：不填null无法初始化成功<br>
 [](image/note1.png)
-  
+
 * 正则表达式
 
 （1）加/g

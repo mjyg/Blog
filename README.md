@@ -89,4 +89,5 @@
   * [二进制文件流下载和打印](./src/other/export&download.md)
   * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
   * [虚拟dom转化为真实dom](./src/other/render.js)
+  * [flex布局和grid布局](./src/other/flex&grid.md)
 * [笔记](./src/note/note.md)
