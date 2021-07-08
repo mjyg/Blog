@@ -1,5 +1,9 @@
 # React Hook
 
+[TOC]
+
+[toc]
+
 hook 钩子， 在非class情况下，可以使用更多react特性<br>
 完全可选 100%向后兼容，class依旧可以用
 
@@ -382,6 +386,8 @@ export function HookComponent() {
 ## Hook使用规则
 1.只能在最顶层使用Hook,不要在循环、条件、嵌套函数中调用Hook
 2.只在React函数或自定义Hook中调用Hook
+
+1111
 
 
 
