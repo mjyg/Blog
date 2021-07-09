@@ -8,6 +8,7 @@
 > * [Scheduler(调度器)](#Scheduler(调度器))
 >   * [Fiber的结构](#Fiber的结构)
 >   * [Fiber Tree](#Fiber-Tree)
+>   * [调度逻辑](#调度逻辑)
 > * [Reconciler(协调器)](#Reconciler(协调器))
 >   * [双缓存结构](#双缓存结构)
 >   * [构建Fiber Tree](#构建Fiber-Tree)
@@ -35,7 +36,7 @@ t渲染器，虚拟DOM使用浏览器V8引擎或SSR渲染
 完成后Reconciler又发现下个需要更新的节点，再交给Renderer渲染器...直到此次更新内容全部完成，整个更新流程是同步执行的
 
 **batchUpdate机制**<br>
-React15用batchUpdate做了批处理优化，如下代码，同步执行两次setState操作，只会触发一次render更新，
+React15默认用batchUpdate做了批处理优化，如下代码，同时执行两次setState操作，只会触发一次render更新，
 但是可以用unBatchUpdate来强制更新，比如第一次执行ReactDOM.render()时，页面初始换渲染时，就不需要用
 批处理，因为此时页面还是白的，希望能立刻渲染出来
 
@@ -71,27 +72,90 @@ react⾥的优先级：
 * ⽣命周期⽅法：同步执⾏
 * 受控的⽤⼾输⼊：⽐如输⼊框内输⼊⽂字，同步执⾏
 * 交互事件：⽐如动画，⾼优先级执⾏
-* 其他：⽐如数据请求，低优先级执⾏Q
+* 其他：⽐如数据请求，低优先级执⾏
+
+可以在自己的代码中手动更新优先级，在ReactDom中暴露了unstable_runWithPriority方法来更新优先级，可以
+像下面这样使用：
+```js
+import ReactDOM from 'react-dom';
+ReactDOM.unstable_runWithPriority(
+  1000, // 优先级,
+  () => {
+    // 要做的更新
+  }
+)
+```
 
 ### React17
+React17承接了React16的Fiber架构，做了以下两个优化：
 * 对优先级的扩展
 为了解决react16的不⾜：<br>
 1.⾼优先级IO操作会阻塞低优先级CPU操作<br>
 2.只能指定⼀个优先级<br>
-升级为从指定⼀个优先级到指定到指定⼀个连续的优先级区间。扩展了原本优先级，可⽀持的优先级
-更多，同时也可以指定多个优先级为当前优先级
+React17升级为从指定⼀个优先级到指定到指定⼀个连续的优先级区间，避免出现一个很高优先级但运行时间很长的
+任务一直执行的情况，如果有低优先级但是在同一个优先级区间的任务，且耗时较少，就可以和该任务同批执行。
+
+优先级区间：
+```js
+export const NoLanes: Lanes = /*                        */ 0b0000000000000000000000000000000;
+export const NoLane: Lane = /*                          */ 0b0000000000000000000000000000000;
+
+export const SyncLane: Lane = /*                        */ 0b0000000000000000000000000000001;
+export const SyncBatchedLane: Lane = /*                 */ 0b0000000000000000000000000000010;
+
+export const InputDiscreteHydrationLane: Lane = /*      */ 0b0000000000000000000000000000100;
+const InputDiscreteLanes: Lanes = /*                    */ 0b0000000000000000000000000011000;
+
+const InputContinuousHydrationLane: Lane = /*           */ 0b0000000000000000000000000100000;
+const InputContinuousLanes: Lanes = /*                  */ 0b0000000000000000000000011000000;
+
+export const DefaultHydrationLane: Lane = /*            */ 0b0000000000000000000000100000000;
+export const DefaultLanes: Lanes = /*                   */ 0b0000000000000000000111000000000;
+
+const TransitionHydrationLane: Lane = /*                */ 0b0000000000000000001000000000000;
+const TransitionLanes: Lanes = /*                       */ 0b0000000001111111110000000000000;
+
+const RetryLanes: Lanes = /*                            */ 0b0000011110000000000000000000000;
+
+export const SomeRetryLane: Lanes = /*                  */ 0b0000010000000000000000000000000;
+
+export const SelectiveHydrationLane: Lane = /*          */ 0b0000100000000000000000000000000;
+
+const NonIdleLanes = /*                                 */ 0b0000111111111111111111111111111;
+
+export const IdleHydrationLane: Lane = /*               */ 0b0001000000000000000000000000000;
+const IdleLanes: Lanes = /*                             */ 0b0110000000000000000000000000000;
+
+export const OffscreenLane: Lane = /*                   */ 0b1000000000000000000000000000000;
+```
+通过位运算的与操作、或操作来快速得到是属于哪个区间，也可以减少if else操作：
+```
+DefaultLanes: 0b0000000000000000000111000000000
+lane:         0b0000000000000000000100000000000
+DefaultLanes & lane 
+DefaultLanes | lane
+```
+> vue编译时优化，react运行时优化
 
 * 剥离了JSX
 剥离了JSX,参考[介绍全新的 JSX 转换](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 
 ## Scheduler(调度器)
+调度任务的优先级，高优先级任务优先进入Reconciler(performSyncWorkOnRoot)
+
+调度器流程图(React16)：
+![](../image/1625839766088.jpg)<br>
+![](../image/1625839783008.jpg)<br>
+![](../image/1625840051596.jpg)<br>
+
 ### Fiber的结构
+Fiber是一个包含很多属性的对象
 ```js
 function FiberNode() {
   // Fiber对应组件的类型 Function/Class/Host
   this.tag = tag;
 
-  // 标志这个节点的唯⼀性
+  // 标志这个节点的唯⼀性，dom diff时使用
   this.key = key;
   this.elementType = null;
 
@@ -113,7 +177,7 @@ function FiberNode() {
   this.memoizedState = null;
   this.dependencies = null;
 
-  // SideEffects, 标志更新的类型:删除，新增，更改属性
+  // 以前是SideEffects, 标志副作用/更新的类型:删除，新增，更改属性
   this.flags = NoFlags;
   this.subtreeFlags = NoFlags;
   this.deletions = null;
@@ -132,7 +196,7 @@ function FiberNode() {
 可以看到Fiber 与 Fiber之间是以链表的形式来连接的，这种结构可以⽅便中断<br>
 ![](../image/1625753261016.jpg)
 
-**调度逻辑:**
+### 调度逻辑
 * 1.根据优先级区分同步任务和异步任务，同步任务⽴即同步执⾏，最快渲染出来。异步任务⾛scheduler
 * 2.计算得到expirationTime，expirationTime = currentTime(当前时间) + timeout (不同优先级的时
 间间隔，时间越短，优先级越⼤)
@@ -145,17 +209,28 @@ function FiberNode() {
 **具体代码分析：**<br>
 1.根据优先级区分同步任务和异步任务，同步任务⽴即同步执⾏，最快渲染出来。异步任务⾛scheduler
 ```js
+export const NoContext = /*             */ 0b0000000;
+const BatchedContext = /*               */ 0b0000001;
+const EventContext = /*                 */ 0b0000010;
+const DiscreteEventContext = /*         */ 0b0000100;
+const LegacyUnbatchedContext = /*       */ 0b0001000;
+const RenderContext = /*                */ 0b0010000;
+const CommitContext = /*                */ 0b0100000;
+```
+```js
 export function scheduleUpdateOnFiber(fiber, lane, eventTime) {
   //...
   // 获得当前更新的优先级
   const priorityLevel = getCurrentPriorityLevel();
-  // 同步任务，⽴即更新
+  // 同步任务，⽴即更新(React16的判断为expiration === Sync)
   if (lane === SyncLane) {
     if (
       // 处于unbatchedUpdates， 且不在Renderer渲染阶段， ⽴即执⾏
       // Check if we're inside unbatchedUpdates
-      // 执⾏上下⽂
+      // executionContext: 执⾏上下⽂,执行时动态赋值
+      // LegacyUnbatchedContext: 非批处理
       (executionContext & LegacyUnbatchedContext) !== NoContext &&
+
       // Check if we're not already rendering
       // CommitContext: 表⽰渲染到⻚⾯的那个逻辑
       (executionContext & (RenderContext | CommitContext)) === NoContext
@@ -166,7 +241,7 @@ export function scheduleUpdateOnFiber(fiber, lane, eventTime) {
       // This is a legacy edge case. The initial mount of a ReactDOM.render-ed
       // root inside of batchedUpdates should be synchronous, but layout updates
       // should be deferred until the end of the batch.
-      performSyncWorkOnRoot(root);
+      performSyncWorkOnRoot(root); //立即执行
     } else {
       // ...
       // 包含异步调度逻辑，和中断逻辑
@@ -181,17 +256,19 @@ export function scheduleUpdateOnFiber(fiber, lane, eventTime) {
   //mostRecentlyUpdatedRoot = root;
 }
 
-// A: ensureRootIsScheduled root.callbackNode已被赋值
-// B: ensureRootIsScheduled existingCallbackNode = root.callbackNode 是否存在
 function ensureRootIsScheduled(root, currentTime) {
   // root.callbackNode的存活周期是从ensureRootIsScheduled开始——>到commitRootImpl截⽌
+// A: ensureRootIsScheduled root.callbackNode已被赋值
+// B: ensureRootIsScheduled existingCallbackNode = root.callbackNode 已经存在
   const existingCallbackNode = root.callbackNode;
+
   // 检查是否存在现有任务。 我们也许可以重⽤它。
   // Check if there's an existing task. We may be able to reuse it.
   if (existingCallbackNode !== null) {
     const existingCallbackPriority = root.callbackPriority;
-    // 优先级没有改变。 我们可以重⽤现有任务, 现有任务的优先级和下⼀个任务的优先级相同。⽐如
-    // input连续的输⼊，优先级相同，可以执⾏⽤之前的任务
+
+    // 优先级没有改变。 我们可以重⽤现有任务, 现有任务的优先级和下⼀个任务的优先级相同。
+    // ⽐如input连续的输⼊，优先级相同，可以执⾏⽤之前的任务
     // 由于获取更新是从root开始，往下找到在这个优先级内的所有update.
     // ⽐如存在连续的setState，会执⾏这个逻辑，不会新建⼀个新的update
     // this.setState({
@@ -200,13 +277,14 @@ function ensureRootIsScheduled(root, currentTime) {
     // this.setState({
     // "b": ""
     // });
-    // 不需要重新发起⼀个调度，⽤之前那个就可以了
+    // 不需要重新发起⼀个调度，⽤之前那个就可以了（React16这块判断优先级的逻辑不在这里）
     if (existingCallbackPriority === newCallbackPriority) {
       // The priority hasn't changed. We can reuse the existing task. Exit.
       return;
     }
-    // 17 以前是判断 优先级的⾼低 lane
+    // React16是判断优先级的⾼低，React17是判断优先级是否相同,用lane
     // 优先级变了，先cancel掉，后续重新发起⼀个
+    // 用意是把cancel掉的任务和其他相同优先级的任务合并，再一起执行
     // The priority changed. Cancel the existing callback. We'll schedule a new
     // one below.
     cancelCallback(existingCallbackNode);
@@ -229,26 +307,27 @@ function ensureRootIsScheduled(root, currentTime) {
 间间隔，时间越短，优先级越⼤)<br>
 ```js
 var currentTime = getCurrentTime();
-// 得到startTime, 根据优先级的不同分别加上不同的间隔时间，构成expirationTime；当
-//expirationTime越接近真实的时间，优先级越⾼
+// 得到startTime, 根据优先级的不同分别加上不同的间隔时间，构成expirationTime；
+// 当expirationTime越接近真实的时间，优先级越⾼
 // 根据startTime 是否⼤于当前的currentTime，将任务分为了及时任务和延时任务。延时任务还不
-//会⽴即执⾏，它会在currentTime接近startTime的时候，才会执⾏
+// 会⽴即执⾏，它会在currentTime接近startTime的时候，才会执⾏
 var startTime;
 if (typeof options === "object" && options !== null) {
   var delay = options.delay;
-  if (typeof delay === "number" && delay > 0) {
+  if (typeof delay === "number" && delay > 0) {  //延时任务，该任务在delay时间后执行
     startTime = currentTime + delay;
   } else {
-    startTime = currentTime;
+    startTime = currentTime;  //及时任务
   }
 } else {
-  startTime = currentTime;
+  startTime = currentTime;  //及时任务
 }
+
 var timeout;
 // 根据优先级增加不同的时间间隔
 switch (priorityLevel) {
-  case ImmediatePriority:
-    timeout = IMMEDIATE_PRIORITY_TIMEOUT;
+  case ImmediatePriority:  //立即执行，优先级最高
+    timeout = IMMEDIATE_PRIORITY_TIMEOUT;  // -1，加上它比当前时间还小
     break;
   case UserBlockingPriority:
     timeout = USER_BLOCKING_PRIORITY_TIMEOUT;
@@ -264,7 +343,7 @@ switch (priorityLevel) {
     timeout = NORMAL_PRIORITY_TIMEOUT;
     break;
 }
-var expirationTime = startTime + timeout;
+var expirationTime = startTime + timeout;  //过期时间
 ```
 ```js
 // Max 31 bit integer. The max integer size in V8 for 32-bit systems.
@@ -290,6 +369,7 @@ if (startTime > currentTime) {
   // Schedule a timeout.
   // 在间隔时间之后，调⽤⼀个handleTimeout，主要作⽤是把timerQueue的任务加到
   // taskQueue队列⾥来，然后调⽤requestHostCallback
+
   // 执⾏那个延时任务
   // setTimeOut(handleTimeout, startTime - currentTime)
   requestHostTimeout(handleTimeout, startTime - currentTime);
@@ -309,40 +389,45 @@ return newTask;
 
 4.及时任务当即执⾏,但是为了不阻塞⻚⾯的交互，因此在宏任务中执⾏
 ```js
-// 第⼀次调⽤ scheduleCallback
+// 模拟任务调度流程：
+// 一.第⼀次调⽤ scheduleCallback
 // 1. 把任务放在timeQueue 不会⽴即执⾏,等待
-// 第⼆次调⽤ scheduleCallback
+// 二.第⼆次调⽤ scheduleCallback
 // 1. 把任务放在TaskQuene
 // 2. 执⾏new MessageChannel() 的 port.postMessage。如果主线程还有任务，那就还不
-//会到performWorkUntilDeadline。
-// 第三次调⽤ scheduleCallback
-// 1.1. 把任务放在TaskQuene
+//    会到performWorkUntilDeadline。
+// 三.第三次调⽤ scheduleCallback
+// 1. 把任务放在TaskQuene
 // 2. 执⾏new MessageChannel() 的 port.postMessage
-// 主线程没有任务
-// 执⾏微任务
-// 执⾏宏任务列表
-// 执⾏第⼆次调⽤发起的performWorkUntilDeadline
-// performWorkUntilDeadline 去取得TaskQuene中的任务，发起 PerformanceSyncWorkOnRoot
-// 判断TimeQueue中是否有到期的任务，如果有就加到TaskQuene来
-// 主线程了
-// 微任务
-// 下⼀个宏任务
-const channel = new MessageChannel();
+// 四. 主线程没有任务
+// 五. 执⾏微任务列表
+// 六. 执⾏宏任务列表
+// 七. 执⾏第⼆次调⽤发起的performWorkUntilDeadline
+// 八. performWorkUntilDeadline 去取得TaskQuene中的任务，发起 PerformanceSyncWorkOnRoot
+// 九. 判断TimeQueue中是否有到期的任务，如果有就加到TaskQuene来
+// 十. 主线程
+// 十一. 微任务
+// 十二. 下⼀个宏任务，执⾏第三次调⽤发起的performWorkUntilDeadline（两个宏任务之间间隔主线程、微任务调用）
+
+const channel = new MessageChannel();  //创建一个消息通道，并可以通过port1和port2两个通道发送数据
 const port = channel.port2;
-channel.port1.onmessage = performWorkUntilDeadline;
-// 在MessageChannel宏任务⾥执⾏真正的调度逻辑，可以保证任务与任务之间不是连续执⾏的，这样就
-//不会因为要⼀次性执⾏的任务多⽽阻塞⽤⼾的操作
+channel.port1.onmessage = performWorkUntilDeadline; //workLoop 
+// 在MessageChannel宏任务⾥执⾏真正的调度逻辑，等主线程执行完了再来执行，可以保证任务与任务之间不是连续执⾏的，这样就
+// 不会因为要⼀次性执⾏的任务多⽽阻塞⽤⼾的操作
 requestHostCallback = function (callback) {
   scheduledHostCallback = callback;
   if (!isMessageLoopRunning) {
     isMessageLoopRunning = true;
-    port.postMessage(null);
+    port.postMessage(null);  //在宏任务中调用performWorkUntilDeadline，也可用setTimeout来进入宏任务
     // setTimeout(() => {
     // 进⼊宏任务
     // }, 0)
   }
 };
 ```
+
+附一段MessageChannel使用的使用方法：<br>
+![](../image/1625843140212.jpg)
 
 5.延时任务需要等到currentTime >= expirationTime的时候才会执⾏。每次调度及时任务的时候，
   都会去判断延时任务的执⾏时间是否到了，如果判断为true，则添加到及时任务中来。
@@ -374,6 +459,7 @@ function advanceTimers(currentTime) {
 ```
 
 ## Reconciler(协调器)
+
 Reconciler的主要作⽤是负责找出变化的组件。在react16以上，为了⽅便打断，数据结构⼏乎都是链表的格式，
 会做dom-diff，也会把dom元素⽣成，但是并不会渲染到⻚⾯，⽽是先打上⼀个标记，等在下⼀个commit阶段才会真正
 的渲染到⻚⾯。
@@ -400,7 +486,7 @@ Tree, 这个tree的Fiber节点可以复⽤Current Tree上没有发⽣变化的�
 * 更新完毕后 current直接指向workInProgress root，完成了Fiber tree的更新
 
 ### 构建Fiber Tree
-```js
+```
 return (
   <div>
     i am
