@@ -1,4 +1,4 @@
-# React源码分析
+# React17源码分析
 
 **目录**
 > * [整体架构](#整体架构)
@@ -91,7 +91,7 @@ function FiberNode() {
   // Fiber对应组件的类型 Function/Class/Host
   this.tag = tag;
 
-  // 标志你的这个节点的唯⼀性
+  // 标志这个节点的唯⼀性
   this.key = key;
   this.elementType = null;
 
@@ -113,7 +113,7 @@ function FiberNode() {
   this.memoizedState = null;
   this.dependencies = null;
 
-  // SideEffects, 标志更新的类型。删除，新增，更改属性
+  // SideEffects, 标志更新的类型:删除，新增，更改属性
   this.flags = NoFlags;
   this.subtreeFlags = NoFlags;
   this.deletions = null;
@@ -132,7 +132,7 @@ function FiberNode() {
 可以看到Fiber 与 Fiber之间是以链表的形式来连接的，这种结构可以⽅便中断<br>
 ![](../image/1625753261016.jpg)
 
-⼤致调度逻辑:
+**调度逻辑:**
 * 1.根据优先级区分同步任务和异步任务，同步任务⽴即同步执⾏，最快渲染出来。异步任务⾛scheduler
 * 2.计算得到expirationTime，expirationTime = currentTime(当前时间) + timeout (不同优先级的时
 间间隔，时间越短，优先级越⼤)
@@ -142,7 +142,7 @@ function FiberNode() {
 * 6.及时任务执⾏完后，也会去判断是否有延时任务到了该执⾏之时，如果是，就执⾏延时任务
 * 7.每⼀批任务的执⾏在不同的宏任务中，不阻塞⻚⾯⽤⼾的交互
 
-具体代码分析：<br>
+**具体代码分析：**<br>
 1.根据优先级区分同步任务和异步任务，同步任务⽴即同步执⾏，最快渲染出来。异步任务⾛scheduler
 ```js
 export function scheduleUpdateOnFiber(fiber, lane, eventTime) {
@@ -191,7 +191,7 @@ function ensureRootIsScheduled(root, currentTime) {
   if (existingCallbackNode !== null) {
     const existingCallbackPriority = root.callbackPriority;
     // 优先级没有改变。 我们可以重⽤现有任务, 现有任务的优先级和下⼀个任务的优先级相同。⽐如
-    //input连续的输⼊，优先级相同，可以执⾏⽤之前的任务
+    // input连续的输⼊，优先级相同，可以执⾏⽤之前的任务
     // 由于获取更新是从root开始，往下找到在这个优先级内的所有update.
     // ⽐如存在连续的setState，会执⾏这个逻辑，不会新建⼀个新的update
     // this.setState({
@@ -206,7 +206,7 @@ function ensureRootIsScheduled(root, currentTime) {
       return;
     }
     // 17 以前是判断 优先级的⾼低 lane
-    // 优先级变了，先cancel掉，后续重新发起⼀个，// 中断逻辑
+    // 优先级变了，先cancel掉，后续重新发起⼀个
     // The priority changed. Cancel the existing callback. We'll schedule a new
     // one below.
     cancelCallback(existingCallbackNode);

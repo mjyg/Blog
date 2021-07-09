@@ -46,7 +46,7 @@
   * [React Router](./src/react/react-router/note.md)
   * [React性能优化](./src/react/react-performance/performance.md)
   * [手写useState和useEffect](./src/react/handwriting.md)
-  * [React源码分析](./src/react/react-code/note.md)
+  * [React17源码分析](./src/react/react-code/note.md)
 * Redux
   * [Redux基础](./src/redux/note.md)
   * [九步大白话手写一个Redux](./src/redux/redux.md)
