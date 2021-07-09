@@ -16,10 +16,10 @@
 >       * [单节点diff](#单节点diff)
 >       * [多节点diff](#多节点diff)
 >   * [completeUnitOfWork](#completeUnitOfWork)
->     * [commitBeforeMutationEffects(DOM操作前)](#commitBeforeMutationEffects(DOM操作前))
->     * [commitMutationEffects(执⾏DOM操作)](#commitMutationEffects(执⾏DOM操作))
->     * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelyCommitLayoutEffects(DOM操作后))
-> * [ReactDOM.render流程](#ReactDOM-render流程)
+>     * [commitBeforeMutationEffects(DOM操作前)](#commitBeforeMutationEffectsDOM操作前)
+>     * [commitMutationEffects(执⾏DOM操作)](#commitMutationEffects执⾏DOM操作)
+>     * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelyCommitLayoutEffectsDOM操作后))
+> * [ReactDOM.render流程](#ReactDOMrender流程)
 
 ## 整体架构
 ### React15
