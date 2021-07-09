@@ -1,4 +1,25 @@
-# React17源码分析
+# React源码分析
+
+**目录**
+> * [整体架构](#整体架构)
+>   * [React15](#React15)
+>   * [React16](#React16)
+>   * [React17](#React17)
+> * [Scheduler(调度器)](#Scheduler(调度器))
+>   * [Fiber的结构](#Fiber的结构)
+>   * [Fiber Tree](#Fiber-Tree)
+> * [Reconciler(协调器)](#Reconciler(协调器))
+>   * [双缓存结构](#双缓存结构)
+>   * [构建Fiber Tree](#构建Fiber-Tree)
+>   * [beginWork](#beginWork)
+>     * [diff算法](#diff算法)
+>       * [单节点diff](#单节点diff)
+>       * [多节点diff](#多节点diff)
+>   * [completeUnitOfWork](#completeUnitOfWork)
+>     * [commitBeforeMutationEffects(DOM操作前)](#commitBeforeMutationEffects(DOM操作前))
+>     * [commitMutationEffects(执⾏DOM操作)](#commitMutationEffects(执⾏DOM操作))
+>     * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelyCommitLayoutEffects(DOM操作后))
+> * [ReactDOM.render流程](#ReactDOM-render流程)
 
 ## 整体架构
 ### React15
@@ -13,7 +34,7 @@ t渲染器，虚拟DOM使用浏览器V8引擎或SSR渲染
 渲染流程：对于当前组件需要更新内容是依次更新，Reconciler发现一个需要更新的节点后就交给Renderer渲染器渲染。
 完成后Reconciler又发现下个需要更新的节点，再交给Renderer渲染器...直到此次更新内容全部完成，整个更新流程是同步执行的
 
-#### batchUpdate机制
+**batchUpdate机制**<br>
 React15用batchUpdate做了批处理优化，如下代码，同步执行两次setState操作，只会触发一次render更新，
 但是可以用unBatchUpdate来强制更新，比如第一次执行ReactDOM.render()时，页面初始换渲染时，就不需要用
 批处理，因为此时页面还是白的，希望能立刻渲染出来
@@ -29,7 +50,7 @@ this.setState({
 * 在 react 的 event handler 内部同步的多次 setState 会被 batch 为一次更新
 * 在一个异步的事件循环里面多次 setState，react 不会 batch
 
-#### React15架构的缺点
+**React15架构的缺点**<br>
 React15是同步更新节点，Reconciler更新一个DOM节点，Renderer更新一次视图，且通过递归的方式进行渲染，
 使用的是 JS 引擎自身的函数调用栈，它会一直执行到栈空为止，因此如果是⼀个⻓任务，会导致阻塞⽤⼾后续交互，
 会卡顿<br>
@@ -61,9 +82,9 @@ react⾥的优先级：
 更多，同时也可以指定多个优先级为当前优先级
 
 * 剥离了JSX
-剥离了JSX,参考![介绍全新的 JSX 转换](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+剥离了JSX,参考[介绍全新的 JSX 转换](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 
-## Fiber
+## Scheduler(调度器)
 ### Fiber的结构
 ```js
 function FiberNode() {
@@ -352,7 +373,7 @@ function advanceTimers(currentTime) {
 }
 ```
 
-### Reconciler（协调器）
+## Reconciler(协调器)
 Reconciler的主要作⽤是负责找出变化的组件。在react16以上，为了⽅便打断，数据结构⼏乎都是链表的格式，
 会做dom-diff，也会把dom元素⽣成，但是并不会渲染到⻚⾯，⽽是先打上⼀个标记，等在下⼀个commit阶段才会真正
 的渲染到⻚⾯。
@@ -361,7 +382,7 @@ Reconciler的主要作⽤是负责找出变化的组件。在react16以上，为
 react发⽣⼀次更新的时候，⽐如ReactDOM.render/setState，都会从Fiber Root开始从上往下遍历,
 然后逐⼀找到变化的节点。构建完成会形成⼀颗Fiber Tree。<br>
 
-#### 双缓存结构
+### 双缓存结构
 在 React 中最多会同时存在两棵 Fiber树 。当前屏幕上显⽰内容对应的 Fiber树 称为 current
 Fiber树 ，正在内存中构建的 Fiber树 称为 workInProgress Fiber树 。
 
@@ -378,7 +399,7 @@ Tree, 这个tree的Fiber节点可以复⽤Current Tree上没有发⽣变化的�
 * 在某些情况下可以直接复⽤fiber
 * 更新完毕后 current直接指向workInProgress root，完成了Fiber tree的更新
 
-#### 构建Fiber Tree
+### 构建Fiber Tree
 ```js
 return (
   <div>
@@ -433,7 +454,7 @@ completeUnitOfWork⾥执⾏，执⾏completeUnitOfWork后如果存在兄弟Fiber
 节点这⾥接着执⾏BeginWork.执⾏完了，⼜接着执⾏completeUnitOfWork。这就是Fiber Tree构建
 的整体流程。
 
-#### beginWork
+### beginWork
 * 1.判断Fiber 节点是否可以复⽤
 * 2.根据不同的Tag，⽣成不同的Fiber节点（调⽤reconcileChildren）
     * a.Mount 阶段：创建Fiber 节点
@@ -590,7 +611,7 @@ function placeSingleChild(newFiber: Fiber): Fiber {
 }
 ```
 
-##### diff算法
+#### diff算法
 React Diff 会预设⼏个规则：
 * 1.只对同级节点，进⾏⽐较.
 * 2.节点变化，直接删除，然后重建
@@ -631,7 +652,7 @@ if (isArray(newChild)) {
 }
 ```
 
-###### 单节点diff
+##### 单节点diff
 * 1.判断存在对应节点，key值是否相同，节点类型⼀致，可以复⽤
 * 2.存在对应节点，key值是否相同，节点类型不⼀致，标记删除
 * 3.存在对应节点，key值不同，标记删除
@@ -681,7 +702,7 @@ function reconcileSingleElement(
 }
 ```
 
-###### 多节点diff
+##### 多节点diff
 * 1. 对⽐新旧children相同index的对象的key是否相等, 如果是，返回该对象，如果不是，返回null
 * 2. key值不等，不⽤对⽐下去了，节点不能复⽤，跳出
 * 3. 判断节点是否存在移动，存在则返回新位置
@@ -771,12 +792,12 @@ function reconcileChildrenArray(
 }
 ```
 
-#### completeUnitOfWork
+### completeUnitOfWork
 commit阶段——负责将变化的组件渲染到⻚⾯上commit阶段⸺负责将变化的组件渲染到⻚⾯上
 
 分为下面三个小阶段
 
-##### commitBeforeMutationEffects(DOM操作前）
+#### commitBeforeMutationEffects(DOM操作前)
 * 1.处理 DOM节点 渲染/删除后的 autoFocus 、 blur 逻辑。
 * 2.调⽤ getSnapshotBeforeUpdate ⽣命周期钩⼦。
 * 3.调度 useEffect。
@@ -846,7 +867,7 @@ function commitBeforeMutationEffectsImpl(fiber: Fiber) {
 }
 ```
 
-##### commitMutationEffects(执⾏DOM操作)
+#### commitMutationEffects(执⾏DOM操作)
 * 1.遍历finishedWork，执⾏DOM操作
 * 2.对于删除的组件，会执⾏componentWillUnMount⽣命周期
 ```js
@@ -886,7 +907,7 @@ function commitMutationEffects(
 }
 ```
 
-##### recursivelyCommitLayoutEffects(DOM操作后)
+#### recursivelyCommitLayoutEffects(DOM操作后)
 在这个阶段前current tree也发⽣变化了，指向了最新构建的workInProgress tree。
 * 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期，didMount/didUpdate；执⾏
 useEffect
@@ -974,7 +995,7 @@ function recursivelyCommitLayoutEffects(
 }
 ```
 
-#### ReactDOM.render流程
+## ReactDOM.render流程
 是⾛的unBatchUpdate ，所以是没有⾛schedule调度的，直接就到了Reconciler阶段了。
 * unBatchUpdate 不批处理
 * batchUpdate 批处理
