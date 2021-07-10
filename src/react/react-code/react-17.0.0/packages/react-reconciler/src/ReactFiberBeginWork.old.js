@@ -741,6 +741,7 @@ function updateFunctionComponent(
   if (__DEV__) {
     ReactCurrentOwner.current = workInProgress;
     setIsRendering(true);
+    // 注入hooks
     nextChildren = renderWithHooks(
       current,
       workInProgress,
@@ -924,6 +925,7 @@ function updateClassComponent(
     mountClassInstance(workInProgress, Component, nextProps, renderLanes);
     shouldUpdate = true;
   } else if (current === null) {
+    // 不是第一次执行但current === null，走特殊的复用方式
     // In a resume, we'll already have an instance we can reuse.
     // 会执行willMount，shouldComponentUpdate等等生命周期
     shouldUpdate = resumeMountClassInstance(
@@ -933,8 +935,10 @@ function updateClassComponent(
       renderLanes,
     );
   } else {
+    // 不是第一次执行但current !== null, 更新阶段
+    // 执行下面的生命周期
     // 执行componentWillReceiveProps。父级传递的props变化了，componentWillReceiveProps会执行
-    // 如果componentDidUpdate存在，打上Flags
+    // 如果componentDidUpdate存在，打上Flags： `workInProgress.flags |= Update  //按位或，打上update标记`
     // 执行getDerivedStateFromProps
     // 执行shouldComponentUpdate
     // 执行componentWillUpdate

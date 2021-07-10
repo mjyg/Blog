@@ -17,6 +17,7 @@
 >       * [单节点diff](#单节点diff)
 >       * [多节点diff](#多节点diff)
 >   * [completeUnitOfWork](#completeUnitOfWork)
+>  * [commit阶段](#commit阶段)
 >     * [commitBeforeMutationEffects(DOM操作前)](#commitbeforemutationeffectsdom操作前)
 >     * [commitMutationEffects(执⾏DOM操作)](#commitmutationeffects执dom操作)
 >     * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelycommitlayouteffectsdom操作后))
@@ -459,14 +460,19 @@ function advanceTimers(currentTime) {
 ```
 
 ## Reconciler(协调器)
+Reconciler的主要作⽤是负责找出变化的组件，这个阶段可以被打断。
 
-Reconciler的主要作⽤是负责找出变化的组件。在react16以上，为了⽅便打断，数据结构⼏乎都是链表的格式，
-会做dom-diff，也会把dom元素⽣成，但是并不会渲染到⻚⾯，⽽是先打上⼀个标记，等在下⼀个commit阶段才会真正
-的渲染到⻚⾯。
+在react16以上，为了⽅便打断，数据结构⼏乎都是链表的格式，会做dom-diff，也会把dom元素⽣成，
+但是并不会渲染到⻚⾯，⽽是先打上⼀个标记，等在下⼀个commit阶段才会真正的渲染到⻚⾯，commit阶段不能被打
+断，因为渲染到dom是昂贵的。
 
 找出变化的组件：<br>
 react发⽣⼀次更新的时候，⽐如ReactDOM.render/setState，都会从Fiber Root开始从上往下遍历,
 然后逐⼀找到变化的节点。构建完成会形成⼀颗Fiber Tree。<br>
+
+协调器流程图：<br>
+![](../image/1625929339905.jpg)<br>
+![](../image/1625929491886.jpg)<br>
 
 ### 双缓存结构
 在 React 中最多会同时存在两棵 Fiber树 。当前屏幕上显⽰内容对应的 Fiber树 称为 current
@@ -497,22 +503,24 @@ return (
 这段代码的FiberTree如下：<br>
 ![](../image/1625755858610.jpg)
 
-源码：
+Reconciler的代码大致从rendererRootSync函数开始，从优先级最高的Fiber Root开始递归
 ```js
 function workLoopSync() {
    // Already timed out, so perform work without checking if we need to yield.
-  // workInProgress:当前正在处理的节点
+   // 开始用一个循环构建一棵树
+   // workInProgress:指的是当前正在处理的节点
    while (workInProgress !== null) {
     performUnitOfWork(workInProgress);
-     // if (next === null) {
-     // If this doesn't spawn new work, complete the current work.
-     // completeUnitOfWork(unitOfWork);
-     //do{
-     // sibliing存在的时候， return
-     // xxx
-     // } while (completedWork !== null);
-    // }}
-   }
+     // if (next === null) {   //双层循环构建fiber tree
+          // If this doesn't spawn new work, complete the current work.
+     //   completeUnitOfWork(unitOfWork);
+     //     do{
+     //       sibliing存在的时候， return
+     //       xxx
+     //   } while (completedWork !== null);
+     //  }
+  }
+}
 
 function performUnitOfWork(unitOfWork: Fiber): void {
   // The current, flushed, state of this fiber is the alternate. Ideally
@@ -520,28 +528,31 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   // need an additional field on the work in progress.
   const current = unitOfWork.alternate;
   // ...
-  // 会创建⼀个Fiber，赋值给workInProgress.child并返回workInProgress.child.注 意，
-  //sibilig Fiber，此处暂时还没处理
-  // 返回 next = workInProgress.child
+  // 会创建⼀个Fiber节点，赋值给workInProgress.child
+  // 注意，此处暂时还没处理sibilig Fiber，
+  // beginWork(current, unitOfWork, subtreeRenderLanes)会返回workInProgress.child;
+  // 即 next = workInProgress.child
   next = beginWork(current, unitOfWork, subtreeRenderLanes);
   // ...
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
   if (next === null) {
+    // 没有next节点(子节点)， 在completeUnitOfWork中处理sibling节点(兄弟节点)
+    // 即先beginWork深度遍历，再completeUnitOfWork广度遍历
     // If this doesn't spawn new work, complete the current work.
     completeUnitOfWork(unitOfWork);
   } else {
-    workInProgress = next;
+    workInProgress = next;  //指向下一个节点
   }
   ReactCurrentOwner.current = null;
 }
 ```
-在beginWork函数⾥：只创建了这副图中的App， div， iam 3个Fiber。当没有⼦节点时，进⼊到
+在beginWork函数⾥：只创建了这副图中的App， div， i am 3个Fiber。当没有⼦节点时，进⼊到
 completeUnitOfWork⾥执⾏，执⾏completeUnitOfWork后如果存在兄弟Fiber节点，就从兄弟Fiber
 节点这⾥接着执⾏BeginWork.执⾏完了，⼜接着执⾏completeUnitOfWork。这就是Fiber Tree构建
 的整体流程。
 
 ### beginWork
-* 1.判断Fiber 节点是否可以复⽤
+* 1.判断Fiber 节点是否可以复⽤，能够复用的话打上didReceiveUpdate为true的tag
 * 2.根据不同的Tag，⽣成不同的Fiber节点（调⽤reconcileChildren）
     * a.Mount 阶段：创建Fiber 节点
     * b.Update阶段 和现在的Fiber节点做对⽐，⽣成新的Fiber节点
@@ -550,37 +561,50 @@ completeUnitOfWork⾥执⾏，执⾏completeUnitOfWork后如果存在兄弟Fiber
 * 3.给存在变更的Fiber节点打上标记 newFiber.flags = Placement|Update|Deletion|...
 * 4.创建的Fiber节点赋给WorkInProgress.child,返回WorkInProgress.child. 继续下⼀次的循环
 ```js
-// {} === {} false
-// extra = <div> extra </div>;
-// render() => {
-// return <div>
-// i'm
-// {this.extra}
-// <Extra />
-// </div>
-// }
 function beginWork(
   current: Fiber | null,
   workInProgress: Fiber,
   renderLanes: Lanes
 ): Fiber | null {
   const updateLanes = workInProgress.lanes;
-  // current tree 存在，不是初次构建
+  // current tree 存在，不是初次构建；第一次渲染页面时，curren为Null
+  // 在这里根据curren值打上didReceiveUpdate标记，是否需要更新
   if (current !== null) {
     const oldProps = current.memoizedProps;
     const newProps = workInProgress.pendingProps;
     if (oldProps !== newProps || hasLegacyContextChanged()) {
       // If props or context changed, mark the fiber as having performed work.
       // This may be unset if the props are determined to be equal later (memo).
-      didReceiveUpdate = true;
+      // props变了，需要更新
+      didReceiveUpdate = true;  
     } else if (!includesSomeLane(renderLanes, updateLanes)) {
-      // 更新的优先级和current tree的优先级是否有⼀致的，不⼀致才触发bailout
+      // 更新的优先级和current tree的优先级是否有⼀致的，不⼀致才触发bailout，表示不需要更新，
+      // 可以缓存这个fiber,放入堆栈以便复用
       didReceiveUpdate = false;
       // This fiber does not have any pending work. Bailout without entering
       // the begin phase. There's still some bookkeeping we that needs to be done
       // in this optimized path, mostly pushing stuff onto the stack.
       //...
-      // didReceiveUpdate = false; 可以复⽤上次的fiber
+      // 例子1：
+      //   const extra = <div> extra </div>;
+      //   render() => {
+      //     return (
+      //       <div>
+      //         i'm
+      //         {this.extra}   //这样使用，是使用变量，不需要更新，且可以下次复用复用
+      //       </div>
+      //   )}
+      // 例子2：
+      //    function Extra(){
+      //       return <div> extra </div>;
+      //    }
+      //   render() => {
+      //     return (
+      //       <div>
+      //         i'm
+      //         <Extra/>   //这样使用，是调用React.createElement方法，会创建一个新的对象，就不是走这个分支条件
+      //       </div>
+      //   )}
       return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
     } else {
       if ((current.flags & ForceUpdateForLegacySuspense) !== NoFlags) {
@@ -603,12 +627,15 @@ function beginWork(
   // the update queue. However, there's an exception: SimpleMemoComponent
   // sometimes bails out later in the begin phase. This indicates that we should
   // move this assignment out of the common path and into each branch.
-  workInProgress.lanes = NoLanes;
+  workInProgress.lanes = NoLanes; 
+  // 根据不同的Tag，⽣成不同的Fiber节点
   switch (workInProgress.tag) {
     case IndeterminateComponent:
     //...
     case LazyComponent:
     //...
+    // 这里着重看函数式组件和类组件
+    // 函数式组件
     case FunctionComponent:
       const Component = workInProgress.type;
       const unresolvedProps = workInProgress.pendingProps;
@@ -627,6 +654,7 @@ function beginWork(
         resolvedProps,
         renderLanes
       );
+    // 类组件
     case ClassComponent: {
       const Component = workInProgress.type;
       const unresolvedProps = workInProgress.pendingProps;
@@ -634,7 +662,7 @@ function beginWork(
         workInProgress.elementType === Component
           ? unresolvedProps
           : resolveDefaultProps(Component, unresolvedProps);
-      // 执⾏render()等⽣命周期，reconcileChildren
+      // 执⾏render()等⽣命周期，调用reconcileChildren
       return updateClassComponent(
         current,
         workInProgress,
@@ -643,14 +671,100 @@ function beginWork(
         renderLanes
       );
     }
-    // ReactDOM.render(<App />)
+    // ReactDOM.render(<App />)会走到这里
     case HostRoot:
-      // 会调到reconcileChildren
+      // 会调到reconcileChildren，
       return updateHostRoot(current, workInProgress, renderLanes);
   }
   // ...
+  function updateClassComponent(
+    current: Fiber | null,
+    workInProgress: Fiber,
+    Component: any,
+    nextProps: any,
+    renderLanes: Lanes,
+  ) {
+    // Push context providers early to prevent context stack mismatches.
+    // During mounting we don't know the child context yet as the instance doesn't exist.
+    // We will invalidate the child context in finishClassComponent() right after rendering.
+    // 检测有没有context，context可以跨组件传递数据。
+    let hasContext;
+    if (isLegacyContextProvider(Component)) {
+      hasContext = true;
+      pushLegacyContextProvider(workInProgress);
+    } else {
+      hasContext = false;
+    }
+    prepareToReadContext(workInProgress, renderLanes);
+  
+    // stateNode 里存储的是真正的Dom元素，如果有则不是第一次执行
+    const instance = workInProgress.stateNode;
+    let shouldUpdate;
+    // 第一次执行，执行contructor
+    if (instance === null) {
+      if (current !== null) {
+        // 这个节点之前从未存在过，flags设置为Placement，也就是新增
+        // A class component without an instance only mounts if it suspended
+        // inside a non-concurrent tree, in an inconsistent state. We want to
+        // treat it like a new mount, even though an empty version of it already
+        // committed. Disconnect the alternate pointers.
+        current.alternate = null;
+        workInProgress.alternate = null;
+        // Since this is conceptually a new fiber, schedule a Placement effect
+        workInProgress.flags |= Placement;
+      }
+      // In the initial pass we might need to construct the instance.
+      // 执行constructor 生命周期
+      // class A extends Component {
+      //   constructor(){
+      //   }
+      // }
+      constructClassInstance(workInProgress, Component, nextProps);
+      // 1. 调用getDerivedStateFromProps
+      // 2. 调用UNSAFE_componentWillMount
+      mountClassInstance(workInProgress, Component, nextProps, renderLanes);
+      shouldUpdate = true;
+    } else if (current === null) {
+      // 不是第一次执行但current === null，走特殊的复用方式
+      // In a resume, we'll already have an instance we can reuse.
+      // 会执行willMount，shouldComponentUpdate等等生命周期
+      shouldUpdate = resumeMountClassInstance(
+        workInProgress,
+        Component,
+        nextProps,
+        renderLanes,
+      );
+    } else {
+      // 不是第一次执行但current !== null, 更新阶段
+      // 执行下面的生命周期
+      // 1.执行componentWillReceiveProps。父级传递的props变化了，componentWillReceiveProps会执行
+      // 2.如果componentDidUpdate存在，打上Flags： （因为这个生命周期要在dom渲染完毕后执行，所以先打上标记，不执行）
+      //        `workInProgress.flags |= Update  //按位或，打上update标记`
+      // 3.执行getDerivedStateFromProps，每次都会执行
+      // 4.执行shouldComponentUpdate：shouldUpdate为true，子组件才会更新，才会执行componentWillUpdate生命周期
+      // 5.执行componentWillUpdate
+      shouldUpdate = updateClassInstance(
+        current,
+        workInProgress,
+        Component,
+        nextProps,
+        renderLanes,
+      );
+    }
+    // 执行 render() 生命周期。子Fiber从Render得来
+    const nextUnitOfWork = finishClassComponent(
+      current,
+      workInProgress,
+      Component,
+      shouldUpdate,
+      hasContext,
+      renderLanes,
+    );
+    return nextUnitOfWork;
+  }
 }
 
+// 真正做dom diff的地方，上面所有不同类型的fiber节点，处理完自己的逻辑最后都会进入这里，做diff
 export function reconcileChildren(
   current: Fiber | null,
   workInProgress: Fiber,
@@ -675,7 +789,7 @@ export function reconcileChildren(
     // the clone algorithm to create a copy of all the current children.
     // If we had any progressed work already, that is invalid at this point so
     // let's throw it out.
-    // Update节点，diff后更新Fiber节点
+    // Update阶段，diff后更新Fiber节点，返回更新后的新节点
     workInProgress.child = reconcileChildFibers(
       workInProgress,
       current.child,
@@ -685,28 +799,43 @@ export function reconcileChildren(
   }
 }
 
-//reconcileChildFibers⾥会判断变更的类型是什么？⽐如有新增，删除，更新等类型。每⼀种类型
-//的变更，调⽤不同的⽅法，赋予flags⼀个值.在commit阶段，会直接根据flags来做dom操作。
+// reconcileChildFibers⾥会判断变更的类型是什么？⽐如有新增，删除，更新等类型。每⼀种类型
+// 的变更，调⽤不同的⽅法，赋予flags⼀个值.
+// 在commit阶段，会直接根据flags来做dom操作。
 function placeSingleChild(newFiber: Fiber): Fiber {
   // This is simpler for the single child case. We only need to do a
   // placement for inserting new children.
   if (shouldTrackSideEffects && newFiber.alternate === null) {
-    newFiber.flags = Placement;
+    newFiber.flags = Placement;  //Placement表示新增
   }
   return newFiber;
 }
 ```
+有以下几种类型：
+```js
+// You can change the rest (and add more).
+export const Placement = /*                    */ 0b000000000000000010;
+export const Update = /*                       */ 0b000000000000000100;
+export const PlacementAndUpdate = /*           */ 0b000000000000000110;
+export const Deletion = /*                     */ 0b000000000000001000;
+export const ContentReset = /*                 */ 0b000000000000010000;
+export const Callback = /*                     */ 0b000000000000100000;
+export const DidCapture = /*                   */ 0b000000000001000000;
+export const Ref = /*                          */ 0b000000000010000000;
+export const Snapshot = /*                     */ 0b000000000100000000;
+export const Passive = /*                      */ 0b000000001000000000;
+```
 
 #### diff算法
-React Diff 会预设⼏个规则：
-* 1.只对同级节点，进⾏⽐较.
+React Diff 会预设⼏个规则（React15到React17 dom diff大体一致）：
+* 1.只对同级节点，进⾏⽐较(双缓存可以瞬间找到同级节点)
 * 2.节点变化，直接删除，然后重建
 * 3.存在key值，对⽐key值⼀样的节点
 ```js
 // 代码在ReactChildFiber.new.js 下 reconcileChildFibers函数
 // 判断节点是不是react 节点
 // Handle object types
-const isObject = typeof newChild === "object" && newChild !== null;
+const isObject = typeof newChild === "object" && newChild !== null;  //是对象走单节点diff
 if (isObject) {
   // 根据不同的类型，处理不同的节点对⽐
   switch (newChild.$$typeof) {
@@ -717,7 +846,7 @@ if (isObject) {
     //...
   }
 }
-if (typeof newChild === "string" || typeof newChild === "number") {
+if (typeof newChild === "string" || typeof newChild === "number") {  //是string或number走单节点diff
   return placeSingleChild(
     reconcileSingleTextNode(
       returnFiber,
@@ -727,7 +856,7 @@ if (typeof newChild === "string" || typeof newChild === "number") {
     )
   );
 }
-// 多节点数组
+// 数组走多节点diff
 if (isArray(newChild)) {
   return reconcileChildrenArray(
     returnFiber,
@@ -758,7 +887,7 @@ function reconcileSingleElement(
     if (child.key === key) {
       switch (child.tag) {
         default: {
-          // 节点类型⼀致，可以复⽤
+          // 节点类型⼀致，可以复⽤节点
           if (child.elementType === element.type) {
             deleteRemainingChildren(returnFiber, child.sibling);
             const existing = useFiber(child, element.props);
@@ -769,13 +898,13 @@ function reconcileSingleElement(
           break;
         }
       }
-      // div => p
-      // 节点类型不⼀致才会到这⾥，标记为删除
+      // div变成p
+      // 节点类型不⼀致，标记为删除
       // Didn't match.
       deleteRemainingChildren(returnFiber, child);
       break;
     } else {
-      // key不同，将该fiber标记为删除 flags
+      // key不同，将该fiber标记为删除
       deleteChild(returnFiber, child);
     }
     child = child.sibling;
@@ -792,7 +921,7 @@ function reconcileSingleElement(
 * 1. 对⽐新旧children相同index的对象的key是否相等, 如果是，返回该对象，如果不是，返回null
 * 2. key值不等，不⽤对⽐下去了，节点不能复⽤，跳出
 * 3. 判断节点是否存在移动，存在则返回新位置
-* 4. 但可能存在新的数组⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除
+* 4. 可能存在新的数组⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除老数组后面剩余的
 * 5. 新数组存在新增的节点，创建新阶段
 * 6. 创建⼀个existingChildren代表所有剩余没有匹配掉的节点，然后新的数组根据key从这个 map
 ⾥⾯查找，如果有则复⽤，没有则新建
@@ -817,8 +946,7 @@ function reconcileChildrenArray(
     } else {
       nextOldFiber = oldFiber.sibling;
     }
-    // 对⽐新旧children相同index的对象的key是否相等, 如果是，返回该对象，如果不是，返回
-    //null
+    // 对⽐新旧children相同index的对象的key是否相等, 如果是，返回该对象，如果不是，返回null
     const newFiber = updateSlot(
       returnFiber,
       oldFiber,
@@ -837,16 +965,17 @@ function reconcileChildrenArray(
     oldFiber = nextOldFiber;
   }
   // 第⼀个循环完毕
-  // newIdx === newChildren.length 说明中途没有跳出的情况
-  // 但可能存在新的数组⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除
+  // newIdx === newChildren.length 说明上个循环中途没有跳出的情况
+  // 新的数组遍历完
+  // 但可能存在新的数组个数⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除
   if (newIdx === newChildren.length) {
     // We've reached the end of the new children. We can delete the rest.
     deleteRemainingChildren(returnFiber, oldFiber);
     return resultingFirstChild;
   }
-  // oldFiber === null 说明数组中所有的都可以复⽤
+  // oldFiber === null 说明数组中所有的都可以复⽤，新的数组之后的节点全部重新创建
   if (oldFiber === null) {
-    // 新数组存在新增的节点，创建新阶段
+    // 新数组存在新增的节点，创建新节点
     for (; newIdx < newChildren.length; newIdx++) {
       const newFiber = createChild(returnFiber, newChildren[newIdx], lanes);
       if (newFiber === null) {
@@ -879,11 +1008,210 @@ function reconcileChildrenArray(
 ```
 
 ### completeUnitOfWork
-commit阶段——负责将变化的组件渲染到⻚⾯上commit阶段⸺负责将变化的组件渲染到⻚⾯上
+流程：
+*  1. 向上递归completedWork
+*  2. 创建DOM节点，更新Dom节点，Dom节点赋值给stateNode属性
+*  3. 把子节点的side Effect附加到父节点的sideEffect链之上，在commit节点使用
+*  4. 存在兄弟节点，将workInProgress指向兄弟节点，并return,执行兄弟节点的beginWork过程
+*  5. 不存在兄弟节点，返回父节点。继续执行父节点的completeUnitOfWork<br>
+即构建整个Fiber Tree处于2重循环中的
+```js
+function completeUnitOfWork(unitOfWork: Fiber): void {
+  // Attempt to complete the current unit of work, then move to the next
+  // sibling. If there are no more siblings, return to the parent fiber.
+  let completedWork = unitOfWork;
+  do {
+    // The current, flushed, state of this fiber is the alternate. Ideally
+    // nothing should rely on this, but relying on it here means that we don't
+    // need an additional field on the work in progress.
+    const current = completedWork.alternate;
+    const returnFiber = completedWork.return;
 
-分为下面三个小阶段
+    // Check if the work completed or if something threw.
+    if ((completedWork.flags & Incomplete) === NoFlags) {
+      setCurrentDebugFiberInDEV(completedWork);
+      let next;
+      if (
+        !enableProfilerTimer ||
+        (completedWork.mode & ProfileMode) === NoMode
+      ) {
+        // 1. Mount时，创建DOM节点，将子孙DOM节点插入刚生成的DOM节点中，DOM节点赋值给stateNode保存备用
+        // 2. Update时，由于DOM节点已经创建过，只需要更新一些属性
+        next = completeWork(current, completedWork, subtreeRenderLanes);
+      } else {
+        startProfilerTimer(completedWork);
+        next = completeWork(current, completedWork, subtreeRenderLanes);
+        // Update render duration assuming we didn't error.
+        stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
+      }
+      resetCurrentDebugFiberInDEV();
 
-#### commitBeforeMutationEffects(DOM操作前)
+      if (next !== null) {
+        // Completing this fiber spawned new work. Work on that next.
+        // 完成这种Fiber催生了新的工作
+        workInProgress = next;
+        return;
+      }
+
+      resetChildLanes(completedWork);
+
+      if (
+        returnFiber !== null &&
+        // Do not append effects to parents if a sibling failed to complete
+        (returnFiber.flags & Incomplete) === NoFlags
+      ) {
+        // Append all the effects of the subtree and this fiber onto the effect
+        // list of the parent. The completion order of the children affects the
+        // side-effect order.
+        if (returnFiber.firstEffect === null) {
+          returnFiber.firstEffect = completedWork.firstEffect;
+        }
+        if (completedWork.lastEffect !== null) {
+          if (returnFiber.lastEffect !== null) {
+            // 把当前子节点的副作用添加到父节点的副作用链的最后一个
+            returnFiber.lastEffect.nextEffect = completedWork.firstEffect;
+          }
+          // 把子节点的副作用添加到父节点的副作用链上
+          // 这样一直向上传递就会把完整的副作用链挂到根节点上
+          returnFiber.lastEffect = completedWork.lastEffect;
+        }
+ 
+        // If this fiber had side-effects, we append it AFTER the children's
+        // side-effects. We can perform certain side-effects earlier if needed,
+        // by doing multiple passes over the effect list. We don't want to
+        // schedule our own side-effect on our own list because if end up
+        // reusing children we'll schedule this effect onto itself since we're
+        // at the end.
+        const flags = completedWork.flags;
+
+        // Skip both NoWork and PerformedWork tags when creating the effect
+        // list. PerformedWork effect is read by React DevTools but shouldn't be
+        // committed.
+        if (flags > PerformedWork) {
+          if (returnFiber.lastEffect !== null) {
+            returnFiber.lastEffect.nextEffect = completedWork;
+          } else {
+            returnFiber.firstEffect = completedWork;
+          }
+          returnFiber.lastEffect = completedWork;
+        }
+      }
+    } else {
+      // This fiber did not complete because something threw. Pop values off
+      // the stack without entering the complete phase. If this is a boundary,
+      // capture values if possible.
+      const next = unwindWork(completedWork, subtreeRenderLanes);
+
+      // Because this fiber did not complete, don't reset its expiration time.
+
+      if (next !== null) {
+        // If completing this work spawned new work, do that next. We'll come
+        // back here again.
+        // Since we're restarting, remove anything that is not a host effect
+        // from the effect tag.
+        next.flags &= HostEffectMask;
+        workInProgress = next;
+        return;
+      }
+
+      if (
+        enableProfilerTimer &&
+        (completedWork.mode & ProfileMode) !== NoMode
+      ) {
+        // Record the render duration for the fiber that errored.
+        stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
+
+        // Include the time spent working on failed children before continuing.
+        let actualDuration = completedWork.actualDuration;
+        let child = completedWork.child;
+        while (child !== null) {
+          actualDuration += child.actualDuration;
+          child = child.sibling;
+        }
+        completedWork.actualDuration = actualDuration;
+      }
+
+      if (returnFiber !== null) {
+        // Mark the parent fiber as incomplete and clear its effect list.
+        returnFiber.firstEffect = returnFiber.lastEffect = null;
+        returnFiber.flags |= Incomplete;
+      }
+    }
+
+    // 存在兄弟节点，将workInProgress指向兄弟节点，并return,执行兄弟节点的beginWork过程
+    const siblingFiber = completedWork.sibling;
+    if (siblingFiber !== null) {
+      // If there is more work to do in this returnFiber, do that next.
+      workInProgress = siblingFiber;
+      return;
+    }
+    // Otherwise, return to the parent
+    // 不存在兄弟节点，返回父节点。继续执行父节点的completeUnitOfWork
+    completedWork = returnFiber;
+    // Update the next thing we're working on in case something throws.
+    workInProgress = completedWork;
+  } while (completedWork !== null);
+
+  // We've reached the root.
+  if (workInProgressRootExitStatus === RootIncomplete) {
+    workInProgressRootExitStatus = RootCompleted;
+  }
+}  
+
+function completeWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+): Fiber | null {
+  // 创建DOM节点
+  const instance = createInstance(
+    type,
+    newProps,
+    rootContainerInstance,
+    currentHostContext,
+    workInProgress,
+  );
+  // 将子孙DOM节点插入刚生成的DOM节点中
+  appendAllChildren(instance, workInProgress, false, false);
+  // DOM节点赋值给stateNode保存备用
+  workInProgress.stateNode = instance;
+
+  // Certain renderers require commit-time effects for initial mount.
+  // (eg DOM renderer supports auto-focus for certain elements).
+  // Make sure such renderers get scheduled for later work.
+  if (
+    finalizeInitialChildren(
+      instance,
+      type,
+      newProps,
+      rootContainerInstance,
+      currentHostContext,
+    )
+  ) {
+    markUpdate(workInProgress);
+  }
+}
+``` 
+由此可见，beginWork和completeUnitOfWork共同构建了Fiber Tree
+```
+return (
+  <div>
+    i am
+    <span>KaSong</span>
+    <span></span>
+  </div>
+  <span></span>
+);
+```
+这段代码的FiberTree如下,其中粉色箭头为beginWork,蓝色箭头为completeUnitOfWork，可以看出beginWork是
+从上往下遍历，completeUnitOfWork是找到兄弟节点后从下往上遍历<br>
+![](../image/WechatIMG3.jpeg)
+
+## commit阶段
+commit阶段负责将变化的组件渲染到⻚⾯上commit阶段
+分为下面三个阶段
+
+### commitBeforeMutationEffects(DOM操作前)
 * 1.处理 DOM节点 渲染/删除后的 autoFocus 、 blur 逻辑。
 * 2.调⽤ getSnapshotBeforeUpdate ⽣命周期钩⼦。
 * 3.调度 useEffect。
@@ -953,7 +1281,7 @@ function commitBeforeMutationEffectsImpl(fiber: Fiber) {
 }
 ```
 
-#### commitMutationEffects(执⾏DOM操作)
+### commitMutationEffects(执⾏DOM操作)
 * 1.遍历finishedWork，执⾏DOM操作
 * 2.对于删除的组件，会执⾏componentWillUnMount⽣命周期
 ```js
@@ -993,7 +1321,7 @@ function commitMutationEffects(
 }
 ```
 
-#### recursivelyCommitLayoutEffects(DOM操作后)
+### recursivelyCommitLayoutEffects(DOM操作后)
 在这个阶段前current tree也发⽣变化了，指向了最新构建的workInProgress tree。
 * 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期，didMount/didUpdate；执⾏
 useEffect
