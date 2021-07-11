@@ -4,10 +4,12 @@ hook 钩子， 在非class情况下，可以使用更多react特性<br>
 完全可选 100%向后兼容，class依旧可以用
 
 为什么要使用Hook?
-* 代码更简洁，上手更简单，不用使用难以理解的生命周期<br>
-* 可以在不改变组件层次结构的情况下重用有状态逻辑
-* 状态管理不用redux，用mobx<br>
-* 开发体验非常好，可以让函数组件维护内部的状态<br>
+* 类组件虽然功能全面，但是要使用难以理解的生命周期，写起来比较复杂<br>
+* 没有hook的函数组件能力有缺陷，hook可以让函数组件维护内部的状态，在不改变组件层次结构的情况下重用有状态逻辑<br>
+* 在hook出现之前，React分为容器组件和UI组件，容器组件使用类组件，因为可以设置state，而UI组件和state无关，
+  只需通过props传递进来使用，可以使用函数组件，但如果在之后的迭代需要在UI组件中加入自己的state，又需要将
+  此UI组件改成类组件，或者接着写越来越多的props，所以新增了hook来补齐函数组件缺失的功能，这样可以实现
+  类组件的功能，且可以复用逻辑，符合solid原则，使代码量变少
 
 React单向数据流：
 * 和vue双向绑定不同，是自上而下的单向数据流方式
@@ -343,6 +345,36 @@ useMemo会在给定输入的情况下存储先前的值，并在给定跟之前�
 * 因为是使用闭包来实现缓存，会占用更大的内存
 * 当依赖项频繁改变时，也不适合用
 * 适用场景:减少不必要的更新，如例2和例3
+
+额外笔记：
+```js
+  // 每次有更新的时候，就会创建一个新的function
+  // 没有依赖的时候，就返回缓存了的函数
+  // age变化的时候，会返回新的函数，age没变就返回之前的缓存的函数
+  const onClick = useCallback(() => {
+    setAge1(34)
+    // this.setState()
+  }, [age]);
+  // useMemo(xxx, []); // div 最终也是一个对象
+  return <div>
+    {name}
+    <B onClick={onClick}></B>
+  </div>
+}
+
+// class component: shouldComponentUpdate 判断是否要更新
+// PureComponent 默认对props做了shouldComponentUpdate
+
+// React.memo + useCallback,可以减少hooks的渲染
+// React.memo + useCallback需要配对使用，没有memo的时候，根本就不比较
+
+// React.memo 会对组件做一层props的浅比较，类似shouldComponentUpdate的逻辑
+// React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
+const B = React.memo(() => {
+  console.log('B');
+  return <div></div>
+});
+```
 
 ## 自定义Hook
 把逻辑功能相同的片段封装成单独的函数来使用，提升开发效率<br>

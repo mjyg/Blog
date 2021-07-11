@@ -1620,6 +1620,365 @@ render()流程图（React16），可以看到render之后就进入了调度流�
 ![](../image/1626013504744.jpg)
 (scheduleUpdateOnFiber是React16的scheduleWork)
 
-## this.setState流程
+## useState
 hooks模拟类组件的生命周期：<br>
 ![](../image/1626014741081.jpg)
+
+useState流程：
+*  1. mountState 得到初始化的state
+*  2. dispatchAction => setName 会创建一个update，
+    *  会判断当前当前有没有任务存在？没有的话，就先执行setName的回调，把值放在eagerState的属性上
+    *  然后发起performanceSyncWorkOnRoot
+*  3. 导致function A 会重新执行
+*  4. useState => updateState, 才执行出setName的回调，把memorizeState更新了
+
+useState的3个阶段：
+* mountState 初始化
+* dispatchAction  更改，比如setName
+* updateState  得到更新后的state
+
+useState源码入口：
+```js
+export function useState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<BasicStateAction<S>>] {
+  const dispatcher = resolveDispatcher();
+  // mount阶段，返回onMount
+  // update阶段， 返回onUpdate
+  return dispatcher.useState(initialState);
+}
+```
+```js
+function resolveDispatcher() {
+  // 这个是动态赋值的，在beginWork的updateFunctionComponent里会给ReactCurrentDispatcher.current赋值
+  const dispatcher = ReactCurrentDispatcher.current; // ?
+  invariant(
+    dispatcher !== null,
+    'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' +
+      ' one of the following reasons:\n' +
+      '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' +
+      '2. You might be breaking the Rules of Hooks\n' +
+      '3. You might have more than one copy of React in the same app\n' +
+      'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.',
+  );
+  return dispatcher;
+}
+```
+
+### mountState
+第一次执行函数体的时候，调用useState会执行mountState，它主要做了以下几件事情:
+* 1.默认值是function，执行function，得到初始state
+* 2. state是存放在memoizedState属性中
+* 3.新建一个quene
+* 4.把queue传递给dispatch, setName
+* 5.返回默认值和dispatch
+```js
+function mountState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<BasicStateAction<S>>] {
+  const hook = mountWorkInProgressHook();
+  // 1.默认值是function，执行function,得到初始state
+  if (typeof initialState === 'function') {
+    // $FlowFixMe: Flow doesn't like mixed types
+    initialState = initialState();
+  }
+  // 2.state是存放在memoizedState属性中
+  hook.memoizedState = hook.baseState = initialState;
+  // 3.新建一个queue,存储update的，一整次的更新
+  const queue = (hook.queue = {
+    pending: null,
+    dispatch: null,
+    lastRenderedReducer: basicStateReducer,
+    lastRenderedState: (initialState: any),
+  });
+  // 4.把queue传递给dispatch
+  const dispatch: Dispatch<
+    BasicStateAction<S>,
+  > = (queue.dispatch = (dispatchAction.bind(
+    null,
+    currentlyRenderingFiber,
+    queue,
+  ): any));
+  // 5.返回默认值和dispatch（name,setName）
+  return [hook.memoizedState, dispatch];
+}
+```
+
+### dispatchAction
+* 1. 创建一个update
+* 2. update添加到quene里
+* 3. 如果当前有时间，提前计算出最新的state，保存在eagerState
+* 4. 进入调度流程scheduleUpdateOnFiber
+```js
+function dispatchAction<S, A>(
+  fiber: Fiber,
+  queue: UpdateQueue<S, A>,
+  action: A,
+) {
+  if (__DEV__) {
+    if (typeof arguments[3] === 'function') {
+      console.error(
+        "State updates from the useState() and useReducer() Hooks don't support the " +
+          'second callback argument. To execute a side effect after ' +
+          'rendering, declare it in the component body with useEffect().',
+      );
+    }
+  }
+
+  const eventTime = requestEventTime();
+  const lane = requestUpdateLane(fiber);
+  // 1.创建一个update
+  const update: Update<S, A> = {
+    lane,
+    action,
+    eagerReducer: null,
+    eagerState: null, //3. 如果当前有时间，提前计算出最新的state,保存在eagerState
+    next: (null: any),
+  };
+
+  // Append the update to the end of the list.
+  // 2. update添加到quene里
+  const pending = queue.pending;
+  if (pending === null) {
+    // This is the first update. Create a circular list.
+    update.next = update;
+  } else {
+    update.next = pending.next;
+    pending.next = update;
+  }
+  queue.pending = update;
+
+  const alternate = fiber.alternate;
+  if (
+    fiber === currentlyRenderingFiber ||
+    (alternate !== null && alternate === currentlyRenderingFiber)
+  ) {
+    // This is a render phase update. Stash it in a lazily-created map of
+    // queue -> linked list of updates. After this render pass, we'll restart
+    // and apply the stashed updates on top of the work-in-progress hook.
+    didScheduleRenderPhaseUpdateDuringThisPass = didScheduleRenderPhaseUpdate = true;
+  } else {
+    if (
+      fiber.lanes === NoLanes &&
+      (alternate === null || alternate.lanes === NoLanes)
+    ) {
+      // The queue is currently empty, which means we can eagerly compute the
+      // next state before entering the render phase. If the new state is the
+      // same as the current state, we may be able to bail out entirely.
+      // 队列当前为空，这意味着我们可以在进入渲染阶段之前提前地计算下一个状态。 
+      // 如果新状态与当前状态相同，我们可能可以完全复用。
+      const lastRenderedReducer = queue.lastRenderedReducer;
+      if (lastRenderedReducer !== null) {
+        let prevDispatcher;
+        if (__DEV__) {
+          prevDispatcher = ReactCurrentDispatcher.current;
+          ReactCurrentDispatcher.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
+        }
+        try {
+          const currentState: S = (queue.lastRenderedState: any);
+          const eagerState = lastRenderedReducer(currentState, action);
+          // Stash the eagerly computed state, and the reducer used to compute
+          // it, on the update object. If the reducer hasn't changed by the
+          // time we enter the render phase, then the eager state can be used
+          // without calling the reducer again.
+          update.eagerReducer = lastRenderedReducer;
+          update.eagerState = eagerState;
+          if (is(eagerState, currentState)) {
+            // Fast path. We can bail out without scheduling React to re-render.
+            // It's still possible that we'll need to rebase this update later,
+            // if the component re-renders for a different reason and by that
+            // time the reducer has changed.
+            return;
+          }
+        } catch (error) {
+          // Suppress the error. It will throw again in the render phase.
+        } finally {
+          if (__DEV__) {
+            ReactCurrentDispatcher.current = prevDispatcher;
+          }
+        }
+      }
+    }
+   
+    // 4.进入调度流程
+    scheduleUpdateOnFiber(fiber, lane, eventTime);
+  }
+}
+```
+
+### updateState
+* 1.递归执行quene里的update
+* 2.计算最新的state赋值给，memoizedState
+```js
+ // Process this update.
+// eagerReducer是预先处理的state
+if (update.eagerReducer === reducer) {
+  // If this update was processed eagerly, and its reducer matches the
+  // current reducer, we can use the eagerly computed state.
+  newState = ((update.eagerState: any): S);
+} else {
+  // 执行action,得到新的state，赋值给newState
+  const action = update.action;
+  newState = reducer(newState, action);
+}
+```
+
+## useEffect
+useEffect流程：
+* 初始化:
+*  1. mountEffect: 是在beginWork执行的，打上flags标记，推入一个Effect的链表
+*  2. 在commit阶段的dom更新完毕后，才会执行useEffect的回调，并把create的返回值赋值给distory
+*  state变化了:
+*  3. updateEffect 是在beginWork执行的,对比依赖是否发生变化，如不一样，设置EffectTag，则重新push一个新的Effect，
+*  依赖发生变化：
+*  4. commit阶段开始，在flushPassiveEffects 执行distory
+*  5. 在commit阶段dom更新完毕后才会又执行useEffect的回调
+
+useEffect的2个阶段:
+* MountEffect
+* UpdateEffect
+
+### MountEffect
+* 1. 处理依赖数组
+* 2. 设置effectTag
+* 3. 新增一个Effect到currentlyRenderingFiber.updateQueue 中参与到compleleRoot中
+```js
+function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
+  const hook = mountWorkInProgressHook();
+  // 依赖数组
+  const nextDeps = deps === undefined ? null : deps;
+  // 设置effectTag
+  currentlyRenderingFiber.flags |= fiberFlags;
+  hook.memoizedState = pushEffect(
+    HookHasEffect | hookFlags,
+    create,
+    undefined,
+    nextDeps,
+  );
+}
+```
+MountEffect执行时机:<br>
+在commitRoot =>commitLayoutEffects =>commitLifeCycles =>commitHookEffectListMount里执行MountEffect
+```js
+function commitHookEffectListMount(flags: HookFlags, finishedWork: Fiber) {
+  const updateQueue: FunctionComponentUpdateQueue | null = (finishedWork.updateQueue: any);
+  const lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
+  // 有更新队列
+  if (lastEffect !== null) {
+    const firstEffect = lastEffect.next;
+    let effect = firstEffect;
+    // 遍历所有的effect
+    do {
+      if ((effect.tag & flags) === flags) {
+        // Mount
+        // create是useEffect的回调函数,即useEffect的第一个参数
+        const create = effect.create;
+        // 回调的返回值赋值给effect.destroy,该值一开始是没有的
+        effect.destroy = create();
+
+        if (__DEV__) {
+          const destroy = effect.destroy;
+          if (destroy !== undefined && typeof destroy !== 'function') {
+            let addendum;
+            if (destroy === null) {
+              addendum =
+                ' You returned null. If your effect does not require clean ' +
+                'up, return undefined (or nothing).';
+            } else if (typeof destroy.then === 'function') {
+              addendum =
+                '\n\nIt looks like you wrote useEffect(async () => ...) or returned a Promise. ' +
+                'Instead, write the async function inside your effect ' +
+                'and call it immediately:\n\n' +
+                'useEffect(() => {\n' +
+                '  async function fetchData() {\n' +
+                '    // You can await here\n' +
+                '    const response = await MyAPI.getData(someId);\n' +
+                '    // ...\n' +
+                '  }\n' +
+                '  fetchData();\n' +
+                `}, [someId]); // Or [] if effect doesn't need props or state\n\n` +
+                'Learn more about data fetching with Hooks: https://reactjs.org/link/hooks-data-fetching';
+            } else {
+              addendum = ' You returned: ' + destroy;
+            }
+            console.error(
+              'An effect function must not return anything besides a function, ' +
+                'which is used for clean-up.%s',
+              addendum,
+            );
+          }
+        }
+      }
+      effect = effect.next;
+    } while (effect !== firstEffect);
+  }
+}
+```
+### UpdateEffect
+* 设置EffectTag
+* 对比依赖是否发生变化，如不一样，则重新push一个新的Effect
+```js
+function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
+  const hook = updateWorkInProgressHook();
+  const nextDeps = deps === undefined ? null : deps;
+  let destroy = undefined;
+
+  if (currentHook !== null) {
+    const prevEffect = currentHook.memoizedState;
+    // useEffect返回的回调函数
+    destroy = prevEffect.destroy;
+    if (nextDeps !== null) {
+      const prevDeps = prevEffect.deps;
+      // seEffect依赖的对比，变化了才pushEffect
+      if (areHookInputsEqual(nextDeps, prevDeps)) {
+        pushEffect(hookFlags, create, destroy, nextDeps);
+        return;
+      }
+    }
+  }
+```
+
+destroy: 在commitUnmount阶段卸载组件，这时distory方法会被调用
+```js
+function commitHookEffectListUnmount(
+  flags: HookFlags,
+  finishedWork: Fiber,
+  nearestMountedAncestor: Fiber | null,
+) {
+  const updateQueue: FunctionComponentUpdateQueue | null = (finishedWork.updateQueue: any);
+  const lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
+  if (lastEffect !== null) {
+    const firstEffect = lastEffect.next;
+    let effect = firstEffect;
+    do {
+      if ((effect.tag & flags) === flags) {
+        // Unmount
+        const destroy = effect.destroy;
+        effect.destroy = undefined;
+        if (destroy !== undefined) {
+          // 执行destory
+          safelyCallDestroy(finishedWork, nearestMountedAncestor, destroy);
+        }
+      }
+      effect = effect.next;
+    } while (effect !== firstEffect);
+  }
+}
+```
+
+react hook实用小技巧：
+```js
+import { unstable_batchedUpdates as batchedUpdates} from 'react-dom';
+ useEffect(() => {
+    console.log('12');
+    // 调用两次setName会做两次更新， 在hooks里暂时没有批处理
+    // 可以这样手动调用批处理
+    batchedUpdates(() => {
+      setName("二灯");
+      setName((name) => {
+        // name就是上一次的name的值
+        return '新name'
+      })
+    });
+  }, []);
+```

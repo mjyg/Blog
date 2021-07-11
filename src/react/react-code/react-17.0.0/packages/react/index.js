@@ -134,6 +134,7 @@ function A (){
   useEffect(() => {
     console.log('12');
     // 会做两次更新， 在hooks里暂时没有批处理
+    // 可以这样手动调用批处理
     batchedUpdates(() => {
       setName("二灯");
       setName((name) => {
@@ -186,9 +187,11 @@ function A (){
 
 // React.memo + useCallback,可以减少hooks的渲染
 // React.memo + useCallback需要配对使用，没有memo的时候，根本就不比较
+
 // React.memo 会对组件做一层props的浅比较，类似shouldComponentUpdate的逻辑
+// React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
 const B = React.memo(() => {
   console.log('B');
   return <div></div>
 });
-// React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
+

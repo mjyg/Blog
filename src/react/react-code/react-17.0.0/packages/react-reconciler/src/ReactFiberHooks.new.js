@@ -760,11 +760,13 @@ function updateReducer<S, I, A>(
         }
 
         // Process this update.
+        // eagerReducer是预先处理的state
         if (update.eagerReducer === reducer) {
           // If this update was processed eagerly, and its reducer matches the
           // current reducer, we can use the eagerly computed state.
           newState = ((update.eagerState: any): S);
         } else {
+          // 执行action,得到新的state，赋值给newState
           const action = update.action;
           newState = reducer(newState, action);
         }
@@ -1205,7 +1207,9 @@ function updateRef<T>(initialValue: T): {|current: T|} {
 
 function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
   const hook = mountWorkInProgressHook();
+  // 依赖数组
   const nextDeps = deps === undefined ? null : deps;
+  // 设置effectTag
   currentlyRenderingFiber.flags |= fiberFlags;
   hook.memoizedState = pushEffect(
     HookHasEffect | hookFlags,

@@ -1227,9 +1227,11 @@ function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
 
   if (currentHook !== null) {
     const prevEffect = currentHook.memoizedState;
+    // useEffect返回的回调函数
     destroy = prevEffect.destroy;
     if (nextDeps !== null) {
       const prevDeps = prevEffect.deps;
+      // seEffect依赖的对比
       if (areHookInputsEqual(nextDeps, prevDeps)) {
         pushEffect(hookFlags, create, destroy, nextDeps);
         return;

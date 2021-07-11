@@ -23,7 +23,7 @@ type BasicStateAction<S> = (S => S) | S;
 type Dispatch<A> = A => void;
 
 function resolveDispatcher() {
-  // 这个是动态赋值的
+  // 这个是动态赋值的，在beginWork的updateFunctionComponent里会给ReactCurrentDispatcher.current赋值
   const dispatcher = ReactCurrentDispatcher.current; // ?
   invariant(
     dispatcher !== null,

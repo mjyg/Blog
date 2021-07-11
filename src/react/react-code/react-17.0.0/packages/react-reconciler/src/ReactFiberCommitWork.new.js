@@ -354,9 +354,11 @@ function commitHookEffectListUnmount(
 function commitHookEffectListMount(flags: HookFlags, finishedWork: Fiber) {
   const updateQueue: FunctionComponentUpdateQueue | null = (finishedWork.updateQueue: any);
   const lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
+  // 有更新队列
   if (lastEffect !== null) {
     const firstEffect = lastEffect.next;
     let effect = firstEffect;
+    // 遍历所有的effect
     do {
       if ((effect.tag & flags) === flags) {
         // Mount
