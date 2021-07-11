@@ -17,10 +17,10 @@
 >       * [单节点diff](#单节点diff)
 >       * [多节点diff](#多节点diff)
 >   * [completeUnitOfWork](#completeUnitOfWork)
->  * [commit阶段](#commit阶段)
->     * [commitBeforeMutationEffects(DOM操作前)](#commitbeforemutationeffectsdom操作前)
->     * [commitMutationEffects(执⾏DOM操作)](#commitmutationeffects执dom操作)
->     * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelycommitlayouteffectsdom操作后))
+> * [commit阶段](#commit阶段)
+>   * [commitBeforeMutationEffects(DOM操作前)](#commitbeforemutationeffectsdom操作前)
+>   * [commitMutationEffects(执⾏DOM操作)](#commitmutationeffects执dom操作)
+>   * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelycommitlayouteffectsdom操作后))
 > * [ReactDOM.render流程](#ReactDOMrender流程)
 
 ## 整体架构
@@ -148,6 +148,7 @@ DefaultLanes | lane
 ![](../image/1625839766088.jpg)<br>
 ![](../image/1625839783008.jpg)<br>
 ![](../image/1625840051596.jpg)<br>
+(scheduleUpdateOnFiber是React16的scheduleWork)
 
 ### Fiber的结构
 Fiber是一个包含很多属性的对象
@@ -346,12 +347,13 @@ switch (priorityLevel) {
 }
 var expirationTime = startTime + timeout;  //过期时间
 ```
+**优先级**
+* Immediate (-1) - 这个优先级的任务会同步执⾏, 或者说要⻢上执⾏且不能中断
+& UserBlocking (250ms) 这些任务⼀般是⽤户交互的结果, 需要即时得到反馈
+* Normal (5s) 应对哪些不需要⽴即感受到的任务，例如⽹络请求
+* Low (10s) 这些任务可以放后，但是最终应该得到执⾏. 例如分析通知
+* Idle (没有超时时间) ⼀些没有必要做的任务 (e.g. ⽐如隐藏的内容), 可能会被饿死
 ```js
-// Max 31 bit integer. The max integer size in V8 for 32-bit systems.
-// Math.pow(2, 30) - 1
-// 0b111111111111111111111111111111
-var maxSigned31BitInt = 1073741823;
-
 // Times out immediately
 var IMMEDIATE_PRIORITY_TIMEOUT = -1;
 // Eventually times out
@@ -1208,7 +1210,7 @@ return (
 ![](../image/WechatIMG3.jpeg)
 
 ## commit阶段
-commit阶段负责将变化的组件渲染到⻚⾯上commit阶段
+commit阶段负责将变化的组件渲染到⻚⾯上
 分为下面三个阶段
 
 ### commitBeforeMutationEffects(DOM操作前)
@@ -1216,26 +1218,10 @@ commit阶段负责将变化的组件渲染到⻚⾯上commit阶段
 * 2.调⽤ getSnapshotBeforeUpdate ⽣命周期钩⼦。
 * 3.调度 useEffect。
 ```js
-// class A extrends Component{
-//  getSnapshotBeforeUpdate(){
-//   console.log(1);
-//   }
-//  render(){
-//   return <B> </B>
-//   }
-//  }
-// class B extrends Component{
-//   getSnapshotBeforeUpdate(){
-//     console.log(2);
-//   }
-//   render(){
-//   return <div> </div>
-//  }
-
 function commitBeforeMutationEffects(firstChild: Fiber) {
   let fiber = firstChild;
   while (fiber !== null) {
-    // 处理需要删除的fiber autoFocus、blur 逻辑。
+    // 处理需要删除的fiber,处理autoFocus、blur 逻辑。
     if (fiber.deletions !== null) {
       commitBeforeMutationEffectsDeletions(fiber.deletions);
     }
@@ -1247,6 +1233,25 @@ function commitBeforeMutationEffects(firstChild: Fiber) {
       // 调⽤ getSnapshotBeforeUpdate ⽣命周期
       // 异步调度useEffect
       commitBeforeMutationEffectsImpl(fiber);
+      //例子：
+      // class A extrends Component{
+      //  getSnapshotBeforeUpdate(){   //执行这个生命周期立马渲染到页面
+      //    console.log(1);
+      //  }
+      //  render(){
+      //    return <B> </B>
+      //  }
+      // }
+      // class B extrends Component{
+      //   getSnapshotBeforeUpdate(){
+      //     console.log(2);
+      //   }
+      //   render(){
+      //    return <div> </div>
+      //  }
+      // }
+      // 问：会先调用哪个节点的getSnapshotBeforeUpdate？
+      // 会先调用子节点B的，从源码可以看出会先处理子节点的getSnapshotBeforeUpdate
     } catch (error) {
       captureCommitPhaseError(fiber, fiber.return, error);
     } // 返回兄弟节点，接着循环
@@ -1259,23 +1264,24 @@ function commitBeforeMutationEffectsImpl(fiber: Fiber) {
   const current = fiber.alternate;
   const flags = fiber.flags;
   if ((flags & Snapshot) !== NoFlags) {
-    // 调⽤ getSnapshotBeforeUpdate ⽣命周期
+    // 存在getSnapshotBeforeUpdate的时候，调⽤ getSnapshotBeforeUpdate ⽣命周期
     commitBeforeMutationEffectOnFiber(current, fiber);
   }
-  // tags
+ 
   if ((flags & Passive) !== NoFlags) {
     // If there are passive effects, schedule a callback to flush at
     // the earliest opportunity.
     if (!rootDoesHavePassiveEffects) {
       rootDoesHavePassiveEffects = true;
-      // 异步调度 useEffect 的回调并不是在 dom渲染前执⾏的。
-      // useLayoutEffect 在dom操作后同步执⾏回调
-      // useEffect 异步执⾏回调。不想阻塞主线程。可以先尝试使⽤useEffect。不⾏的话再使⽤
-      // useLayoutEffect。
+      // 异步调度 useEffect 的回调，在这里并不执行，是做了异步调用在宏任务中执行，因为它并不是在dom渲染前执行的
       scheduleCallback(NormalSchedulerPriority, () => {
         flushPassiveEffects();
         return null;
       });
+      // useLayoutEffect和useEffect区别：
+      // useLayoutEffect：在dom操作后同步执⾏回调
+      // useEffect：异步执⾏回调。因为不想阻塞主线程。
+      // 任何时候可以先尝试使⽤useEffect，不⾏的话再使⽤useLayoutEffect，因为useLayoutEffect会阻塞主线程
     }
   }
 }
@@ -1285,7 +1291,7 @@ function commitBeforeMutationEffectsImpl(fiber: Fiber) {
 * 1.遍历finishedWork，执⾏DOM操作
 * 2.对于删除的组件，会执⾏componentWillUnMount⽣命周期
 ```js
-// 结构和上⾯的⼀样
+// 结构和commitBeforeMutationEffects的⼀样
 function commitMutationEffects(
   firstChild: Fiber,
   root: FiberRoot,
@@ -1308,8 +1314,8 @@ function commitMutationEffects(
       commitMutationEffects(fiber.child, root, renderPriorityLevel);
     }
     try {
-      // 区分不同情Flag 执⾏不同的Dom操作
-      // 已经构造好了dom元素了，存放在stateNode节点的。新增，删除，替换？
+      // 区分不同情Flag 执⾏不同的Dom操作：新增，删除，替换
+      // 已经构造好了dom元素了，存放在stateNode节点
       commitMutationEffectsImpl(fiber, root, renderPriorityLevel);
       // ⻚⾯就终于渲染出来了
     } catch (error) {
@@ -1321,15 +1327,69 @@ function commitMutationEffects(
 }
 ```
 
+调用commitMutationEffects后，就把root.current 指向了work-in-progress tree
+```js
+// 把DOM元素渲染到页面上
+// The next phase is the mutation phase, where we mutate the host tree.
+commitMutationEffects(finishedWork, root, renderPriorityLevel);
+
+if (shouldFireAfterActiveInstanceBlur) {
+  afterActiveInstanceBlur();
+}
+resetAfterCommit(root.containerInfo);
+
+// The work-in-progress tree is now the current tree. This must come after
+// the mutation phase, so that the previous tree is still current during
+// componentWillUnmount, but before the layout phase, so that the finished
+// work is current during componentDidMount/Update.
+// 在此之后，root.current 指向了work-in-progress tree
+root.current = finishedWork;
+
+// The next phase is the layout phase, where we call effects that read
+// the host tree after it's been mutated. The idiomatic use case for this is
+// layout, but class component lifecycles also fire here for legacy reasons.
+
+if (__DEV__) {
+  if (enableDebugTracing) {
+    logLayoutEffectsStarted(lanes);
+  }
+}
+if (enableSchedulingProfiler) {
+  markLayoutEffectsStarted(lanes);
+}
+
+if (__DEV__) {
+  setCurrentDebugFiberInDEV(finishedWork);
+  invokeGuardedCallback(
+    null,
+    recursivelyCommitLayoutEffects,
+    null,
+    finishedWork,
+    root,
+  );
+  if (hasCaughtError()) {
+    const error = clearCaughtError();
+    captureCommitPhaseErrorOnRoot(finishedWork, finishedWork, error);
+  }
+  resetCurrentDebugFiberInDEV();
+} else {
+  try {
+    recursivelyCommitLayoutEffects(finishedWork, root);
+  } catch (error) {
+    captureCommitPhaseErrorOnRoot(finishedWork, finishedWork, error);
+  }
+}
+
+```
+
 ### recursivelyCommitLayoutEffects(DOM操作后)
 在这个阶段前current tree也发⽣变化了，指向了最新构建的workInProgress tree。
-* 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期，didMount/didUpdate；执⾏
-useEffect
+* 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期，didMount/didUpdate；执⾏useEffect
 * 2.赋值 ref
 * 3.处理ReactDom.render 回调
 ```js
-// A,B两个组件，⽣命周期getSnapshotBeforeUpdate，componentDidMount，
-//componentWillMount,
+// 例子1：
+// A,B两个组件，⽣命周期getSnapshotBeforeUpdate，componentDidMount，componentWillMount,
 // componentWillUnMount 问整体的执⾏顺序？
 // 哪⼏个是在commit阶段执⾏的？哪⼏个是在BeginWork⾥执⾏的？
 // class A extrends Component{
@@ -1338,9 +1398,9 @@ useEffect
 //   }
 //   componentDidUpdate(){
 //     console.log(1);
-//  }
-//  render(){
-//   return <B> </B>
+//   }
+//   render(){
+//    return <B> </B>
 //   }
 //  }
 //
@@ -1348,17 +1408,20 @@ useEffect
 //  componentDidMount(){
 //   console.log(2);
 //  }
-//   componentDidUpdate(){
-//  console.log(2);
+//  componentDidUpdate(){
+//   console.log(2);
 //  }
 //  render(){
 //   return <div> </div>
 //  }
 // }
-//
+// getSnapshotBeforeUpdate(dom操作前)，componentDidMount（dom操作后,componentWillUnMount（dom操作后）在commit阶段执行
+// componentWillMount在BeginWork⾥执⾏的
+
+// 例子2：
 // ReactDOM.render(<App/>, $("#app"), () => {
-//  console.log('');
-//  });
+//  console.log('');  //在这里的回调和写在componentDidMount效果一样
+// });
 
 function recursivelyCommitLayoutEffects(
   finishedWork: Fiber,
@@ -1410,6 +1473,153 @@ function recursivelyCommitLayoutEffects(
 ```
 
 ## ReactDOM.render流程
-是⾛的unBatchUpdate ，所以是没有⾛schedule调度的，直接就到了Reconciler阶段了。
+在render函数里调用了legacyRenderSubtreeIntoContainer方法
+```js
+export function render(
+  element: React$Element<any>,
+  container: Container,
+  callback: ?Function,
+) {
+  invariant(
+    isValidContainer(container),
+    'Target container is not a DOM element.',
+  );
+  if (__DEV__) {
+    const isModernRoot =
+      isContainerMarkedAsRoot(container) &&
+      container._reactRootContainer === undefined;
+    if (isModernRoot) {
+      console.error(
+        'You are calling ReactDOM.render() on a container that was previously ' +
+          'passed to ReactDOM.createRoot(). This is not supported. ' +
+          'Did you mean to call root.render(element)?',
+      );
+    }
+  }
+  return legacyRenderSubtreeIntoContainer(
+    null,
+    element,
+    container,
+    false,
+    callback,
+  );
+}
+```
+下面来看legacyRenderSubtreeIntoContainer方法:
+* 1. 创建 reactRoot，在dom元素上挂载, FiberRoot
+* 2. 调用 unbatchUpdate 非批处理
+* 3. 调用 updateContainer
+```js
+function legacyRenderSubtreeIntoContainer(
+  parentComponent: ?React$Component<any, any>,
+  children: ReactNodeList,
+  container: Container,
+  forceHydrate: boolean,
+  callback: ?Function,
+) {
+  if (__DEV__) {
+    topLevelUpdateWarnings(container);
+    warnOnInvalidCallback(callback === undefined ? null : callback, 'render');
+  }
+
+  // TODO: Without `any` type, Flow says "Property cannot be accessed on any
+  // member of intersection type." Whyyyyyy.
+  // dom元素
+  let root: RootType = (container._reactRootContainer: any);
+  let fiberRoot;
+  if (!root) {
+    // Initial mount
+    // 创建 reactRoot，在dom元素上挂载, FiberRoot
+    root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
+      container,
+      forceHydrate,
+    );
+    fiberRoot = root._internalRoot;
+    // ReactDOM.render(<App/>, $('#app'), () => {// })
+    // callback是callback第三个参数
+    if (typeof callback === 'function') {
+      const originalCallback = callback;
+      callback = function() {
+        const instance = getPublicRootInstance(fiberRoot);
+        originalCallback.call(instance);
+      };
+    }
+    // Initial mount should not be batched.
+    // react里class Component 默认的批处理逻辑。
+    // 这里是期望不批处理，立刻就最高优先级渲染出来的，设置unBatchUpdateContext
+    unbatchedUpdates(() => {
+      updateContainer(children, fiberRoot, parentComponent, callback);
+    });
+  } else {
+    fiberRoot = root._internalRoot;
+    if (typeof callback === 'function') {
+      const originalCallback = callback;
+      callback = function() {
+        const instance = getPublicRootInstance(fiberRoot);
+        originalCallback.call(instance);
+      };
+    }
+    // Update
+    updateContainer(children, fiberRoot, parentComponent, callback);
+  }
+  return getPublicRootInstance(fiberRoot);
+}
+```
+从updateContainer进入scheduleUpdateOnFiber，进入调度流程
+```js
+export function updateContainer(
+  element: ReactNodeList,
+  container: OpaqueRoot,
+  parentComponent: ?React$Component<any, any>,
+  callback: ?Function,
+): Lane {
+  if (__DEV__) {
+    onScheduleRoot(container, element);
+  }
+  const current = container.current;
+  const eventTime = requestEventTime();
+  if (__DEV__) {
+    // $FlowExpectedError - jest isn't a global, and isn't recognized outside of tests
+    if ('undefined' !== typeof jest) {
+      warnIfUnmockedScheduler(current);
+      warnIfNotScopedWithMatchingAct(current);
+    }
+  }
+  // 获取优先级通道
+  const lane = requestUpdateLane(current);
+
+  if (enableSchedulingProfiler) {
+    markRenderScheduled(lane);
+  }
+
+  const context = getContextForSubtree(parentComponent);
+  if (container.context === null) {
+    container.context = context;
+  } else {
+    container.pendingContext = context;
+  }
+
+  const update = createUpdate(eventTime, lane);
+  // Caution: React DevTools currently depends on this property
+  // being called "element".
+  update.payload = {element};
+
+  callback = callback === undefined ? null : callback;
+
+  enqueueUpdate(current, update);
+  scheduleUpdateOnFiber(current, lane, eventTime);
+
+  return lane;
+}
+```
+在scheduleUpdateOnFiber中，是⾛的unBatchUpdate ，所以是没有⾛schedule调度的，直接就到了Reconciler阶段了。
 * unBatchUpdate 不批处理
 * batchUpdate 批处理
+
+render()流程图（React16），可以看到render之后就进入了调度流程:<br>
+![](../image/1626013504744.jpg)
+(scheduleUpdateOnFiber是React16的scheduleWork)
+
+## this.setState流程
+hooks模拟类组件的生命周期：<br>
+![](../image/1626014741081.jpg)

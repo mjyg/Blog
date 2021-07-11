@@ -759,6 +759,7 @@ function updateReducer<S, I, A>(
         }
 
         // Process this update.
+        // eagerState是预先处理的state
         if (update.eagerReducer === reducer) {
           // If this update was processed eagerly, and its reducer matches the
           // current reducer, we can use the eagerly computed state.
@@ -1126,17 +1127,21 @@ function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
   const hook = mountWorkInProgressHook();
+  // 1.默认值是function，执行function,得到初始state
   if (typeof initialState === 'function') {
     // $FlowFixMe: Flow doesn't like mixed types
     initialState = initialState();
   }
+  // 2.state是存放在memoizedState属性中
   hook.memoizedState = hook.baseState = initialState;
+  // 3.新建一个queue
   const queue = (hook.queue = {
     pending: null,
     dispatch: null,
     lastRenderedReducer: basicStateReducer,
     lastRenderedState: (initialState: any),
   });
+  // 4.把queue传递给dispatch,
   const dispatch: Dispatch<
     BasicStateAction<S>,
   > = (queue.dispatch = (dispatchAction.bind(
@@ -1144,6 +1149,7 @@ function mountState<S>(
     currentlyRenderingFiber,
     queue,
   ): any));
+  // 5.返回默认值和dispatch
   return [hook.memoizedState, dispatch];
 }
 
@@ -1671,16 +1677,17 @@ function dispatchAction<S, A>(
 
   const eventTime = requestEventTime();
   const lane = requestUpdateLane(fiber);
-
+  // 1.创建一个update
   const update: Update<S, A> = {
     lane,
     action,
     eagerReducer: null,
-    eagerState: null,
+    eagerState: null, //3. 如果当前有时间，提前计算出最新的state,保存在eagerState
     next: (null: any),
   };
 
   // Append the update to the end of the list.
+  // 2. update添加到quene里
   const pending = queue.pending;
   if (pending === null) {
     // This is the first update. Create a circular list.
@@ -1749,6 +1756,7 @@ function dispatchAction<S, A>(
         warnIfNotCurrentlyActingUpdatesInDev(fiber);
       }
     }
+    // 进入调度流程
     scheduleUpdateOnFiber(fiber, lane, eventTime);
   }
 

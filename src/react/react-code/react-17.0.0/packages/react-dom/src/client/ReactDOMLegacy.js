@@ -191,12 +191,14 @@ function legacyRenderSubtreeIntoContainer(
   let fiberRoot;
   if (!root) {
     // Initial mount
+    // 创建 reactRoot，在dom元素上挂载, FiberRoot
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
       container,
       forceHydrate,
     );
     fiberRoot = root._internalRoot;
     // ReactDOM.render(<App/>, $('#app'), () => {// })
+    // callback是callback第三个参数
     if (typeof callback === 'function') {
       const originalCallback = callback;
       callback = function() {

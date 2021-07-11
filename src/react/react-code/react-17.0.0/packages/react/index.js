@@ -183,12 +183,12 @@ function A (){
 
 // class component: shouldComponentUpdate 判断是否要更新
 // PureComponent 默认对props做了shouldComponentUpdate
-// React.memo + useCallback
-// 没有memo的时候，根本就不比较
-// PureComponent一样
+
+// React.memo + useCallback,可以减少hooks的渲染
+// React.memo + useCallback需要配对使用，没有memo的时候，根本就不比较
+// React.memo 会对组件做一层props的浅比较，类似shouldComponentUpdate的逻辑
 const B = React.memo(() => {
   console.log('B');
   return <div></div>
 });
-// React.memo 会对组价做一层props的浅比较，类似shouldComponentUpdate的逻辑
 // React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
