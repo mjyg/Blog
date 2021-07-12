@@ -9,7 +9,7 @@
 >   * [Fiber的结构](#Fiber的结构)
 >   * [Fiber Tree](#Fiber-Tree)
 >   * [调度逻辑](#调度逻辑)
-> * [Reconciler(协调器)](#Reconciler(协调器))
+> * [Reconciler(协调器)](#Reconciler协调器)
 >   * [双缓存结构](#双缓存结构)
 >   * [构建Fiber Tree](#构建Fiber-Tree)
 >   * [beginWork](#beginWork)
@@ -167,10 +167,7 @@ DefaultLanes | lane
 调度任务的优先级，高优先级任务优先进入Reconciler(performSyncWorkOnRoot)
 
 调度器流程图(React16)：
-![](../image/1625839766088.jpg)<br>
-![](../image/1625839783008.jpg)<br>
-![](../image/1625840051596.jpg)<br>
-(scheduleUpdateOnFiber是React16的scheduleWork)
+![](../image/WechatIMG4.jpeg)
 
 ### Fiber的结构
 Fiber是一个包含很多属性的对象
@@ -507,8 +504,7 @@ react发⽣⼀次更新的时候，⽐如ReactDOM.render/setState，都会从Fib
 然后逐⼀找到变化的节点。构建完成会形成⼀颗Fiber Tree。<br>
 
 协调器流程图：<br>
-![](../image/1625929339905.jpg)<br>
-![](../image/1625929491886.jpg)<br>
+![](../image/WechatIMG5.jpeg)<br>
 
 ### 双缓存结构
 在 React 中最多会同时存在两棵 Fiber树 。当前屏幕上显⽰内容对应的 Fiber树 称为 current
@@ -539,7 +535,7 @@ return (
 这段代码的FiberTree如下：<br>
 ![](../image/1625755858610.jpg)
 
-Reconciler的代码大致从rendererRootSync函数开始，从优先级最高的Fiber Root开始递归
+Reconciler的代码大致从renderRootSync函数开始，在里面调用了workLoopSync方法，从优先级最高的Fiber Root开始递归
 ```js
 // react-code\react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
 function workLoopSync() {
@@ -871,39 +867,61 @@ React Diff 会预设⼏个规则（React15到React17 dom diff大体一致）：
 * 2.节点变化，直接删除，然后重建
 * 3.存在key值，对⽐key值⼀样的节点
 ```js
-// react-17.0.0\packages\react-reconciler\src\ReactChildFiber.mew.js
-// 判断节点是不是react 节点
-// Handle object types
-const isObject = typeof newChild === "object" && newChild !== null;  //是对象走单节点diff
-if (isObject) {
-  // 根据不同的类型，处理不同的节点对⽐
-  switch (newChild.$$typeof) {
-    case REACT_ELEMENT_TYPE:
-      return placeSingleChild(
-        reconcileSingleElement(returnFiber, currentFirstChild, newChild, lanes)
-      );
-    //...
+// react-17.0.0\packages\react-reconciler\src\ReactChildFiber.new.js
+function reconcileChildFibers(
+  returnFiber: Fiber,
+   currentFirstChild: Fiber | null,
+   newChild: any,
+   lanes: Lanes,
+  ): Fiber | null {
+    // This function is not recursive.
+    // If the top level item is an array, we treat it as a set of children,
+    // not as a fragment. Nested arrays on the other hand will be treated as
+    // fragment nodes. Recursion happens at the normal flow.
+
+    // Handle top level unkeyed fragments as if they were arrays.
+    // This leads to an ambiguity between <>{[...]}</> and <>...</>.
+    // We treat the ambiguous cases above the same.
+    const isUnkeyedTopLevelFragment =
+          typeof newChild === 'object' &&
+          newChild !== null &&
+          newChild.type === REACT_FRAGMENT_TYPE &&
+          newChild.key === null;
+    if (isUnkeyedTopLevelFragment) {
+      newChild = newChild.props.children;
+    }
+  // 判断节点是不是react 节点
+  // Handle object types
+  const isObject = typeof newChild === "object" && newChild !== null;  //是对象走单节点diff
+  if (isObject) {
+    // 根据不同的类型，处理不同的节点对⽐
+    switch (newChild.$$typeof) {
+      case REACT_ELEMENT_TYPE:
+        return placeSingleChild(
+          reconcileSingleElement(returnFiber, currentFirstChild, newChild, lanes)
+        );
+      //...
+    }
   }
-}
-if (typeof newChild === "string" || typeof newChild === "number") {  //是string或number走单节点diff
-  return placeSingleChild(
-    reconcileSingleTextNode(
+  if (typeof newChild === "string" || typeof newChild === "number") {  //是string或number走单节点diff
+    return placeSingleChild(
+      reconcileSingleTextNode(
+        returnFiber,
+        currentFirstChild,
+        "" + newChild,
+        lanes
+      )
+    );
+  }
+  // 数组走多节点diff
+  if (isArray(newChild)) {
+    return reconcileChildrenArray(
       returnFiber,
       currentFirstChild,
-      "" + newChild,
+      newChild,
       lanes
-    )
-  );
-}
-// 数组走多节点diff
-if (isArray(newChild)) {
-  return reconcileChildrenArray(
-    returnFiber,
-    currentFirstChild,
-    newChild,
-    lanes
-  );
-}
+    );
+  }
 ```
 
 ##### 单节点diff
@@ -1052,10 +1070,12 @@ function reconcileChildrenArray(
 流程：
 *  1.向上递归completedWork
 *  2.创建DOM节点，更新Dom节点，Dom节点赋值给stateNode属性
-*  3.把子节点的side Effect附加到父节点的sideEffect链之上，在commit节点使用
+*  3.把子节点的sideEffect附加到父节点的sideEffect链之上，在commit阶段使用
 *  4.存在兄弟节点，将workInProgress指向兄弟节点，并return,执行兄弟节点的beginWork过程
 *  5.不存在兄弟节点，返回父节点。继续执行父节点的completeUnitOfWork<br>
+
 即构建整个Fiber Tree处于2重循环中的
+
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
 function completeUnitOfWork(unitOfWork: Fiber): void {
