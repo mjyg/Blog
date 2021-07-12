@@ -5,7 +5,7 @@
 >   * [React15](#React15)
 >   * [React16](#React16)
 >   * [React17](#React17)
-> * [Scheduler(调度器)](#Scheduler(调度器))
+> * [Scheduler(调度器)](#Scheduler调度器)
 >   * [Fiber的结构](#Fiber的结构)
 >   * [Fiber Tree](#Fiber-Tree)
 >   * [调度逻辑](#调度逻辑)
@@ -34,14 +34,10 @@
 ### React15
 ![](../image/16256178716322.png)
 
-由Reconciler(协调器)、Render(渲染器)这两个机制负责Dom的更新和渲染。
+React15由Reconciler(协调器)、Render(渲染器)这两个机制负责Dom的更新和渲染。
 * Reconciler: 本次更新中哪些节点需要更新，在相应的虚拟DOM打上标记，然后交给Render渲染器，Diff算法就
 是发生在这个阶段。这里指虚拟DOM节点的更新，并不是视图层的更新
-* Renderer 负责渲染更新的虚拟DOM，根据不同的内容或环境使用不同的渲染器。如渲染jsx内容使用ReactTes
-t渲染器，虚拟DOM使用浏览器V8引擎或SSR渲染
-
-渲染流程：对于当前组件需要更新内容是依次更新，Reconciler发现一个需要更新的节点后就交给Renderer渲染器渲染。
-完成后Reconciler又发现下个需要更新的节点，再交给Renderer渲染器...直到此次更新内容全部完成，整个更新流程是同步执行的
+* Renderer 负责渲染更新的虚拟DOM
 
 **batchUpdate机制**<br>
 React15默认用batchUpdate做了批处理优化，如下代码，同时执行两次setState操作，只会触发一次render更新，
@@ -100,10 +96,10 @@ React17承接了React16的Fiber架构，做了以下两个优化：
 为了解决react16的不⾜：<br>
 1.⾼优先级IO操作会阻塞低优先级CPU操作<br>
 2.只能指定⼀个优先级<br>
-React17升级为从指定⼀个优先级到指定到指定⼀个连续的优先级区间，避免出现一个很高优先级但运行时间很长的
+React17升级为从指定⼀个优先级到指定⼀个连续的优先级区间，避免出现一个很高优先级但运行时间很长的
 任务一直执行的情况，如果有低优先级但是在同一个优先级区间的任务，且耗时较少，就可以和该任务同批执行。
 
-优先级区间：
+优先级区间,被形象的命名为‘车道’：
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberLane.js
 export const NoLanes: Lanes = /*                        */ 0b0000000000000000000000000000000;
@@ -137,7 +133,7 @@ const IdleLanes: Lanes = /*                             */ 0b0110000000000000000
 
 export const OffscreenLane: Lane = /*                   */ 0b1000000000000000000000000000000;
 ```
-通过位运算的与操作、或操作来快速得到是属于哪个区间，也可以减少if else操作：
+通过位运算的与操作、或操作来快速得到是属于哪个区间，也可以减少if...else操作：
 ```
 DefaultLanes: 0b0000000000000000000111000000000
 lane:         0b0000000000000000000100000000000
@@ -147,9 +143,27 @@ DefaultLanes | lane
 > vue编译时优化，react运行时优化
 
 * 剥离了JSX
-剥离了JSX,参考[介绍全新的 JSX 转换](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+  不需要在引入React的情况下才能使用JSX,新的 JSX 转换**不会将 JSX 转换为 `React.createElement`**，
+  而是自动从 React 的 package 中引入新的入口函数并调用。<br>
+  假设源码如下：
+  ```js
+  function App() {
+    return <h1>Hello World</h1>;
+  }
+  ```
+  新 JSX 被转换编译后的结果:
+  ```js
+  // 由编译器引入（禁止自己引入！）
+  import {jsx as _jsx} from 'react/jsx-runtime';
+  
+  function App() {
+    return _jsx('h1', { children: 'Hello world' });
+  }
+  ```
+  参考[介绍全新的 JSX 转换](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
 
 ## Scheduler(调度器)
+
 调度任务的优先级，高优先级任务优先进入Reconciler(performSyncWorkOnRoot)
 
 调度器流程图(React16)：
@@ -163,7 +177,7 @@ Fiber是一个包含很多属性的对象
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiber.old.js
 function FiberNode() {
-  // Fiber对应组件的类型 Function/Class/Host
+  // Fiber对应组件的类型 Function/Class/Host(dom元素节点)
   this.tag = tag;
 
   // 标志这个节点的唯⼀性，dom diff时使用
@@ -215,7 +229,7 @@ function FiberNode() {
 * 4.及时任务当即执⾏
 * 5.延时任务需要等到currentTime >= expirationTime的时候才会执⾏。
 * 6.及时任务执⾏完后，也会去判断是否有延时任务到了该执⾏之时，如果是，就执⾏延时任务
-* 7.每⼀批任务的执⾏在不同的宏任务中，不阻塞⻚⾯⽤⼾的交互
+* 7.每⼀批任务的执⾏通过MessageChannel放在不同的宏任务中，不阻塞⻚⾯⽤⼾的交互
 
 **具体代码分析：**<br>
 1.根据优先级区分同步任务和异步任务，同步任务⽴即同步执⾏，最快渲染出来。异步任务⾛scheduler
@@ -270,7 +284,7 @@ export function scheduleUpdateOnFiber(fiber, lane, eventTime) {
 }
 
 function ensureRootIsScheduled(root, currentTime) {
-  // root.callbackNode的存活周期是从ensureRootIsScheduled开始——>到commitRootImpl截⽌
+// root.callbackNode的存活周期是从ensureRootIsScheduled开始——>到commitRootImpl截⽌
 // A: ensureRootIsScheduled root.callbackNode已被赋值
 // B: ensureRootIsScheduled existingCallbackNode = root.callbackNode 已经存在
   const existingCallbackNode = root.callbackNode;
@@ -362,10 +376,10 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
 ```
 **优先级**
 * Immediate (-1) - 这个优先级的任务会同步执⾏, 或者说要⻢上执⾏且不能中断
-& UserBlocking (250ms) 这些任务⼀般是⽤户交互的结果, 需要即时得到反馈
+* UserBlocking (250ms) 这些任务⼀般是⽤户交互的结果, 需要即时得到反馈
 * Normal (5s) 应对哪些不需要⽴即感受到的任务，例如⽹络请求
 * Low (10s) 这些任务可以放后，但是最终应该得到执⾏. 例如分析通知
-* Idle (没有超时时间) ⼀些没有必要做的任务 (e.g. ⽐如隐藏的内容), 可能会被饿死
+* Idle (没有超时时间): ⼀些没有必要做的任务 ( ⽐如隐藏的内容), 可能会被饿死
 ```js
 // react-17.0.0\packages\scheduler\src\Scheduler.js
 // Times out immediately
@@ -383,16 +397,18 @@ var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt;
 // react-17.0.0\packages\scheduler\src\Scheduler.js
 // 接着上面的unstable_scheduleCallback方法
 if (startTime > currentTime) {
+  // 是延时任务，放到timerQueue
   push(timerQueue, newTask);
+  
   // 当没有及时任务的时候
   // Schedule a timeout.
   // 在间隔时间之后，调⽤⼀个handleTimeout，主要作⽤是把timerQueue的任务加到
   // taskQueue队列⾥来，然后调⽤requestHostCallback
-
   // 执⾏那个延时任务
   // setTimeOut(handleTimeout, startTime - currentTime)
   requestHostTimeout(handleTimeout, startTime - currentTime);
 } else {
+  // 是及时任务，放到taskQueue
   push(taskQueue, newTask);
   // Schedule a host callback, if needed. If we're already performing work,
   // wait until the next time we yield.
@@ -1218,7 +1234,7 @@ function completeWork(
     markUpdate(workInProgress);
   }
 }
-``` 
+```
 由此可见，beginWork和completeUnitOfWork共同构建了Fiber Tree
 ```
 return (
