@@ -1513,9 +1513,9 @@ export function render(
 }
 ```
 下面来看legacyRenderSubtreeIntoContainer方法:
-* 1. 创建 reactRoot，在dom元素上挂载, FiberRoot
-* 2. 调用 unbatchUpdate 非批处理
-* 3. 调用 updateContainer
+* 1.创建 reactRoot，在dom元素上挂载, FiberRoot
+* 2.调用 unbatchUpdate 非批处理
+* 3.调用 updateContainer
 ```js
 function legacyRenderSubtreeIntoContainer(
   parentComponent: ?React$Component<any, any>,
@@ -1632,12 +1632,12 @@ hooks模拟类组件的生命周期：<br>
 ![](../image/1626014741081.jpg)
 
 useState流程：
-*  1. mountState 得到初始化的state
-*  2. dispatchAction => setName 会创建一个update，
+*  1.mountState 得到初始化的state
+*  2.dispatchAction => setName 会创建一个update，
     *  会判断当前当前有没有任务存在？没有的话，就先执行setName的回调，把值放在eagerState的属性上
     *  然后发起performanceSyncWorkOnRoot
-*  3. 导致function A 会重新执行
-*  4. useState => updateState, 才执行出setName的回调，把memorizeState更新了
+*  3.导致function A 会重新执行
+*  4.useState => updateState, 才执行出setName的回调，把memorizeState更新了
 
 useState的3个阶段：
 * mountState 初始化
@@ -1712,10 +1712,10 @@ function mountState<S>(
 ```
 
 ### dispatchAction
-* 1. 创建一个update
-* 2. update添加到quene里
-* 3. 如果当前有时间，提前计算出最新的state，保存在eagerState
-* 4. 进入调度流程scheduleUpdateOnFiber
+* 1.创建一个update
+* 2.update添加到quene里
+* 3.如果当前有时间，提前计算出最新的state，保存在eagerState
+* 4.进入调度流程scheduleUpdateOnFiber
 ```js
 function dispatchAction<S, A>(
   fiber: Fiber,
@@ -1833,22 +1833,22 @@ if (update.eagerReducer === reducer) {
 ## useEffect
 useEffect流程：
 * 初始化:
-*  1. mountEffect: 是在beginWork执行的，打上flags标记，推入一个Effect的链表
-*  2. 在commit阶段的dom更新完毕后，才会执行useEffect的回调，并把create的返回值赋值给distory
+*  1.mountEffect: 是在beginWork执行的，打上flags标记，推入一个Effect的链表
+*  2.在commit阶段的dom更新完毕后，才会执行useEffect的回调，并把create的返回值赋值给distory
 *  state变化了:
-*  3. updateEffect 是在beginWork执行的,对比依赖是否发生变化，如不一样，设置EffectTag，则重新push一个新的Effect，
+*  3.updateEffect 是在beginWork执行的,对比依赖是否发生变化，如不一样，设置EffectTag，则重新push一个新的Effect，
 *  依赖发生变化：
-*  4. commit阶段开始，在flushPassiveEffects 执行distory
-*  5. 在commit阶段dom更新完毕后才会又执行useEffect的回调
+*  4.commit阶段开始，在flushPassiveEffects 执行distory
+*  5.在commit阶段dom更新完毕后才会又执行useEffect的回调
 
 useEffect的2个阶段:
 * MountEffect
 * UpdateEffect
 
 ### MountEffect
-* 1. 处理依赖数组
-* 2. 设置effectTag
-* 3. 新增一个Effect到currentlyRenderingFiber.updateQueue 中参与到compleleRoot中
+* 1.处理依赖数组
+* 2.设置effectTag
+* 3.新增一个Effect到currentlyRenderingFiber.updateQueue 中参与到compleleRoot中
 ```js
 function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
   const hook = mountWorkInProgressHook();
@@ -1977,11 +1977,10 @@ react hook实用小技巧：
 ```js
 import { unstable_batchedUpdates as batchedUpdates} from 'react-dom';
  useEffect(() => {
-    console.log('12');
     // 调用两次setName会做两次更新， 在hooks里暂时没有批处理
     // 可以这样手动调用批处理
     batchedUpdates(() => {
-      setName("二灯");
+      setName("aa");
       setName((name) => {
         // name就是上一次的name的值
         return '新name'
