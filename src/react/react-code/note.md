@@ -105,6 +105,7 @@ React17升级为从指定⼀个优先级到指定到指定⼀个连续的优先�
 
 优先级区间：
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberLane.js
 export const NoLanes: Lanes = /*                        */ 0b0000000000000000000000000000000;
 export const NoLane: Lane = /*                          */ 0b0000000000000000000000000000000;
 
@@ -160,6 +161,7 @@ DefaultLanes | lane
 ### Fiber的结构
 Fiber是一个包含很多属性的对象
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiber.old.js
 function FiberNode() {
   // Fiber对应组件的类型 Function/Class/Host
   this.tag = tag;
@@ -218,6 +220,7 @@ function FiberNode() {
 **具体代码分析：**<br>
 1.根据优先级区分同步任务和异步任务，同步任务⽴即同步执⾏，最快渲染出来。异步任务⾛scheduler
 ```js
+// react-code\react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
 export const NoContext = /*             */ 0b0000000;
 const BatchedContext = /*               */ 0b0000001;
 const EventContext = /*                 */ 0b0000010;
@@ -227,6 +230,7 @@ const RenderContext = /*                */ 0b0010000;
 const CommitContext = /*                */ 0b0100000;
 ```
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
 export function scheduleUpdateOnFiber(fiber, lane, eventTime) {
   //...
   // 获得当前更新的优先级
@@ -315,44 +319,46 @@ function ensureRootIsScheduled(root, currentTime) {
 2.计算得到expirationTime，expirationTime = currentTime(当前时间) + timeout (不同优先级的时
 间间隔，时间越短，优先级越⼤)<br>
 ```js
-var currentTime = getCurrentTime();
-// 得到startTime, 根据优先级的不同分别加上不同的间隔时间，构成expirationTime；
-// 当expirationTime越接近真实的时间，优先级越⾼
-// 根据startTime 是否⼤于当前的currentTime，将任务分为了及时任务和延时任务。延时任务还不
-// 会⽴即执⾏，它会在currentTime接近startTime的时候，才会执⾏
-var startTime;
-if (typeof options === "object" && options !== null) {
-  var delay = options.delay;
-  if (typeof delay === "number" && delay > 0) {  //延时任务，该任务在delay时间后执行
-    startTime = currentTime + delay;
+// react-17.0.0\packages\scheduler\src\Scheduler.js
+function unstable_scheduleCallback(priorityLevel, callback, options) {
+  var currentTime = getCurrentTime();
+  // 得到startTime, 根据优先级的不同分别加上不同的间隔时间，构成expirationTime；
+  // 当expirationTime越接近真实的时间，优先级越⾼
+  // 根据startTime 是否⼤于当前的currentTime，将任务分为了及时任务和延时任务。延时任务还不
+  // 会⽴即执⾏，它会在currentTime接近startTime的时候，才会执⾏
+  var startTime;
+  if (typeof options === "object" && options !== null) {
+    var delay = options.delay;
+    if (typeof delay === "number" && delay > 0) {  //延时任务，该任务在delay时间后执行
+      startTime = currentTime + delay;
+    } else {
+      startTime = currentTime;  //及时任务
+    }
   } else {
     startTime = currentTime;  //及时任务
   }
-} else {
-  startTime = currentTime;  //及时任务
-}
-
-var timeout;
-// 根据优先级增加不同的时间间隔
-switch (priorityLevel) {
-  case ImmediatePriority:  //立即执行，优先级最高
-    timeout = IMMEDIATE_PRIORITY_TIMEOUT;  // -1，加上它比当前时间还小
-    break;
-  case UserBlockingPriority:
-    timeout = USER_BLOCKING_PRIORITY_TIMEOUT;
-    break;
-  case IdlePriority:
-    timeout = IDLE_PRIORITY_TIMEOUT;
-    break;
-  case LowPriority:
-    timeout = LOW_PRIORITY_TIMEOUT;
-    break;
-  case NormalPriority:
-  default:
-    timeout = NORMAL_PRIORITY_TIMEOUT;
-    break;
-}
-var expirationTime = startTime + timeout;  //过期时间
+  
+  var timeout;
+  // 根据优先级增加不同的时间间隔
+  switch (priorityLevel) {
+    case ImmediatePriority:  //立即执行，优先级最高
+      timeout = IMMEDIATE_PRIORITY_TIMEOUT;  // -1，加上它比当前时间还小
+      break;
+    case UserBlockingPriority:
+      timeout = USER_BLOCKING_PRIORITY_TIMEOUT;
+      break;
+    case IdlePriority:
+      timeout = IDLE_PRIORITY_TIMEOUT;
+      break;
+    case LowPriority:
+      timeout = LOW_PRIORITY_TIMEOUT;
+      break;
+    case NormalPriority:
+    default:
+      timeout = NORMAL_PRIORITY_TIMEOUT;
+      break;
+  }
+  var expirationTime = startTime + timeout;  //过期时间
 ```
 **优先级**
 * Immediate (-1) - 这个优先级的任务会同步执⾏, 或者说要⻢上执⾏且不能中断
@@ -361,6 +367,7 @@ var expirationTime = startTime + timeout;  //过期时间
 * Low (10s) 这些任务可以放后，但是最终应该得到执⾏. 例如分析通知
 * Idle (没有超时时间) ⼀些没有必要做的任务 (e.g. ⽐如隐藏的内容), 可能会被饿死
 ```js
+// react-17.0.0\packages\scheduler\src\Scheduler.js
 // Times out immediately
 var IMMEDIATE_PRIORITY_TIMEOUT = -1;
 // Eventually times out
@@ -373,6 +380,8 @@ var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt;
 
 3.对⽐startTime和currentTime，将任务分为及时任务和延时任务<br>
 ```js
+// react-17.0.0\packages\scheduler\src\Scheduler.js
+// 接着上面的unstable_scheduleCallback方法
 if (startTime > currentTime) {
   push(timerQueue, newTask);
   // 当没有及时任务的时候
@@ -399,6 +408,7 @@ return newTask;
 
 4.及时任务当即执⾏,但是为了不阻塞⻚⾯的交互，因此在宏任务中执⾏
 ```js
+// react-17.0.0\packages\scheduler\src\forks\SchedulerHostConfig.default.js
 // 模拟任务调度流程：
 // 一.第⼀次调⽤ scheduleCallback
 // 1. 把任务放在timeQueue 不会⽴即执⾏,等待
@@ -442,6 +452,7 @@ requestHostCallback = function (callback) {
 5.延时任务需要等到currentTime >= expirationTime的时候才会执⾏。每次调度及时任务的时候，
   都会去判断延时任务的执⾏时间是否到了，如果判断为true，则添加到及时任务中来。
 ```js
+// react-17.0.0\packages\scheduler\src\Scheduler.js
 function advanceTimers(currentTime) {
   // Check for tasks that are no longer delayed and add them to the queue.
   let timer = peek(timerQueue);
@@ -514,6 +525,7 @@ return (
 
 Reconciler的代码大致从rendererRootSync函数开始，从优先级最高的Fiber Root开始递归
 ```js
+// react-code\react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
 function workLoopSync() {
    // Already timed out, so perform work without checking if we need to yield.
    // 开始用一个循环构建一棵树
@@ -570,6 +582,7 @@ completeUnitOfWork⾥执⾏，执⾏completeUnitOfWork后如果存在兄弟Fiber
 * 3.给存在变更的Fiber节点打上标记 newFiber.flags = Placement|Update|Deletion|...
 * 4.创建的Fiber节点赋给WorkInProgress.child,返回WorkInProgress.child. 继续下⼀次的循环
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberBeginWork.old.js
 function beginWork(
   current: Fiber | null,
   workInProgress: Fiber,
@@ -808,6 +821,7 @@ export function reconcileChildren(
   }
 }
 
+// react-17.0.0\packages\react-reconciler\src\ReactChildFiber.old.js
 // reconcileChildFibers⾥会判断变更的类型是什么？⽐如有新增，删除，更新等类型。每⼀种类型
 // 的变更，调⽤不同的⽅法，赋予flags⼀个值.
 // 在commit阶段，会直接根据flags来做dom操作。
@@ -822,7 +836,7 @@ function placeSingleChild(newFiber: Fiber): Fiber {
 ```
 有以下几种类型：
 ```js
-// You can change the rest (and add more).
+// react-17.0.0\packages\react-reconciler\src\ReactFiberFlags.js
 export const Placement = /*                    */ 0b000000000000000010;
 export const Update = /*                       */ 0b000000000000000100;
 export const PlacementAndUpdate = /*           */ 0b000000000000000110;
@@ -841,7 +855,7 @@ React Diff 会预设⼏个规则（React15到React17 dom diff大体一致）：
 * 2.节点变化，直接删除，然后重建
 * 3.存在key值，对⽐key值⼀样的节点
 ```js
-// 代码在ReactChildFiber.new.js 下 reconcileChildFibers函数
+// react-17.0.0\packages\react-reconciler\src\ReactChildFiber.mew.js
 // 判断节点是不是react 节点
 // Handle object types
 const isObject = typeof newChild === "object" && newChild !== null;  //是对象走单节点diff
@@ -882,6 +896,7 @@ if (isArray(newChild)) {
 * 3.存在对应节点，key值不同，标记删除
 * 4.不存在对应节点，创建新节点
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactChildFiber.new.js
 function reconcileSingleElement(
   returnFiber: Fiber,
   currentFirstChild: Fiber | null,
@@ -935,6 +950,7 @@ function reconcileSingleElement(
 * 6. 创建⼀个existingChildren代表所有剩余没有匹配掉的节点，然后新的数组根据key从这个 map
 ⾥⾯查找，如果有则复⽤，没有则新建
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactChildFiber.new.js
 function reconcileChildrenArray(
   returnFiber: Fiber,
   currentFirstChild: Fiber | null,
@@ -1025,6 +1041,7 @@ function reconcileChildrenArray(
 *  5. 不存在兄弟节点，返回父节点。继续执行父节点的completeUnitOfWork<br>
 即构建整个Fiber Tree处于2重循环中的
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
 function completeUnitOfWork(unitOfWork: Fiber): void {
   // Attempt to complete the current unit of work, then move to the next
   // sibling. If there are no more siblings, return to the parent fiber.
@@ -1167,6 +1184,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
   }
 }  
 
+// react-17.0.0\packages\react-reconciler\src\ReactFiberCompleteWork.old.js
 function completeWork(
   current: Fiber | null,
   workInProgress: Fiber,
@@ -1225,6 +1243,7 @@ commit阶段负责将变化的组件渲染到⻚⾯上
 * 2.调⽤ getSnapshotBeforeUpdate ⽣命周期钩⼦。
 * 3.调度 useEffect。
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.new.js
 function commitBeforeMutationEffects(firstChild: Fiber) {
   let fiber = firstChild;
   while (fiber !== null) {
@@ -1298,6 +1317,7 @@ function commitBeforeMutationEffectsImpl(fiber: Fiber) {
 * 1.遍历finishedWork，执⾏DOM操作
 * 2.对于删除的组件，会执⾏componentWillUnMount⽣命周期
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.new.js
 // 结构和commitBeforeMutationEffects的⼀样
 function commitMutationEffects(
   firstChild: Fiber,
@@ -1336,6 +1356,7 @@ function commitMutationEffects(
 
 调用commitMutationEffects后，就把root.current 指向了work-in-progress tree
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.new.js
 // 把DOM元素渲染到页面上
 // The next phase is the mutation phase, where we mutate the host tree.
 commitMutationEffects(finishedWork, root, renderPriorityLevel);
@@ -1386,7 +1407,6 @@ if (__DEV__) {
     captureCommitPhaseErrorOnRoot(finishedWork, finishedWork, error);
   }
 }
-
 ```
 
 ### recursivelyCommitLayoutEffects(DOM操作后)
@@ -1395,6 +1415,7 @@ if (__DEV__) {
 * 2.赋值 ref
 * 3.处理ReactDom.render 回调
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberCommitWork.new.js
 // 例子1：
 // A,B两个组件，⽣命周期getSnapshotBeforeUpdate，componentDidMount，componentWillMount,
 // componentWillUnMount 问整体的执⾏顺序？
@@ -1482,6 +1503,7 @@ function recursivelyCommitLayoutEffects(
 ## ReactDOM.render流程
 在render函数里调用了legacyRenderSubtreeIntoContainer方法
 ```js
+// react-17.0.0\packages\react-dom\src\client\ReactDOMLegacy.js
 export function render(
   element: React$Element<any>,
   container: Container,
@@ -1517,6 +1539,7 @@ export function render(
 * 2.调用 unbatchUpdate 非批处理
 * 3.调用 updateContainer
 ```js
+// react-17.0.0\packages\react-dom\src\client\ReactDOMLegacy.js
 function legacyRenderSubtreeIntoContainer(
   parentComponent: ?React$Component<any, any>,
   children: ReactNodeList,
@@ -1574,6 +1597,7 @@ function legacyRenderSubtreeIntoContainer(
 ```
 从updateContainer进入scheduleUpdateOnFiber，进入调度流程
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberReconciler.old.js
 export function updateContainer(
   element: ReactNodeList,
   container: OpaqueRoot,
@@ -1646,6 +1670,7 @@ useState的3个阶段：
 
 useState源码入口：
 ```js
+// react-17.0.0\packages\react\src\ReactHooks.js
 export function useState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
@@ -1656,6 +1681,7 @@ export function useState<S>(
 }
 ```
 ```js
+// react-17.0.0\packages\react\src\ReactHooks.js
 function resolveDispatcher() {
   // 这个是动态赋值的，在beginWork的updateFunctionComponent里会给ReactCurrentDispatcher.current赋值
   const dispatcher = ReactCurrentDispatcher.current; // ?
@@ -1680,6 +1706,7 @@ function resolveDispatcher() {
 * 4.把queue传递给dispatch, setName
 * 5.返回默认值和dispatch
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
 function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
@@ -1717,6 +1744,7 @@ function mountState<S>(
 * 3.如果当前有时间，提前计算出最新的state，保存在eagerState
 * 4.进入调度流程scheduleUpdateOnFiber
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
 function dispatchAction<S, A>(
   fiber: Fiber,
   queue: UpdateQueue<S, A>,
@@ -1817,7 +1845,8 @@ function dispatchAction<S, A>(
 * 1.递归执行quene里的update
 * 2.计算最新的state赋值给，memoizedState
 ```js
- // Process this update.
+// react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
+// Process this update.
 // eagerReducer是预先处理的state
 if (update.eagerReducer === reducer) {
   // If this update was processed eagerly, and its reducer matches the
@@ -1850,6 +1879,7 @@ useEffect的2个阶段:
 * 2.设置effectTag
 * 3.新增一个Effect到currentlyRenderingFiber.updateQueue 中参与到compleleRoot中
 ```js
+// D:react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.new.js
 function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
   const hook = mountWorkInProgressHook();
   // 依赖数组
@@ -1867,6 +1897,7 @@ function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
 MountEffect执行时机:<br>
 在commitRoot =>commitLayoutEffects =>commitLifeCycles =>commitHookEffectListMount里执行MountEffect
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberCommitWork.new.js
 function commitHookEffectListMount(flags: HookFlags, finishedWork: Fiber) {
   const updateQueue: FunctionComponentUpdateQueue | null = (finishedWork.updateQueue: any);
   const lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
@@ -1925,6 +1956,7 @@ function commitHookEffectListMount(flags: HookFlags, finishedWork: Fiber) {
 * 设置EffectTag
 * 对比依赖是否发生变化，如不一样，则重新push一个新的Effect
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
 function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
   const hook = updateWorkInProgressHook();
   const nextDeps = deps === undefined ? null : deps;
@@ -1947,6 +1979,7 @@ function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
 
 destroy: 在commitUnmount阶段卸载组件，这时distory方法会被调用
 ```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberCommitWork.new.js
 function commitHookEffectListUnmount(
   flags: HookFlags,
   finishedWork: Fiber,
