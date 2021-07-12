@@ -942,12 +942,12 @@ function reconcileSingleElement(
 ```
 
 ##### 多节点diff
-* 1. 对⽐新旧children相同index的对象的key是否相等, 如果是，返回该对象，如果不是，返回null
-* 2. key值不等，不⽤对⽐下去了，节点不能复⽤，跳出
-* 3. 判断节点是否存在移动，存在则返回新位置
-* 4. 可能存在新的数组⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除老数组后面剩余的
-* 5. 新数组存在新增的节点，创建新阶段
-* 6. 创建⼀个existingChildren代表所有剩余没有匹配掉的节点，然后新的数组根据key从这个 map
+* 1.对⽐新旧children相同index的对象的key是否相等, 如果是，返回该对象，如果不是，返回null
+* 2.key值不等，不⽤对⽐下去了，节点不能复⽤，跳出
+* 3.判断节点是否存在移动，存在则返回新位置
+* 4.可能存在新的数组⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除老数组后面剩余的
+* 5.新数组存在新增的节点，创建新阶段
+* 6.创建⼀个existingChildren代表所有剩余没有匹配掉的节点，然后新的数组根据key从这个 map
 ⾥⾯查找，如果有则复⽤，没有则新建
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactChildFiber.new.js
@@ -1034,11 +1034,11 @@ function reconcileChildrenArray(
 
 ### completeUnitOfWork
 流程：
-*  1. 向上递归completedWork
-*  2. 创建DOM节点，更新Dom节点，Dom节点赋值给stateNode属性
-*  3. 把子节点的side Effect附加到父节点的sideEffect链之上，在commit节点使用
-*  4. 存在兄弟节点，将workInProgress指向兄弟节点，并return,执行兄弟节点的beginWork过程
-*  5. 不存在兄弟节点，返回父节点。继续执行父节点的completeUnitOfWork<br>
+*  1.向上递归completedWork
+*  2.创建DOM节点，更新Dom节点，Dom节点赋值给stateNode属性
+*  3.把子节点的side Effect附加到父节点的sideEffect链之上，在commit节点使用
+*  4.存在兄弟节点，将workInProgress指向兄弟节点，并return,执行兄弟节点的beginWork过程
+*  5.不存在兄弟节点，返回父节点。继续执行父节点的completeUnitOfWork<br>
 即构建整个Fiber Tree处于2重循环中的
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.old.js
