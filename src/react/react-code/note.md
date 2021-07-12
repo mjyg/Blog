@@ -17,7 +17,7 @@
 >       * [单节点diff](#单节点diff)
 >       * [多节点diff](#多节点diff)
 >   * [completeUnitOfWork](#completeUnitOfWork)
-> * [commit阶段](#commit阶段)
+> * [commit渲染阶段](#commit渲染阶段)
 >   * [commitBeforeMutationEffects(DOM操作前)](#commitbeforemutationeffectsdom操作前)
 >   * [commitMutationEffects(执⾏DOM操作)](#commitmutationeffects执dom操作)
 >   * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelycommitlayouteffectsdom操作后))
@@ -1235,7 +1235,7 @@ return (
 ![](../image/WechatIMG3.jpeg)
 
 ## commit阶段
-commit阶段负责将变化的组件渲染到⻚⾯上
+commit阶段负责将变化的组件渲染到⻚⾯上<br>
 分为下面三个阶段
 
 ### commitBeforeMutationEffects(DOM操作前)
@@ -1372,41 +1372,6 @@ resetAfterCommit(root.containerInfo);
 // work is current during componentDidMount/Update.
 // 在此之后，root.current 指向了work-in-progress tree
 root.current = finishedWork;
-
-// The next phase is the layout phase, where we call effects that read
-// the host tree after it's been mutated. The idiomatic use case for this is
-// layout, but class component lifecycles also fire here for legacy reasons.
-
-if (__DEV__) {
-  if (enableDebugTracing) {
-    logLayoutEffectsStarted(lanes);
-  }
-}
-if (enableSchedulingProfiler) {
-  markLayoutEffectsStarted(lanes);
-}
-
-if (__DEV__) {
-  setCurrentDebugFiberInDEV(finishedWork);
-  invokeGuardedCallback(
-    null,
-    recursivelyCommitLayoutEffects,
-    null,
-    finishedWork,
-    root,
-  );
-  if (hasCaughtError()) {
-    const error = clearCaughtError();
-    captureCommitPhaseErrorOnRoot(finishedWork, finishedWork, error);
-  }
-  resetCurrentDebugFiberInDEV();
-} else {
-  try {
-    recursivelyCommitLayoutEffects(finishedWork, root);
-  } catch (error) {
-    captureCommitPhaseErrorOnRoot(finishedWork, finishedWork, error);
-  }
-}
 ```
 
 ### recursivelyCommitLayoutEffects(DOM操作后)
@@ -1700,8 +1665,8 @@ function resolveDispatcher() {
 
 ### mountState
 第一次执行函数体的时候，调用useState会执行mountState，它主要做了以下几件事情:
-* 1.默认值是function，执行function，得到初始state
-* 2. state是存放在memoizedState属性中
+* 1.默认值是function，执行function，得到初始state
+* 2.state是存放在memoizedState属性中
 * 3.新建一个quene
 * 4.把queue传递给dispatch, setName
 * 5.返回默认值和dispatch
