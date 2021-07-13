@@ -62,6 +62,8 @@
   * [手写节流函数](./src/handwriting/throttle.md)
   * [手写parseInt](./src/handwriting/parseInt.md)
   * [手写proxy的get和set](./src/handwriting/proxy.md)
+  * [虚拟dom转化为真实dom](./src/handwriting/render.js)
+  * [请求失败后一定时间重试](./src/handwriting/request.js)
 * 性能优化
   * [基本概念](./src/performance-optimization/base.md)
   * [浏览器缓存](./src/performance-optimization/browserCache.md)
@@ -89,6 +91,5 @@
   * [EventLoop](./src/other/eventloop.md)
   * [二进制文件流下载和打印](./src/other/export&download.md)
   * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
-  * [虚拟dom转化为真实dom](./src/other/render.js)
   * [Flex布局和Grid布局](./src/other/flex&grid.md)
 * [笔记](./src/note/note.md)

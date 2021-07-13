@@ -15,5 +15,6 @@
 * [最长公共前缀](longestCommonPrefix.md)
 * [查询url中的参数](url.md)
 * [词汇表中单词长度之和](countCharacters.md)
+* [有效的括号](checkLegalStr.js)
 
  
