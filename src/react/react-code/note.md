@@ -1377,7 +1377,7 @@ function commitMutationEffects(
       commitMutationEffects(fiber.child, root, renderPriorityLevel);
     }
     try {
-      // 区分不同情Flag 执⾏不同的Dom操作：新增，删除，替换
+      // 区分不同情况Flag 执⾏不同的Dom操作：新增，删除，替换
       // 已经构造好了dom元素了，存放在stateNode节点
       commitMutationEffectsImpl(fiber, root, renderPriorityLevel);
       // ⻚⾯就终于渲染出来了
@@ -1411,7 +1411,6 @@ root.current = finishedWork;
 ```
 
 ### recursivelyCommitLayoutEffects(DOM操作后)
-在这个阶段前current tree也发⽣变化了，指向了最新构建的workInProgress tree。
 * 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期，didMount/didUpdate；执⾏useEffect
 * 2.赋值 ref
 * 3.处理ReactDom.render 回调
@@ -1444,7 +1443,7 @@ root.current = finishedWork;
 //   return <div> </div>
 //  }
 // }
-// getSnapshotBeforeUpdate(dom操作前)，componentDidMount（dom操作后,componentWillUnMount（dom操作后）在commit阶段执行
+// getSnapshotBeforeUpdate(dom操作前)，componentDidMount（dom操作后）,componentWillUnMount（dom操作后）在commit阶段执行
 // componentWillMount在BeginWork⾥执⾏的
 
 // 例子2：
@@ -1567,7 +1566,7 @@ function legacyRenderSubtreeIntoContainer(
     );
     fiberRoot = root._internalRoot;
     // ReactDOM.render(<App/>, $('#app'), () => {// })
-    // callback是callback第三个参数
+    // callback是render第三个参数
     if (typeof callback === 'function') {
       const originalCallback = callback;
       callback = function() {
@@ -1719,7 +1718,7 @@ function mountState<S>(
   }
   // 2.state是存放在memoizedState属性中
   hook.memoizedState = hook.baseState = initialState;
-  // 3.新建一个queue,存储update的，一整次的更新
+  // 3.新建一个queue,存储update的一整次的更新
   const queue = (hook.queue = {
     pending: null,
     dispatch: null,
