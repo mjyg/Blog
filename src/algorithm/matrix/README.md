@@ -4,4 +4,5 @@
 * [旋转图像](rotate.md)
 * [旋转数组](rotate2.md)
 * [转置矩阵](transpose.md)
+* [距离顺序排列矩阵单元格](allCellsDistOrder.js)
  

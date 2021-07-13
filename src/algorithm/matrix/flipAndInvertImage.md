@@ -12,13 +12,14 @@
      然后反转图片: [[1,0,0],[0,1,0],[1,1,1]]
  */
 
+// 解法1：依次遍历矩阵中的元素，对于每行元素，首位元素交换，交换的同时和1做异或运算
+// 异或运算：不带进位的加法运算，当且仅当只有一个表达式的某位上为 1 时，结果的该位才为 1。否则结果的该位为 0。
+// 1^1为0,0^1为1
 /**
  * @param {number[][]} A
  * @return {number[][]}
  */
 var flipAndInvertImage = function (A) {
-  //异或运算：当且仅当只有一个表达式的某位上为 1 时，结果的该位才为 1。否则结果的该位为 0。
-  //1^1为0,0^1为1
   for (const arr of A) {
     let left = 0;
     let right = arr.length - 1;
@@ -33,6 +34,7 @@ var flipAndInvertImage = function (A) {
   return A;
 };
 
+// 解法2：和上面思想一样
 function flipAndInvertImage2() {
   const row = A.length;
   const col = A[0].length;
@@ -47,6 +49,8 @@ function flipAndInvertImage2() {
   }
   return A;
 }
+
+// 两种解法时间复杂度为O(n*n),空间复杂度为O(1)
 
 console.log(
   flipAndInvertImage([

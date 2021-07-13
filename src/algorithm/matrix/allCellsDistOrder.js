@@ -1,4 +1,3 @@
-```js
 /*
 给出 R 行 C 列的矩阵，其中的单元格的整数坐标为 (r, c)，满足 0 <= r < R 且 0 <= c < C。
 另外，我们在该矩阵中给出了一个坐标为 (r0, c0) 的单元格。
@@ -20,7 +19,8 @@
 其他满足题目要求的答案也会被视为正确，例如 [[1,2],[1,1],[0,2],[1,0],[0,1],[0,0]]。
 */
 
-//方案一：使用广度优先遍历算法,从出发点开始，遵循右下左上的顺序
+//方案一：使用广度优先遍历算法,从出发点开始，用一个队列存放最近的点（初始存放出发点），遵循下右上左的顺序，依次遍历和对
+//头元素最近的点入队，已经遍历过的点要打上标记，防止重复遍历，直到队列为空
 /**
  * @param {number} R
  * @param {number} C
@@ -29,7 +29,7 @@
  * @return {number[][]}
  */
 var allCellsDistOrder = function (R, C, r0, c0) {
-  //模拟移动方位
+  //模拟移动方位，顺序：下右上左
   const moveX = [0, 1, 0, -1];
   const moveY = [1, 0, -1, 0];
 
@@ -49,6 +49,7 @@ var allCellsDistOrder = function (R, C, r0, c0) {
     const item = queue.shift();
     re.push(item);
 
+    // 和上一个点(item)距离为1的点入队
     for (let i = 0; i < 4; i++) {
       const x = item[0] + moveX[i];
       const y = item[1] + moveY[i];
@@ -58,7 +59,7 @@ var allCellsDistOrder = function (R, C, r0, c0) {
       }
     }
   }
-  console.log(flagArr);
+  console.log(flagArr);  //[ [ 6, 5, 3 ], [ 4, 2, 1 ] ] flagArr还可以显示遍历的轨迹
   return re;
 };
 
@@ -82,7 +83,7 @@ var allCellsDistOrder2 = function (R, C, r0, c0) {
     }
   }
 
-  //对dist进行排序（冒泡排序）
+  //对dist进行排序（冒泡排序：每趟遍历依次把大的点和后续的点交换，放到后面，直到全部有序）
   for (let i = 0; i < dist.length; i++) {
     for (let j = 0; j < dist.length - i - 1; j++) {
       if (dist[j][2] > dist[j + 1][2]) swap(dist, j, j + 1);
@@ -93,6 +94,7 @@ var allCellsDistOrder2 = function (R, C, r0, c0) {
 };
 
 
-console.log(allCellsDistOrder2(2, 3, 1, 2));
+console.log(allCellsDistOrder(2, 3, 1, 2));
 
-```
+
+// 上面两个算法时间复杂度和空间复杂度应该都是O(n*n)

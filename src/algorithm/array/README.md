@@ -14,7 +14,6 @@
 * [托普利茨矩阵](isToeplitzMatrix.md)
 * [单调数列](isMonotonic.md)
 * [按奇偶排序数组2](sortArrayByParityII.md)
-* [距离顺序排列矩阵单元格](allCellsDistOrder.md)
 * [最后一块石头的重量](lastStoneWeight.md)
 * [等价多米诺骨牌对的数量](numEquivDominoPairs.md)
 * [两个数组的交集](intersection.md)
