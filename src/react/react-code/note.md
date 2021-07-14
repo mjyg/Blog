@@ -1277,7 +1277,7 @@ commit阶段负责将变化的组件渲染到⻚⾯上<br>
 ### commitBeforeMutationEffects(DOM操作前)
 * 1.处理 DOM节点 渲染/删除后的 autoFocus 、 blur 逻辑。
 * 2.调⽤ getSnapshotBeforeUpdate ⽣命周期钩⼦。
-* 3.调度 useEffect。
+* 3.异步调度 useEffect。
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberWorkLoop.new.js
 function commitBeforeMutationEffects(firstChild: Fiber) {
@@ -1335,7 +1335,7 @@ function commitBeforeMutationEffectsImpl(fiber: Fiber) {
     // the earliest opportunity.
     if (!rootDoesHavePassiveEffects) {
       rootDoesHavePassiveEffects = true;
-      // 异步调度 useEffect 的回调，在这里并不执行，是做了异步调用在宏任务中执行，因为它并不是在dom渲染前执行的
+      // 异步调度 useEffect 的回调，在这里并不执行，是做了异步调用在宏任务中执行，并不是在dom渲染前执行的
       scheduleCallback(NormalSchedulerPriority, () => {
         flushPassiveEffects();
         return null;
@@ -1411,7 +1411,7 @@ root.current = finishedWork;
 ```
 
 ### recursivelyCommitLayoutEffects(DOM操作后)
-* 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期，didMount/didUpdate；执⾏useEffect
+* 1.layout阶段 也是深度优先遍历 effectList ，调⽤⽣命周期didMount/didUpdate；执⾏useEffect
 * 2.赋值 ref
 * 3.处理ReactDom.render 回调
 ```js
@@ -1443,7 +1443,7 @@ root.current = finishedWork;
 //   return <div> </div>
 //  }
 // }
-// getSnapshotBeforeUpdate(dom操作前)，componentDidMount（dom操作后）,componentWillUnMount（dom操作后）在commit阶段执行
+// getSnapshotBeforeUpdate(dom操作前)，componentDidMount（dom操作后）,componentWillUnMount（dom操作中）在commit阶段执行
 // componentWillMount在BeginWork⾥执⾏的
 
 // 例子2：
@@ -1554,7 +1554,7 @@ function legacyRenderSubtreeIntoContainer(
 
   // TODO: Without `any` type, Flow says "Property cannot be accessed on any
   // member of intersection type." Whyyyyyy.
-  // dom元素
+  // container是dom元素
   let root: RootType = (container._reactRootContainer: any);
   let fiberRoot;
   if (!root) {
@@ -1652,16 +1652,16 @@ render()流程图（React16），可以看到render之后就进入了调度流�
 (scheduleUpdateOnFiber是React16的scheduleWork)
 
 ## useState
+hooks只能在 function component 使用，因为在renderWithHooks 方法里才会注入hooks上下文
+* useState: 在function component定义state
+* useEffect 模拟生命周期， didMount+didUpdate+willUnMount，所以能精简代码量
+* useCallback: 把函数缓存一下
+* useMemo: 把值缓存一下
+* useRef: 和ref一样的功能
+* useContext+useReducer：在function component使用context(context API)
+
 hooks模拟类组件的生命周期：<br>
 ![](../image/1626014741081.jpg)
-
-useState流程：
-*  1.mountState 得到初始化的state
-*  2.dispatchAction => setName 会创建一个update，
-    *  会判断当前当前有没有任务存在？没有的话，就先执行setName的回调，把值放在eagerState的属性上
-    *  然后发起performanceSyncWorkOnRoot
-*  3.导致function A 会重新执行
-*  4.useState => updateState, 才执行出setName的回调，把memorizeState更新了
 
 useState的3个阶段：
 * mountState 初始化
@@ -1675,15 +1675,20 @@ export function useState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
   const dispatcher = resolveDispatcher();
-  // mount阶段，返回onMount
-  // update阶段， 返回onUpdate
   return dispatcher.useState(initialState);
 }
 ```
 ```js
 // react-17.0.0\packages\react\src\ReactHooks.js
 function resolveDispatcher() {
-  // 这个是动态赋值的，在beginWork的updateFunctionComponent里会给ReactCurrentDispatcher.current赋值
+  // 这个是动态赋值的，在beginWork的updateFunctionComponent的renderWithHooks里会给
+  // ReactCurrentDispatcher.current赋值：
+  //  ReactCurrentDispatcher.current =
+  //    current === null || current.memoizedState === null
+  //      ? HooksDispatcherOnMount
+  //      : HooksDispatcherOnUpdate;
+  // mount阶段，返回onMount一系列方法(HooksDispatcherOnMount -> mountState)
+  // update阶段，返回onUpdate一系列方法(HooksDispatcherOnUpdate -> updataState)
   const dispatcher = ReactCurrentDispatcher.current; // ?
   invariant(
     dispatcher !== null,
@@ -1701,8 +1706,8 @@ function resolveDispatcher() {
 ### mountState
 第一次执行函数体的时候，调用useState会执行mountState，它主要做了以下几件事情:
 * 1.默认值是function，执行function，得到初始state
-* 2.state是存放在memoizedState属性中
-* 3.新建一个quene
+* 2.把state存放在memoizedState属性中
+* 3.新建一个quene，存储update的一整次的更新
 * 4.把queue传递给dispatch, setName
 * 5.返回默认值和dispatch
 ```js
@@ -1712,13 +1717,14 @@ function mountState<S>(
 ): [S, Dispatch<BasicStateAction<S>>] {
   const hook = mountWorkInProgressHook();
   // 1.默认值是function，执行function,得到初始state
+  //   类似这样写:const [name,setName] = useState(()=>'Lily'),默认值是一个function
   if (typeof initialState === 'function') {
     // $FlowFixMe: Flow doesn't like mixed types
-    initialState = initialState();
+    initialState = initialState();  // Lily
   }
-  // 2.state是存放在memoizedState属性中
+  // 2.把state存放在memoizedState属性中
   hook.memoizedState = hook.baseState = initialState;
-  // 3.新建一个queue,存储update的一整次的更新
+  // 3.新建一个queue,用来更新时存储update的一整次的更新
   const queue = (hook.queue = {
     pending: null,
     dispatch: null,
@@ -1730,7 +1736,7 @@ function mountState<S>(
     BasicStateAction<S>,
   > = (queue.dispatch = (dispatchAction.bind(
     null,
-    currentlyRenderingFiber,
+    currentlyRenderingFiber,  //当前的fiber，通过它找到当前是更新的哪一个state,比如这里是name
     queue,
   ): any));
   // 5.返回默认值和dispatch（name,setName）
@@ -1739,8 +1745,11 @@ function mountState<S>(
 ```
 
 ### dispatchAction
+在这个阶段做的事情：setName('Ann')是如何更新name的
+
+具体流程：
 * 1.创建一个update
-* 2.update添加到quene里
+* 2.update添加到quene里，在updateState时再处理queue
 * 3.如果当前有时间，提前计算出最新的state，保存在eagerState
 * 4.进入调度流程scheduleUpdateOnFiber
 ```js
@@ -1842,12 +1851,13 @@ function dispatchAction<S, A>(
 ```
 
 ### updateState
-* 1.递归执行quene里的update
-* 2.计算最新的state赋值给，memoizedState
+更新state的时候，调用useState会执行updateState
+* 1.递归执行queue里的update
+* 2.计算最新的state，赋值给memoizedState
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
 // Process this update.
-// eagerReducer是预先处理的state
+// eagerReducer是预先处理的state,如果存在，直接赋值给newState
 if (update.eagerReducer === reducer) {
   // If this update was processed eagerly, and its reducer matches the
   // current reducer, we can use the eagerly computed state.
@@ -1859,25 +1869,37 @@ if (update.eagerReducer === reducer) {
 }
 ```
 
-## useEffect
-useEffect流程：
-* 初始化:
-*  1.mountEffect: 是在beginWork执行的，打上flags标记，推入一个Effect的链表
-*  2.在commit阶段的dom更新完毕后，才会执行useEffect的回调，并把create的返回值赋值给distory
-*  state变化了:
-*  3.updateEffect 是在beginWork执行的,对比依赖是否发生变化，如不一样，设置EffectTag，则重新push一个新的Effect，
-*  依赖发生变化：
-*  4.commit阶段开始，在flushPassiveEffects 执行distory
-*  5.在commit阶段dom更新完毕后才会又执行useEffect的回调
+useState具体流程：
+*  1.mountState 得到初始化的state,放入memorizeState
+*  2.dispatchAction => setName 会创建一个update，
+    *  会判断当前当前有没有任务存在？没有的话，就先执行setName的回调，把值放在eagerState的属性上
+    *  然后发起scheduleUpdateOnFiber
+*  3.导致function A 会重新执行
+*  4.执行到setName('Ann')，执行useState->updateState, 把memorizeState更新成‘Ann’
 
+流程图<br>
+![](../image/WechatIMG41.jpeg)
+
+## useEffect
 useEffect的2个阶段:
 * MountEffect
 * UpdateEffect
 
+useEffect具体流程：
+* 初始化:
+*  1.mountEffect: 是在beginWork执行的，打上flags标记，推入一个Effect的链表
+*  2.在commit阶段的dom更新完毕后，才会执行useEffect的回调，并把create的返回值赋值给destroy
+* state变化了，组件重新执行:
+*  3.updateEffect：是在beginWork执行的,对比依赖是否发生变化，如不一样，设置EffectTag，则重新push一个新的Effect，
+* 依赖发生变化：
+*  4.commit阶段开始，在flushPassiveEffects 执行destroy
+*  5.在commit阶段dom更新完毕后才会又执行useEffect的回调
+
+
 ### MountEffect
 * 1.处理依赖数组
 * 2.设置effectTag
-* 3.新增一个Effect到currentlyRenderingFiber.updateQueue 中参与到compleleRoot中
+* 3.新增一个Effect到hook.memoizedState 中
 ```js
 // D:react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.new.js
 function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
@@ -1887,10 +1909,10 @@ function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
   // 设置effectTag
   currentlyRenderingFiber.flags |= fiberFlags;
   hook.memoizedState = pushEffect(
-    HookHasEffect | hookFlags,
-    create,
-    undefined,
-    nextDeps,
+    HookHasEffect | hookFlags, //effectTag
+    create, //useEffect第一个参数
+    undefined, //useEffect第一个参数的返回值，destroy
+    nextDeps, //useEffect第二个参数，依赖
   );
 }
 ```
@@ -1968,7 +1990,7 @@ function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
     destroy = prevEffect.destroy;
     if (nextDeps !== null) {
       const prevDeps = prevEffect.deps;
-      // seEffect依赖的对比，变化了才pushEffect
+      // useEffect依赖的对比，变化了才pushEffect
       if (areHookInputsEqual(nextDeps, prevDeps)) {
         pushEffect(hookFlags, create, destroy, nextDeps);
         return;
@@ -1977,7 +1999,7 @@ function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
   }
 ```
 
-destroy: 在commitUnmount阶段卸载组件，这时distory方法会被调用
+destroy: 在commitUnmount阶段卸载组件，这时destroy方法会被调用
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberCommitWork.new.js
 function commitHookEffectListUnmount(

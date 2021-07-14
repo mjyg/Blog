@@ -98,15 +98,13 @@ import {
 } from 'react';
 import { unstable_batchedUpdates as batchedUpdates} from 'react-dom';
 
-// 1个前提 hooks只能在 function component 使用
-// renderWithHooks 方法才会注入hooks上下文
+// 1个前提 hooks只能在 function component 使用，因为在renderWithHooks 方法里才会注入hooks上下文
 // useState: 在function component定义state
-// useEffect 模拟生命周期， didMount+didUpdate+willUnMount
+// useEffect 模拟生命周期， didMount+didUpdate+willUnMount，所有能精简代码量
 // useCallback: 把函数缓存一下
 // useMemo: 把值缓存一下
 // useRef: 和ref一样的功能
-// useContext+useReducer：在function component使用context
-// context API  实现一个redux？
+// useContext+useReducer：在function component使用context （context API ）
 
 // useState:
 // 1. mountState 得到初始化的state "一灯"
@@ -185,10 +183,12 @@ function A (){
 // class component: shouldComponentUpdate 判断是否要更新
 // PureComponent 默认对props做了shouldComponentUpdate
 
-// React.memo + useCallback,可以减少hooks的渲染
-// React.memo + useCallback需要配对使用，没有memo的时候，根本就不比较
+// React.memo + useCallback,可以减少hooks的渲染,React.memo + useCallback需要配对使用,即在父组件把要
+// 传递给子组件的函数用useCallback包裹，子组件创建的时候用React.memo包裹
+// 如果单使用useCallback，B组件还是会更新，使用React.memo包裹子组件，会对组件做一层props的浅比较，类似
+// shouldComponentUpdate的逻辑，当props改变的时候，才会重新渲染B组件，而没有memo的时候，根本就不比较，
+// 直接重新渲染B组件
 
-// React.memo 会对组件做一层props的浅比较，类似shouldComponentUpdate的逻辑
 // React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
 const B = React.memo(() => {
   console.log('B');

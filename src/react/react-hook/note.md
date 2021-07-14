@@ -78,7 +78,6 @@ export function ContextProvider2({ children }) {
   // context对象中，提供了一个自带的Provider组件
   return <context2.Provider value={val}>{children}</context2.Provider>;
 }
-
 ```
 
 定义子组件SubCount
@@ -392,32 +391,35 @@ useMemo会在给定输入的情况下存储先前的值，并在给定跟之前�
 
 额外笔记：
 ```js
-  // 每次有更新的时候，就会创建一个新的function
-  // 没有依赖的时候，就返回缓存了的函数
-  // age变化的时候，会返回新的函数，age没变就返回之前的缓存的函数
-  const onClick = useCallback(() => {
-    setAge1(34)
-    // this.setState()
-  }, [age]);
-  // useMemo(xxx, []); // div 最终也是一个对象
-  return <div>
-    {name}
-    <B onClick={onClick}></B>
-  </div>
-}
-
-// class component: shouldComponentUpdate 判断是否要更新
-// PureComponent 默认对props做了shouldComponentUpdate
-
-// React.memo + useCallback,可以减少hooks的渲染
-// React.memo + useCallback需要配对使用，没有memo的时候，根本就不比较
-
-// React.memo 会对组件做一层props的浅比较，类似shouldComponentUpdate的逻辑
-// React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
-const B = React.memo(() => {
-  console.log('B');
-  return <div></div>
-});
+   function A (){
+     // 每次有更新的时候，就会创建一个新的function
+     // 没有依赖的时候，就返回缓存了的函数
+     // age变化的时候，会返回新的函数，age没变就返回之前的缓存的函数
+     const onClick = useCallback(() => {
+       setAge1(34)
+       // this.setState()
+     }, [age]);
+     // useMemo(xxx, []); // div 最终也是一个对象
+     return <div>
+       {name}
+       <B onClick={onClick}></B>
+     </div>
+   }
+   
+   // class component: shouldComponentUpdate 判断是否要更新
+   // PureComponent 默认对props做了shouldComponentUpdate
+   
+   // React.memo + useCallback,可以减少hooks的渲染,React.memo + useCallback需要配对使用,即在父组件把要
+   // 传递给子组件的函数用useCallback包裹，子组件创建的时候用React.memo包裹
+   // 如果单使用useCallback，B组件还是会更新，使用React.memo包裹子组件，会对组件做一层props的浅比较，类似
+   // shouldComponentUpdate的逻辑，当props改变的时候，才会重新渲染B组件，而没有memo的时候，根本就不比较，
+   // 直接重新渲染B组件
+   
+   // React.useMemo 是hooks里对值的缓存，依赖变化的时候才会更新，依赖不变也不变
+   const B = React.memo(() => {
+     console.log('B');
+     return <div></div>
+   });
 ```
 
 ## 自定义Hook
