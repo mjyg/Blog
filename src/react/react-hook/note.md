@@ -211,6 +211,50 @@ export function HookComponent() {
   );
 }
 ```
+useRef和createRef的区别：
+* 使用createRef创建的ref会随着组件的更新而重新创建。
+* 使用useRef创建的ref仿佛就像外部定义的一个全局变量，不会随着组件的更新而重新创建。但组件销毁，它也会消失，不用手动进行销毁。
+
+下面这个例子，用全局变量store存储两种方式创建的ref，比较组件更新时和初始化值是否不同：
+```js
+import React, { useState, useEffect,useRef,createRef } from 'react';
+const store = {}
+export default () => {
+  const ref1 = createRef()
+  const ref2 = useRef()
+
+  const [ count, setCount ] = useState(0)
+
+  useEffect(() => {
+    if (!store.ref1) {
+      store.ref1 = ref1
+    } else {
+      console.log(store.ref1 === ref1)  // false
+    }
+  })
+
+  useEffect(() => {
+    if (!store.ref2) {
+      store.ref2 = ref2
+    } else {
+      console.log(store.ref2 === ref2)  //true
+    }
+  })
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCount(1)
+    }, 1000)
+  }, [])
+
+  return (
+    <form ref={ref1}>
+      <span>用户信息</span>
+      <input type="text" ref={ref2} />
+    </form>
+  )
+}
+```
 
 ## useMemo和useCallback
 记住返回值的缓存，当依赖项更新才更新；
