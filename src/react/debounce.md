@@ -3,7 +3,7 @@
 ## 防抖函数
 当持续触发事件时，一定时间段内没有再触发事件，事件处理函数才会执行一次，如果设定的时间到来之前，又一次
 触发了事件，就重新开始延时。
-> 比如用户连续点击新增按钮时只在点击结束后新增一条数据
+> 比如用户连续点击新增按钮时，只在点击结束后新增一条数据
 ```js
 function debounce(fn, time) {
   let timeout;
@@ -98,7 +98,7 @@ export default function () {
  ![](./image/1626230201705.png) 
    
 
-还有什么能保证数据唯一性呢？useRef
+还有什么能保证数据唯一性呢？用useRef
  
 上面方法的问题在于，要么没法保证防抖函数唯一，致使timeout失去效果;
 要么没法保证调用函数是最新的，使调用函数失去效果，中和一下两种方法，结果就出来了：
@@ -106,7 +106,7 @@ export default function () {
 function useDebounce(fn, time,dep=[]) {
   console.log('debounce初始化');
 
-  // 使用useRef存储保证数据的唯一性
+  // 使用useRef存储保证fn和timeout的唯一性
   const {current} = useRef({fn,timeout:null})
 
   // 确保调用函数是最新的
@@ -145,7 +145,7 @@ export default function LuckySheetDesigner(props) {
 
 ## 节流函数
 当持续触发事件时，保证一定时间段内只调用一次事件处理函数,同样节流函数只能放在只执行一次的地方调用
-> 比如用户连续点击新增按钮时在点击期间间隔1s新增一条数据
+> 比如用户连续点击新增按钮时,在点击期间每间隔1s新增一条数据
 ```js
 function throttle(fn, time) {
   let timeout;
