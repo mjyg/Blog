@@ -22,13 +22,15 @@
 >   * [commitMutationEffects(执⾏DOM操作)](#commitmutationeffects执dom操作)
 >   * [recursivelyCommitLayoutEffects(DOM操作后)](#recursivelycommitlayouteffectsdom操作后))
 > * [ReactDOM.render流程](#ReactDOMrender流程)
-> * [useState](#useState)
->   * [mountState](#mountState)
->   * [dispatchAction](#dispatchAction)
->   * [updateState](#updateState)
-> * [useEffect](#useEffect)
->   * [MountEffect](#MountEffect)
->   * [UpdateEffect](#UpdateEffect)
+> * [React Hooks](#React-Hooks)
+>   * [基本类型](#基本类型)
+>   * [useState](#useState)
+>     * [mountState](#mountState)
+>     * [dispatchAction](#dispatchAction)
+>     * [updateState](#updateState)
+>   * [useEffect](#useEffect)
+>     * [MountEffect](#MountEffect)
+>     * [UpdateEffect](#UpdateEffect)
 
 ## 整体架构
 ### React15
@@ -1651,7 +1653,8 @@ render()流程图（React16），可以看到render之后就进入了调度流�
 ![](../image/1626013504744.jpg)
 (scheduleUpdateOnFiber是React16的scheduleWork)
 
-## useState
+## React Hooks
+###  基本类型
 hooks只能在 function component 使用，因为在renderWithHooks 方法里才会注入hooks上下文
 * useState: 在function component定义state
 * useEffect 模拟生命周期， didMount+didUpdate+willUnMount，所以能精简代码量
@@ -1663,12 +1666,88 @@ hooks只能在 function component 使用，因为在renderWithHooks 方法里才
 hooks模拟类组件的生命周期：<br>
 ![](../image/1626014741081.jpg)
 
+先看看 ReactFiberHooks.js 中Hook的定义：
+```js
+export type Hook = {
+  memoizedState: any, // 指向当前渲染节点 Fiber, 上一次完整更新之后的最终状态值
+
+  baseState: any, // 初始化 initialState， 已经每次 dispatch 之后 newState
+  baseUpdate: Update<any, any> | null, // 当前需要更新的 Update ，每次更新完之后，会赋值上一个 
+                                       // update，方便 react 在渲染错误的边缘，数据回溯
+  queue: UpdateQueue<any, any> | null, // 缓存的更新队列，存储多次更新行为
+
+  next: Hook | null,  // link 到下一个 hooks，通过 next 串联每一 hooks
+};
+```
+可以看到， React 的 Hooks 是一个单向链表，Hook.next 指向下一个 Hook。
+
+两个 Dispatch 的类型定义需要关注一下，一个是首次加载时的 HooksDispatcherOnMount，另一个是更新时的 
+HooksDispatcherOnUpdate
+```js
+const HooksDispatcherOnMount: Dispatcher = {
+  readContext,
+
+  useCallback: mountCallback,
+  useContext: readContext,
+  useEffect: mountEffect,
+  useImperativeHandle: mountImperativeHandle,
+  useLayoutEffect: mountLayoutEffect,
+  useMemo: mountMemo,
+  useReducer: mountReducer,
+  useRef: mountRef,
+  useState: mountState,
+  useDebugValue: mountDebugValue,
+  useResponder: createResponderListener,
+};
+
+const HooksDispatcherOnUpdate: Dispatcher = {
+  readContext,
+
+  useCallback: updateCallback,
+  useContext: readContext,
+  useEffect: updateEffect,
+  useImperativeHandle: updateImperativeHandle,
+  useLayoutEffect: updateLayoutEffect,
+  useMemo: updateMemo,
+  useReducer: updateReducer,
+  useRef: updateRef,
+  useState: updateState,
+  useDebugValue: updateDebugValue,
+  useResponder: createResponderListener,
+};
+```
+
+React Fiber 会从 packages/react-reconciler/src/ReactFiberBeginWork.js 中的 beginWork() 开始执
+行，对于 Function Component，执行updateFunctionComponent方法(函数组件更新阶段)，在该方法中，对于hooks的处理是：
+```js
+nextChildren = renderWithHooks(
+  current,
+  workInProgress,
+  Component,
+  nextProps,
+  context,
+  renderExpirationTime,
+);
+```
+因此，React Hooks 的渲染核心入口是 renderWithHooks，他的关键部分代码如下：
+```js
+nextCurrentHook = current !== null ? current.memoizedState : null;
+  
+ReactCurrentDispatcher.current =
+    nextCurrentHook === null
+      ? HooksDispatcherOnMount
+      : HooksDispatcherOnUpdate;
+```
+可以看到：
+* mount阶段，返回onMount一系列方法HooksDispatcherOnMount，useState赋值为mountState
+* update阶段，返回onUpdate一系列方法HooksDispatcherOnUpdate, useState赋值为updatetate
+
+###  useState
 useState的3个阶段：
 * mountState 初始化
 * dispatchAction  更改，比如setName
 * updateState  得到更新后的state
 
-useState源码入口：
 ```js
 // react-17.0.0\packages\react\src\ReactHooks.js
 export function useState<S>(
@@ -1681,15 +1760,7 @@ export function useState<S>(
 ```js
 // react-17.0.0\packages\react\src\ReactHooks.js
 function resolveDispatcher() {
-  // 这个是动态赋值的，在beginWork的updateFunctionComponent的renderWithHooks里会给
-  // ReactCurrentDispatcher.current赋值：
-  //  ReactCurrentDispatcher.current =
-  //    current === null || current.memoizedState === null
-  //      ? HooksDispatcherOnMount
-  //      : HooksDispatcherOnUpdate;
-  // mount阶段，返回onMount一系列方法(HooksDispatcherOnMount -> mountState)
-  // update阶段，返回onUpdate一系列方法(HooksDispatcherOnUpdate -> updataState)
-  const dispatcher = ReactCurrentDispatcher.current; // ?
+  const dispatcher = ReactCurrentDispatcher.current;  //ooksDispatcherOnMount或HooksDispatcherOnUpdate
   invariant(
     dispatcher !== null,
     'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' +
@@ -1703,19 +1774,21 @@ function resolveDispatcher() {
 }
 ```
 
-### mountState
+#### mountState
 第一次执行函数体的时候，调用useState会执行mountState，它主要做了以下几件事情:
 * 1.默认值是function，执行function，得到初始state
 * 2.把state存放在memoizedState属性中
 * 3.新建一个quene，存储update的一整次的更新
-* 4.把queue传递给dispatch, setName
+* 4.把当前fiber和queue传递给dispatch, setName
 * 5.返回默认值和dispatch
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
 function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
+ // 创建一个新的 Hook，并返回当前 workInProgressHook
   const hook = mountWorkInProgressHook();
+
   // 1.默认值是function，执行function,得到初始state
   //   类似这样写:const [name,setName] = useState(()=>'Lily'),默认值是一个function
   if (typeof initialState === 'function') {
@@ -1731,7 +1804,7 @@ function mountState<S>(
     lastRenderedReducer: basicStateReducer,
     lastRenderedState: (initialState: any),
   });
-  // 4.把queue传递给dispatch
+  // 4.把当前fiber和queue传递给dispatch
   const dispatch: Dispatch<
     BasicStateAction<S>,
   > = (queue.dispatch = (dispatchAction.bind(
@@ -1743,8 +1816,30 @@ function mountState<S>(
   return [hook.memoizedState, dispatch];
 }
 ```
+mountWorkInProgressHook 是创建一个新的 Hook 并返回当前 workInProgressHook，实现如下：
+```js
+// react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
+function mountWorkInProgressHook(): Hook {
+  const hook: Hook = {
+    memoizedState: null,
+    baseState: null,
+    queue: null,
+    baseUpdate: null,
+    next: null,
+  };
 
-### dispatchAction
+  // 只有在第一次打开页面的时候，workInProgressHook 为空
+  if (workInProgressHook === null) {
+    firstWorkInProgressHook = workInProgressHook = hook;
+  } else {
+    // 已经存在 workInProgressHook 就将新创建的这个 Hook 接在 workInProgressHook 的尾部。
+    workInProgressHook = workInProgressHook.next = hook;
+  }
+  return workInProgressHook;
+}
+```
+
+#### dispatchAction
 在这个阶段做的事情：setName('Ann')是如何更新name的
 
 具体流程：
@@ -1771,7 +1866,7 @@ function dispatchAction<S, A>(
 
   const eventTime = requestEventTime();
   const lane = requestUpdateLane(fiber);
-  // 1.创建一个update
+  // 1.创建一个update，存储所有的更新行为，以便在 re-render 流程中计算最新的状态值
   const update: Update<S, A> = {
     lane,
     action,
@@ -1792,65 +1887,13 @@ function dispatchAction<S, A>(
   }
   queue.pending = update;
 
-  const alternate = fiber.alternate;
-  if (
-    fiber === currentlyRenderingFiber ||
-    (alternate !== null && alternate === currentlyRenderingFiber)
-  ) {
-    // This is a render phase update. Stash it in a lazily-created map of
-    // queue -> linked list of updates. After this render pass, we'll restart
-    // and apply the stashed updates on top of the work-in-progress hook.
-    didScheduleRenderPhaseUpdateDuringThisPass = didScheduleRenderPhaseUpdate = true;
-  } else {
-    if (
-      fiber.lanes === NoLanes &&
-      (alternate === null || alternate.lanes === NoLanes)
-    ) {
-      // The queue is currently empty, which means we can eagerly compute the
-      // next state before entering the render phase. If the new state is the
-      // same as the current state, we may be able to bail out entirely.
-      // 队列当前为空，这意味着我们可以在进入渲染阶段之前提前地计算下一个状态。 
-      // 如果新状态与当前状态相同，我们可能可以完全复用。
-      const lastRenderedReducer = queue.lastRenderedReducer;
-      if (lastRenderedReducer !== null) {
-        let prevDispatcher;
-        if (__DEV__) {
-          prevDispatcher = ReactCurrentDispatcher.current;
-          ReactCurrentDispatcher.current = InvalidNestedHooksDispatcherOnUpdateInDEV;
-        }
-        try {
-          const currentState: S = (queue.lastRenderedState: any);
-          const eagerState = lastRenderedReducer(currentState, action);
-          // Stash the eagerly computed state, and the reducer used to compute
-          // it, on the update object. If the reducer hasn't changed by the
-          // time we enter the render phase, then the eager state can be used
-          // without calling the reducer again.
-          update.eagerReducer = lastRenderedReducer;
-          update.eagerState = eagerState;
-          if (is(eagerState, currentState)) {
-            // Fast path. We can bail out without scheduling React to re-render.
-            // It's still possible that we'll need to rebase this update later,
-            // if the component re-renders for a different reason and by that
-            // time the reducer has changed.
-            return;
-          }
-        } catch (error) {
-          // Suppress the error. It will throw again in the render phase.
-        } finally {
-          if (__DEV__) {
-            ReactCurrentDispatcher.current = prevDispatcher;
-          }
-        }
-      }
-    }
-   
     // 4.进入调度流程
     scheduleUpdateOnFiber(fiber, lane, eventTime);
   }
 }
 ```
 
-### updateState
+#### updateState
 更新state的时候，调用useState会执行updateState
 * 1.递归执行queue里的update
 * 2.计算最新的state，赋值给memoizedState
@@ -1880,10 +1923,10 @@ useState具体流程：
 流程图<br>
 ![](../image/WechatIMG41.jpeg)
 
-## useEffect
+### useEffect
 useEffect的2个阶段:
-* MountEffect
-* UpdateEffect
+* MountEffect 初始化
+* UpdateEffect 更新
 
 useEffect具体流程：
 * 初始化:
@@ -1896,14 +1939,29 @@ useEffect具体流程：
 *  5.在commit阶段dom更新完毕后才会又执行useEffect的回调
 
 
-### MountEffect
+#### MountEffect
 * 1.处理依赖数组
 * 2.设置effectTag
 * 3.新增一个Effect到hook.memoizedState 中
+
+mountEffect:
+```js
+function mountEffect(
+  create: () => (() => void) | void,
+  deps: Array<mixed> | void | null,
+): void {
+  return mountEffectImpl(
+    UpdateEffect | PassiveEffect,
+    UnmountPassive | MountPassive,
+    create,
+    deps,
+  );
+}
+```
 ```js
 // D:react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.new.js
 function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
-  const hook = mountWorkInProgressHook();
+  const hook = mountWorkInProgressHook(); // 创建一个新的 Hook 并返回当前 workInProgressHook
   // 依赖数组
   const nextDeps = deps === undefined ? null : deps;
   // 设置effectTag
@@ -1911,7 +1969,7 @@ function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
   hook.memoizedState = pushEffect(
     HookHasEffect | hookFlags, //effectTag
     create, //useEffect第一个参数
-    undefined, //useEffect第一个参数的返回值，destroy
+    undefined, //useEffect第一个参数的返回值，destroy,在初始化阶段为undefined
     nextDeps, //useEffect第二个参数，依赖
   );
 }
@@ -1974,13 +2032,28 @@ function commitHookEffectListMount(flags: HookFlags, finishedWork: Fiber) {
   }
 }
 ```
-### UpdateEffect
+#### UpdateEffect
 * 设置EffectTag
 * 对比依赖是否发生变化，如不一样，则重新push一个新的Effect
+
+updateEffect:
+```js
+function updateEffect(
+  create: () => (() => void) | void,
+  deps: Array<mixed> | void | null,
+): void {
+  return updateEffectImpl(
+    UpdateEffect | PassiveEffect,
+    UnmountPassive | MountPassive,
+    create,
+    deps,
+  );
+}
+```
 ```js
 // react-17.0.0\packages\react-reconciler\src\ReactFiberHooks.old.js
 function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
-  const hook = updateWorkInProgressHook();
+  const hook = updateWorkInProgressHook(); // 获取当前正在工作中的 Hook
   const nextDeps = deps === undefined ? null : deps;
   let destroy = undefined;
 
@@ -1998,6 +2071,12 @@ function updateEffectImpl(fiberFlags, hookFlags, create, deps): void {
     }
   }
 ```
+当 effect 存在的时候，有三段逻辑要处理，它们的逻辑基本相同，循环 effect 链表传给三个不同的函数，分别是：
+* commitBeforeMutationEffects
+* commitMutationEffects
+* commitLayoutEffects
+
+这就回到了commit阶段
 
 destroy: 在commitUnmount阶段卸载组件，这时destroy方法会被调用
 ```js
@@ -2027,6 +2106,9 @@ function commitHookEffectListUnmount(
   }
 }
 ```
+
+useEffect流程图：<br>
+![](../image/16ec7841badc29ba.jpg)
 
 react hook实用小技巧：
 ```js

@@ -18,7 +18,7 @@ function useState(initValue) {
 2.如果没有deps， callback每次都执行
 3.deps有，只有deps发生变化才执行callback
 ```js
-let _deps; //记录effect第二个参数的上一次状态
+let _deps; //记录effect第二个参数的上~~~~一次状态
 function useEffect(callback, depArray) {
   const hasNoDeps = !depArray;
 
