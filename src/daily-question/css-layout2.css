@@ -1,0 +1,114 @@
+/*不同方式实现CSS方式实现左右侧宽度固定，中间自适应布局*/
+/*
+ <div class="container">
+    <div class="left"></div>
+    <div class="middle"></div>
+    <div class="right"></div>
+  </div>
+*/
+
+/*1.flex*/
+.container {
+  display: flex;
+}
+
+.left,.right{
+  width: 200px;
+  height:800px;
+  border:1px solid red
+}
+
+.middle{
+  height:800px;
+  flex:1;
+  border:1px solid blue
+}
+
+/*2.grid*/
+.container {
+  display: grid;
+  grid-template-columns: 200px auto 200px;
+}
+
+.left, .right{
+  height:800px;
+  border:1px solid red
+}
+
+.middle{
+  height:800px;
+  border:1px solid blue
+}
+
+/*3.浮动*/
+/*纯float实现的三栏布局需要将中间的内容放在HTML结构的最后，否则右侧会沉在中间内容的下侧*/
+.container {
+  overflow: hidden;
+}
+
+.left{
+  float: left;
+  width:200px;
+  height:800px;
+  border:1px solid red
+}
+
+.right{
+  float: right;
+  width:200px;
+  height:800px;
+  border:1px solid red
+}
+
+.middle{
+  margin: 0 200px;
+  height:800px;
+  border: 1px solid blue;
+}
+
+/*4.table*/
+.container {
+  display: table;
+  width: 100%;
+}
+
+.left, .right {
+  display: table-cell;
+  width: 200px;
+  height: 800px;
+  border: 1px solid red;
+}
+
+.middle {
+  display: table-cell;
+  height: 800px;
+  border: 1px solid blue;
+}
+
+/*5.absolute*/
+.container {
+  box-sizing:border-box;
+  position: relative;
+}
+
+.left {
+  position: absolute;
+  width: 200px;
+  height: 800px;
+  border: 1px solid red;
+}
+
+.right {
+  position: absolute;
+  right:0;
+  top:0;
+  width: 200px;
+  height: 800px;
+  border: 1px solid red;
+}
+
+.middle {
+  margin: 0 200px;
+  height: 800px;
+  border: 1px solid blue;
+}

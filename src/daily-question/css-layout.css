@@ -1,0 +1,93 @@
+/*不同方式实现CSS方式实现左侧宽度固定，右侧自适应布局*/
+/*
+ <div class="container">
+    <div class="left"></div>
+    <div class="right"></div>
+  </div>
+ */
+
+/*1.flex*/
+.container {
+  display: flex;
+}
+
+.left{
+  width: 200px;
+  height:800px;
+  border:1px solid red
+}
+
+.right{
+  height:800px;
+  flex:1;
+  border:1px solid blue
+}
+
+/*2.grid*/
+.container {
+  display: grid;
+  grid-template-columns: 200px auto;
+}
+
+.left{
+  height:800px;
+  border:1px solid red
+}
+
+.right{
+  height:800px;
+  border:1px solid blue
+}
+
+/*3.浮动*/
+.container {
+}
+
+.left{
+  float: left;
+  width:200px;
+  height:800px;
+  border:1px solid red
+}
+
+.right{
+  margin-left: 200px;
+  height:800px;
+  border:1px solid blue
+}
+
+/*4.table*/
+.container {
+  display: table;
+  width: 100%;
+}
+
+.left {
+  display: table-cell;
+  width: 200px;
+  height: 800px;
+  border: 1px solid red;
+}
+
+.right {
+  display: table-cell;
+  height: 800px;
+  border: 1px solid blue;
+}
+
+/*5.absolute*/
+.container {
+}
+
+.left {
+  position: absolute;
+  width: 200px;
+  height: 800px;
+  border: 1px solid red;
+}
+
+.right {
+  margin-left: 200px;
+  height: 800px;
+  border: 1px solid blue;
+}

@@ -2,6 +2,7 @@
 > * 持续学习，不忘初心
 > * "临渊羡鱼，不如退而结网"
 > * 成功的道路从来不拥挤，今天你有进步吗？
+> * 每当你觉得以前的自己渣像块豆腐渣时，就代表你进步了。反过来总说想当年自己如何如何，那说明你还在吃老本
 
 ## 目录
 * JS基础
@@ -63,9 +64,6 @@
   * [手写节流函数](./src/handwriting/throttle.md)
   * [手写parseInt](./src/handwriting/parseInt.md)
   * [手写proxy的get和set](./src/handwriting/proxy.md)
-  * [虚拟dom转化为真实dom](./src/handwriting/render.js)
-  * [请求失败后一定时间重试](./src/handwriting/request.js)
-  * [字符串解析](./src/handwriting/analysis-str.js)
 * 性能优化
   * [基本概念](./src/performance-optimization/base.md)
   * [浏览器缓存](./src/performance-optimization/browserCache.md)
@@ -95,3 +93,9 @@
   * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
   * [Flex布局和Grid布局](./src/other/flex&grid.md)
 * [笔记](./src/note/note.md)
+* 每日一题
+  * [虚拟dom转化为真实dom](./src/daily-question/render.js)
+  * [请求失败后一定时间重试](./src/daily-question/request.js)
+  * [字符串解析](./src/daily-question/analysis-str.js) 
+  * [CSS实现左侧宽度固定，右侧自适应布局](./src/daily-question/css-layout.css) 
+  * [CSS实现左右侧宽度固定，中间自适应布局](./src/daily-question/css-layout2.css) 
