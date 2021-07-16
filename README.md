@@ -65,6 +65,7 @@
   * [手写proxy的get和set](./src/handwriting/proxy.md)
   * [虚拟dom转化为真实dom](./src/handwriting/render.js)
   * [请求失败后一定时间重试](./src/handwriting/request.js)
+  * [字符串解析](./src/handwriting/analysis-str.js)
 * 性能优化
   * [基本概念](./src/performance-optimization/base.md)
   * [浏览器缓存](./src/performance-optimization/browserCache.md)
