@@ -160,6 +160,7 @@ CSS3D，Video,webgl,transform,css滤镜,will-change<br>
 上面代码渲染了一个不断运动的小球,用Chrome的Peformance工具查看性能分析：<br>
 ![](./image/16251314987014.png)<br>
 > Tip:<br>
+> scripting:JavaScript语句执行所占用时间<br>
 > rendering:重排<br>
 > paint:重绘<br>
 > idle:空闲时间<br>

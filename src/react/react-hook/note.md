@@ -458,8 +458,12 @@ export function HookComponent() {
 ![](../image/1624634768377.jpg)
 
 ## Hook使用规则
-1.只能在最顶层使用Hook,不要在循环、条件、嵌套函数中调用Hook
-2.只在React函数或自定义Hook中调用Hook
+* 1.Hooks 的使用必须要符合这条规则：确保 Hook 在每一次渲染中都按照同样的顺序被调用。因此最好每次只在最
+顶层使用 Hook，不要在循环、条件、嵌套函数中调用 Hooks，否则容易出错。只能在最顶层使用Hook,不要在循环、
+条件、嵌套函数中调用Hook
+* 2.只在React函数或自定义Hook中调用Hook
+
+安利一个网站，里面收集了实用的自定义HOOK[易于理解的 React Hook](https://usehooks.com/)
 
 
 
