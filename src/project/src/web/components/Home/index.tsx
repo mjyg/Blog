@@ -53,7 +53,7 @@ const Button = () => {
   return <button onClick={handleAdd}>点击增加</button>;
 };
 
-const wWapHome = () => {
+const WrapHome = () => {
   return (
     <Provider>
       <Home />
@@ -61,4 +61,4 @@ const wWapHome = () => {
   );
 };
 
-export default Home;
+export default WrapHome;
