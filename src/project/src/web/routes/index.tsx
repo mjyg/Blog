@@ -1,36 +1,37 @@
-import * as React from 'react'
-import {Switch,RouterProps,Route} from 'react-router-dom'
+import * as React from "react";
+import { Switch, RouterProps, Route } from "react-router-dom";
 
-const {Suspense,lazy}= React
+const { Suspense, lazy } = React;
 
+const Home = lazy(
+  () => import(/*webpackChunkName:"home"*/ "../components/Home")
+);
 
-const Home= lazy(()=>(
-  import(/**webpackChunkName:"home"*/, "../components/Home")
-))
-
-const routes:RouterProps[]=[
+const routes: RouterProps[] = [
   {
-    path:'/',
-    exact:true,
-    component:Home
-  }
-]
+    path: "/",
+    exact: true,
+    component: Home,
+  },
+];
 
-const Routes = ()=>(
+const Routes = () => (
   <Suspense fallback={<i>loading</i>}>
-     <Switch>
-    {
-      routes.map(r=>{
-        const{path,exact,component} = r;
-        const LazyComponent = component
+    <Switch>
+      {routes.map((r) => {
+        const { path, exact, component } = r;
+        const LazyComponent = component;
         return (
-          <Route key={path} exact={exact} path={path} render={()=><LazyComponent/>}/>
-        )
-      })
-    }
+          <Route
+            key={path}
+            exact={exact}
+            path={path}
+            render={() => <LazyComponent />}
+          />
+        );
+      })}
     </Switch>
   </Suspense>
-)
-
+);
 
 export default Routes;
