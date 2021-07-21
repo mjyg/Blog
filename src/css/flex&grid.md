@@ -26,7 +26,6 @@
 | flex-grow   | 指定了flex容器中剩余空间的多少应该分配给项目                  | 默认为0                                           |
 | flex-shrink | 项目的收缩规则，在默认宽度之和大于容器的时候才会发生收缩     | 默认为1                                           |
 | flex-basis  | 项目在主轴方向上的初始大小                                   | 默认为auto,使用项目本来的宽度                     |
-| flex        | flex-grow,flex-shrink 和 flex-basis的简写,后两个属性可选     | 默认值为`0 1 auto`                                |
 | align-self  | 设置单个项目与其他项目不一样的对齐方式，可以覆盖`align-items`属性 | 默认值为`auto`，表示继承父元素的`align-items`属性 |
 
 

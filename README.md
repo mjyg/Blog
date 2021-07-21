@@ -22,6 +22,9 @@
   * [JS元编程](./src/grammar/metaProgramming.md)
   * [深拷贝](./src/grammar/deepCopy.md)
   * [V8垃圾回收机制](./src/grammar/garbage.md)
+* CSS
+  * [BFC](./src/css/bfc.md)
+  * [Flex布局和Grid布局](./src/css/flex&grid.md)
 * Promise
   * [Promise的链式调用](./src/promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](./src/promise/handwrite-./src/promise/promise.md)
@@ -90,10 +93,9 @@
 * 其他
   * [EventLoop](./src/other/eventloop.md)
   * [二进制文件流下载和打印](./src/other/export&download.md)
-  * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
-  * [Flex布局和Grid布局](./src/other/flex&grid.md)
 * [笔记](./src/note/note.md)
 * 每日一题
+  * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
   * [虚拟dom转化为真实dom](./src/daily-question/render.js)
   * [请求失败后一定时间重试](./src/daily-question/request.js)
   * [字符串解析](./src/daily-question/analysis-str.js) 
