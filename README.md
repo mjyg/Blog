@@ -2,7 +2,8 @@
 > * 持续学习，不忘初心
 > * "临渊羡鱼，不如退而结网"
 > * 成功的道路从来不拥挤，今天你有进步吗？
-> * 每当你觉得以前的自己渣像块豆腐渣时，就代表你进步了。反过来总说想当年自己如何如何，那说明你还在吃老本
+> * 每当你觉得以前的自己渣像块豆腐渣时，就代表你进步了;反过来总说想当年自己如何如何，那说明你还在吃老本
+> * 一般你能轻松学到的东西，别人也可以。因此，如果你想挤进那20%的行列，就要学到一般人学不到的深度，学到一般人学不了的东西。自然，是需要更多额外的努力的。
 
 ## 目录
 * JS基础
@@ -25,6 +26,7 @@
 * CSS
   * [BFC](./src/css/bfc.md)
   * [Flex布局和Grid布局](./src/css/flex&grid.md)
+  * [CSS3 Matrix](./src/css/matrix.md)
 * Promise
   * [Promise的链式调用](./src/promise/promise-call-chaining/promise.md)
   * [十二步大白话手写一个Promise](./src/promise/handwrite-promise/promise.md)
