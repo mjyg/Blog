@@ -27,7 +27,7 @@
   * [Flex布局和Grid布局](./src/css/flex&grid.md)
 * Promise
   * [Promise的链式调用](./src/promise/promise-call-chaining/promise.md)
-  * [十二步大白话手写一个Promise](./src/promise/handwrite-./src/promise/promise.md)
+  * [十二步大白话手写一个Promise](./src/promise/handwrite-promise/promise.md)
 * 函数式编程
     * [基本概念](./src/functional-programming/base.md)
     * [各种函子&Monad](./src/functional-programming/functor.md)
