@@ -91,5 +91,5 @@ y' = x*tan(θ)+y+0 = x*tan(θ)+y
 
 ## 为什么要使用 Matrix
 由上面可以知道，matrix矩阵是transform变换的基础，使用matrix可以实现除了拉伸、缩放、旋转、对称之外的
-其他效果，比如**镜相对称**效果，这里可以参考![理解CSS3 transform中的Matrix(矩阵)](https://www.zhangxinxu.com/wordpress/2012/06/css3-transform-matrix-%E7%9F%A9%E9%98%B5/)
+其他效果，比如**镜相对称**效果，这里可以参考[理解CSS3 transform中的Matrix(矩阵)](https://www.zhangxinxu.com/wordpress/2012/06/css3-transform-matrix-%E7%9F%A9%E9%98%B5/)
 
