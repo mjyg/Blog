@@ -80,3 +80,16 @@ y' = x*sinθ+y*cosθ+0 = x*sinθ+y*cosθ
 matrix(cosθ,sinθ,-sinθ,cosθ,0,0)
 ```
 例如，旋转30度写法为：`transform: matrix(cos30,sin30,-sin30,cos30,0,0);`
+
+## skew
+拉伸后坐标计算：
+```
+x' = x+y*tan(θ)+0 = x+y*tan(θ) 
+y' = x*tan(θ)+y+0 = x*tan(θ)+y
+```
+化成矩阵公式为：`matrix(1,tan(θ),tan(θ),1,0,0)`
+
+## 为什么要使用 Matrix
+由上面可以知道，matrix矩阵是transform变换的基础，使用matrix可以实现除了拉伸、缩放、旋转、对称之外的
+其他效果，比如**镜相对称**效果，这里可以参考![理解CSS3 transform中的Matrix(矩阵)](https://www.zhangxinxu.com/wordpress/2012/06/css3-transform-matrix-%E7%9F%A9%E9%98%B5/)
+
