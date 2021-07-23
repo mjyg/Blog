@@ -1,4 +1,4 @@
-# QA
+# 测试方法
 
 > * [单元测试karma](#单元测试karma)
 > * [UI测试BackstopJs](#UI测试BackstopJs)
