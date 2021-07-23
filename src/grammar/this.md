@@ -15,8 +15,6 @@ b(); // window
 ## setTimeout
 超时调用（setTimeout回调）的代码都是在全局作用域环境中执行的，因此（setTimeout回调）函数中this的值
 在非严格模式下指向window对象，在严格模式下是undefined<br>
-超时调用（setTimeout回调）的代码都是在全局作用域环境中执行的，因此（setTimeout回调）函数中this的值
-在非严格模式下指向window对象，在严格模式下是undefined<br>
 🌰例2
 ```js
 function foo() {
