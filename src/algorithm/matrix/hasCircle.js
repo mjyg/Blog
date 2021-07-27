@@ -38,11 +38,11 @@ function isCircle(nodes) {
         }
         delete nodes[key];
       } else {
-        return false; //遍历一遍没有入度为0的点，说明存在环
+        return true; //遍历一遍没有入度为0的点，说明存在环
       }
     }
   }
-  return true;
+  return false;
 }
 
 console.log(isCircle(nodes));
