@@ -8,20 +8,20 @@ service_relations = [('A', 'B'), ('A', 'C'), ('B', 'D'), ('D', 'A')]
 
 // 转成有向图
 function handleData(relation) {
-  const obj = {}
-  for(const item of relation) {
-    const [key1,key2] = item
-    if(!obj[key1]) obj[key1] = {from:[],to:[]}
-    if(!obj[key2]) obj[key2] = {from:[],to:[]}
-    obj[key1].to.push(key2)
-    obj[key2].from.push(key1)
+  const obj = {};
+  for (const item of relation) {
+    const [key1, key2] = item;
+    if (!obj[key1]) obj[key1] = { from: [], to: [] };
+    if (!obj[key2]) obj[key2] = { from: [], to: [] };
+    obj[key1].to.push(key2);
+    obj[key2].from.push(key1);
   }
-  return obj
+  return obj;
 }
 
 //用拓扑排序检测有向图是否有环
 function isCircle(relation) {
-  const nodes = handleData(relation)
+  const nodes = handleData(relation);
   while (Object.keys(nodes).length) {
     for (const key of Object.keys(nodes)) {
       const { from, to } = nodes[key];
@@ -40,6 +40,29 @@ function isCircle(relation) {
   return false;
 }
 
-const service_relations = [['A', 'B'], ['A', 'C'], ['B', 'D'], ['D','A']]
-console.log(isCircle(service_relations))
+// 一次遍历法
+function isCircle2(relation) {
+  const map = new Map();
+  for (const item of relation) {
+    const [from, to] = item;
 
+    //为每一个依赖开始的节点存储他的所有依赖项
+    if (!map.has(from)) map.set(from, []);
+    map.get(from).push(to);
+
+    // 若to是开始节点，则把from存入to依赖项中
+    if (map.has(to)) map.get(to).push(from);
+
+    // 若to是开始节点，且to的依赖中有from,则存在环
+    if (map.get(to) && map.get(to).indexOf(from) !== -1) return true;
+  }
+  return false;
+}
+
+const service_relations = [
+  ["A", "B"],
+  ["A", "C"],
+  ["B", "D"],
+  ["D", "A"],
+];
+console.log(isCircle2(service_relations));
