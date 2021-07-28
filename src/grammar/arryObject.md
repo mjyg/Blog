@@ -27,7 +27,7 @@ for (const item of arrayLike) {
 ```
 
 ## 类数组转数组
-有一下四种方法:
+有以下四种方法:
 ```js
 //1.slice方法
 console.log(Array.prototype.slice.call(arrayLike)) //[ 'a', 'd', 'c' ]
@@ -37,7 +37,7 @@ console.log(arrayLike)  //{ '0': 'a', '1': 'd', '2': 'c', length: 3 }
 //2.splice方法
 console.log(Array.prototype.splice.call(arrayLike, 0)) //[ 'a', 'd', 'c' ]
 
-console.log(arrayLike) //{ length: 0 }  slice会改变原数组
+console.log(arrayLike) //{ length: 0 }  splice会改变原数组
 
 var a = [1,2,3]
 console.log(a.splice(0))  //[ 1, 2, 3 ]

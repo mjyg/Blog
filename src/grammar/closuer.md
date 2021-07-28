@@ -173,7 +173,7 @@ let CarFactory = function (name) {
 let p1 = new CarFactory("Lili");  
 p1();  
 ```
-运行以上代码可以通过Chrome的Memory查案内存情况：<br>
+运行以上代码可以通过Chrome的Memory查看内存情况：<br>
 ![](./image/1622365410995.jpg)<br>
 清空c1，才会在内存中销毁Car<br>
 ![](./image/1622365532076.jpg)<br>

@@ -160,11 +160,11 @@ sayHello.call(); //还是A
 * 作用域指向的对象：A.sayHello指向的对象是A。
 
 最后是使用箭头函数其他几点需要注意的地方:
-* 不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误( go is not a constructor)。
+* 不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误( xx is not a constructor)。
 * 不可以使用arguments对象，该对象在函数体内不存在。如果要用，可以用 rest 参数代替。
 * 不可以使用yield命令，因此箭头函数不能用作 Generator 函数。
 
-下面开始千锤百炼的练习, fighting ~~
+下面开始千锤百炼的练习, fighting 💪🏻💪🏻💪🏻~~~
 
 🌰例6
 ```js
@@ -212,7 +212,7 @@ var test3 = {
     go3();
   },
 };
-test3.init();  // {a2:50,init:f} window 20
+test3.init();  // {a3:50,init:f} window 20
 ```
 🌰例9
 ```js
