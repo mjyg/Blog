@@ -19,7 +19,7 @@ function combineArray(arr) {
         re.push(arr[start]);
       } else {
         // 存储合并区间
-        re.push(arr[start] + '-' + arr[end]);
+        re.push(arr[start] + "-" + arr[end]);
       }
 
       // 移动滑动窗口
@@ -32,10 +32,28 @@ function combineArray(arr) {
   if (start === end) {
     re.push(arr[start]);
   } else {
-    re.push(arr[start] + '-' + arr[end]);
+    re.push(arr[start] + "-" + arr[end]);
   }
 
   return re;
 }
 
-console.log(combineArray([1, 2, 1, 1, 2, 4, 6, 7, 8,10]));
+// 使用一个指针
+function combineArray2(arr) {
+  let index = 0;
+  let re = [];
+
+  while (index < arr.length) {
+    let begin = index;
+
+    // 遍历直到遇到不连续的元素
+    while (arr[index] + 1 === arr[index + 1]) index++;
+
+    (begin === index && re.push(arr[index])) || re.push(arr[begin] + "-" + arr[index]);
+
+    index++;
+  }
+  return re;
+}
+
+console.log(combineArray2([3, 1, 2, 1, 1, 2, 4, 6, 7, 8, 10]));
