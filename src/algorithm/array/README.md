@@ -27,5 +27,6 @@
 * [移除重复元素](removeDuplicates.md)
 * [递增数组中消失的数字](missingNumber.md)
 * [高度检查器](heightChecker.md)
+* [种花问题](canPlaceFlowers.js)
 
  
