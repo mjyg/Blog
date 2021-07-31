@@ -112,7 +112,8 @@ console.log(p2.friends);  //[ 'a', 'b', 'c' ]  (p2的friends属性值也修改�
 而且每添加一个属性或方法都要写一遍Person.prototype,较为繁琐，封装性难以体现
 
 ### 3-2 原型模式2
-原型模式的简单写法：使用对象字面量来重写整个原型对象，更好体现封装性
+原型模式的简单写法：使用对象字面量来重写整个原型对象，更好体现封装性,但仍然会有上一例引用类型的属性（friends）
+的问题
 ```js
 function Person4() {
 }
@@ -129,10 +130,10 @@ p1 = new Person4();
 console.log(p1 instanceof Person4);  //true
 console.log(p1.constructor);  //Object (无法指向原构造函数Person)
 ```
-> **产生的问题** <br>
-> 重写了默认的prototype对象为Object的prototype）<br>
-> 由于对象的constructor属性并非指向其构造函数,而是指向其构造函数的原型对象的constructor属性，因此p1的constructor
-> 属性为Object.prototype.constructor,即为Object
+**产生的问题** <br>
+重写了默认的prototype对象为Object的prototype<br>
+由于对象的constructor属性并非指向其构造函数,而是指向其构造函数的原型对象的constructor属性，因此p1的constructor
+属性为Object.prototype.constructor,即为Object
 
 ### 3-3 原型模式3
 在重写原型时显示添加constructor属性指向原来的构造函数
@@ -148,8 +149,8 @@ Person4.prototype = {
 p1 = new Person4();
 console.log(p1.constructor);  //Person4
 ```
-> **产生的问题** <br>
-> 如果先创建实例，再重新定义原型：
+**产生的问题** <br>
+如果先创建实例，再重新定义原型：
 ```js
 Person4.prototype = {
   constructor: Person4,
