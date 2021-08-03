@@ -21,9 +21,9 @@
   * [深拷贝](./src/grammar/deepCopy.md)
   * [V8垃圾回收机制](./src/grammar/garbage.md)
 * JS新特性
-  * [ES7&ES8新增语法](./src/grammar/es7es8.md)
-  * [ES9新增语法](./src/grammar/es9.md)
-  * [ES10新增语法](./src/grammar/es10.md)
+  * [ES7&ES8新增语法](./src/new-features/es7es8.md)
+  * [ES9新增语法](./src/new-features/es9.md)
+  * [ES10新增语法](./src/new-features/es10.md)
 * CSS
   * [BFC](./src/css/bfc.md)
   * [Flex布局和Grid布局](./src/css/flex&grid.md)
