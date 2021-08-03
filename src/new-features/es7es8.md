@@ -157,7 +157,8 @@ onmessage = function (e) {
 }
 ```
 输出结果：<br>
-![](https://user-gold-cdn.xitu.io/2020/5/31/1726b2a2ed59acd5?w=484&h=43&f=png&s=2598)
+![](image/1627951201172.png)
+
 使用上述方法，如果数据量很大，来回传递，通讯效率很低
 
 #### 使用SharedArreyBufer进行数据共享
@@ -197,7 +198,7 @@ onmessage = function (e) {
 }
 ```
 输出结果：<br>
-![](https://user-gold-cdn.xitu.io/2020/5/31/1726b3a74b0e5092?w=473&h=388&f=png&s=29848)
+![](image/1627951312511.png)
 
 #### 给线程加锁
 arrBuffer[20] = 88;像这样直接修改内存中的数据，若线程很多，则容易产生冲突<br>
