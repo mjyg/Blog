@@ -17,5 +17,6 @@
 * [词汇表中单词长度之和](countCharacters.md)
 * [有效的括号](checkLegalStr.js)
 * [移掉连续K位数字](removeKdigits.js)
+* [替换字符](replace.js)
 
  
