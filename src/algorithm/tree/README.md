@@ -1,4 +1,4 @@
-## 二叉树
+## 树
 * [先序遍历，中序遍历，后序遍历](traverse.js)
 * [二叉搜索树节点最小距离](minDiffInBST.js)
 * [二叉树的锯齿形层序遍历](zigzagLevelOrder.md)
@@ -6,4 +6,5 @@
 * [判断二叉树是否存在路径根节点到叶子节点的和可以为某一个值](hasPath.md)
 * [生成平衡二叉搜素树](sortedArrayToBST.md)
 * [判断两个二叉树是否相同](isSameTree.js)
+* [实现前缀树](trie.js)
  

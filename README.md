@@ -87,7 +87,7 @@
   * [字符串](./src/algorithm/string/README.md)
   * [链表](./src/algorithm/linked-list/README.md)
   * [栈和队列](./src/algorithm/stack/README.md)
-  * [二叉树](./src/algorithm/tree/README.md)
+  * [树](./src/algorithm/tree/README.md)
   * [数学](./src/algorithm/math/README.md)
   * [排序](./src/algorithm/sort/README.md)
   * [动态规划](./src/algorithm/dynamic-programming/README.md)

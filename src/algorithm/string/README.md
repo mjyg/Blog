@@ -18,5 +18,6 @@
 * [有效的括号](checkLegalStr.js)
 * [移掉连续K位数字](removeKdigits.js)
 * [替换字符](replace.js)
+* [电话号码补齐](suggestPhone.js)
 
  
