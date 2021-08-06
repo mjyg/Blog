@@ -50,7 +50,7 @@ set(target, name, value, receiver):设置target对象的name属性值为value,�
 ```js
 let obj3 = {
   a: 2,
-  set setB(value) {
+  set setA(value) {
     this.a = value;
   }
 };

@@ -52,9 +52,7 @@ proxy具有继承性
 ```js
 //写法1：
 let person2 = Object.create(proxy);//proxy定义在对象的原型对象上，也有拦截效果
-console.log(person2.age);  //not exist（person2没有age属性，会去它的原型对象proxy上去找，就会触发
-console.log(person2);  //not exist（person2没有age属性，会去它的原型对象proxy上去找，就会触发
-// proxy的get方法）
+console.log(person2.age);  //not exist（person2没有age属性，会去它的原型对象proxy上去找，就会触发proxy的get方法）
 
 let person3 = {};
 //写法2：
@@ -67,7 +65,7 @@ Object.setPrototypeOf(person33, proxy);
 console.log(person33.age);  //not exist
 ```
 
-利用proxyd的get()完成属性的链式操作：
+利用proxy的get()完成属性的链式操作：
 ```js
 let pipe = (val) => {
   let funcArr = [];
@@ -102,8 +100,7 @@ let c = pipe(3).double.pow.reverse.value;
 
 console.log(c); //63
 ```
->数组的reduce方法：<br>
->`reduce(function, val)`<br>
+>数组的reduce方法：`reduce(function, val)`<br>
 >参数说明：
 >* function:作为累加器,数组中的每个值（从左到右）开始缩减，最终为一个值,接受四个参数：上一次的
 >值，当前值，当前值的索引，数组本身
@@ -171,6 +168,7 @@ console.log(proxy.name)
 
 ### set
 set(target, property, value, receiver)拦截属性的赋值操作，参数为目标对象，属性名、属性值、代理本身（可选）
+
 例1：用作参数校验
 ```js
 let validator = {
