@@ -25,5 +25,5 @@ const phone = ['5789234', '5623786', '5633678'];
 console.log(suggestPhone('5', phone)); // [ '7', '6', '6' ]
 console.log(suggestPhone('56', phone)); // [ '2', '3' ]
 console.log(suggestPhone('563', phone)); // [ '3' ]
-console.log(suggestPhone('5633678', phone)); // [ '3' ]
+console.log(suggestPhone('5633678', phone)); // []
 
