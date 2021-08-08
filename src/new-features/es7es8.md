@@ -105,7 +105,7 @@ Object.entries(obj).forEach(([key, value]) => {
  })
 ```
 ### 4.String.prototype.padStart(targetLength, padString)
-在字符串开头添加字符串。 
+在字符串开头添加字符串。<br> 
 参数：添加后的字符串的目标长度；添加的字符串
 ```js
 console.log('123'.padStart(5, '555')) //12355
@@ -131,7 +131,7 @@ console.log(Object.getOwnPropertyDescriptors(obj))
 输出结果：<br>
 ![](image/es7.jpg)
 
-### 8.SharedArrayBufer 与Atomics
+### 8.SharedArrayBuffer 与Atomics
 给js带来了多线程的功能，高级特性，Js引擎核心改进<br>
 共享内存主要思想：把多线程引入Js<br>
 新的全局对象SharedArrayBuffer,Js主线程和web-worker线程共享该对象<br>
@@ -161,7 +161,7 @@ onmessage = function (e) {
 
 使用上述方法，如果数据量很大，来回传递，通讯效率很低
 
-#### 使用SharedArreyBufer进行数据共享
+#### 使用SharedArreyBuffer进行数据共享
 main.js
 ```js
 //创建一个worker进程

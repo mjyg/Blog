@@ -80,6 +80,7 @@ console.log(a.next()) //  { value: 3, done: false }
 console.log(a.next()) //执行完了  { value: undefined, done: true }
 ```
 * 异步迭代器
+
 异步迭代器和同步迭代器的区别:<br>
 同步：next方法返回{value:'',done:false},使用for..of遍历<br>
 异步：next方法返回promise,使用for...await...of遍历<br>

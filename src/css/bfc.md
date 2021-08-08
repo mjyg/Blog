@@ -2,7 +2,7 @@
 
 ## BFC 概念
 
-BFC 即 Block Formatting Contexts (块级格式化上下文)，它属于上述定位方案的普通流。
+BFC 即 Block Formatting Contexts (块级格式化上下文)。
 
 具有 BFC 特性的元素可以看作是隔离了的独立容器，**容器里面的元素不会在布局上影响到外面的元素**。
 
