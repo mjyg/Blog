@@ -24,6 +24,7 @@
   * [ES7&ES8新增语法](./src/new-features/es7es8.md)
   * [ES9新增语法](./src/new-features/es9.md)
   * [ES10新增语法](./src/new-features/es10.md)
+  * [ES11新增语法](./src/new-features/es11.md)
 * CSS
   * [BFC](./src/css/bfc.md)
   * [Flex布局和Grid布局](./src/css/flex&grid.md)
@@ -80,8 +81,8 @@
   * [跨站请求伪造(CSRF)](./src/security/csrf.md)
   * [跨域](./src/security/cross-domain.md)
 * QA
-    *[测试方法](./src/qa/qa.md)
-    *[测试React组件](./src/qa/react-test.md)
+  *[测试方法](./src/qa/qa.md)
+  *[测试React组件](./src/qa/react-test.md)
 * 算法和数据结构
   * [数组](./src/algorithm/array/README.md)
   * [字符串](./src/algorithm/string/README.md)
