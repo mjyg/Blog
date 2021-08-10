@@ -81,8 +81,8 @@
   * [跨站请求伪造(CSRF)](./src/security/csrf.md)
   * [跨域](./src/security/cross-domain.md)
 * QA
-  *[测试方法](./src/qa/qa.md)
-  *[测试React组件](./src/qa/react-test.md)
+  * [测试方法](./src/qa/qa.md)
+  * [测试React组件](./src/qa/react-test.md)
 * 算法和数据结构
   * [数组](./src/algorithm/array/README.md)
   * [字符串](./src/algorithm/string/README.md)
