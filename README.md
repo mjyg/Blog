@@ -100,6 +100,8 @@
 * 其他
   * [EventLoop](./src/other/eventloop.md)
   * [二进制文件流下载和打印](./src/other/export&download.md)
+  * [写一个适应所有环境的JS模块](./src/other/module.md)
+  * [jQuery源码学习](./src/other/jquery.md)
 * [笔记](./src/note/note.md)
 * 每日一题
   * [A.name发⽣变化时⽴即执⾏A.getName](./src/other/getName.md)
