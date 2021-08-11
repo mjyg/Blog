@@ -2,7 +2,7 @@
 
 > * [闭包结构](#闭包结构)
 > * [无new构造](#无new构造)
-> * [jQuery.fn.extend 与 jQuery.extend](#jQuery-fn-extend与jQuery-extend)
+> * [jQuery.fn.extend 与 jQuery.extend](#jqueryfnextend与jqueryextend)
 > * [链式调用及回溯](#链式调用及回溯)
 > * [变量冲突处理](#变量冲突处理)
 
@@ -302,7 +302,7 @@ jQuery 变量的冲突处理，通过一开始保存全局变量的 window.jQuer
     })
 }(window)
 ```
-那么让出了这两个符号之后，是否就不能在我们的代码中使用 jQuery 或者呢 $ 呢？莫慌，还是可以使用的：
+那么让出了这两个符号之后，是否就不能在我们的代码中使用 jQuery 或者呢 $ 呢？还是可以使用的：
 ```js
 // 让出 jQuery 、$ 的控制权不代表不能使用 jQuery 和 $ ，方法如下：
 var query = jQuery.noConflict(true);
