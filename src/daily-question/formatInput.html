@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <input id="number" />
+  </body>
+  <script>
+  // 手机号输入四个字加空格限制，并正确调整光标位置
+
+    document.getElementById('number').addEventListener(
+      'input',
+      function () {
+        formatInput(this);
+      },
+      false
+    );
+
+    function formatInput(elem) {
+      const pattern = /\s/g;
+      let curPos = elem.selectionStart;
+      let oldValue = elem.value;
+
+      // 设置新的值：先把原来的空格去掉，再加上新的空格,然后去掉最后一个空格
+      elem.value = paddingSpace(elem.value.replace(pattern, '')).trim();
+
+      // 用oldValue来计算出新的光标
+      if (oldValue[curPos - 1] == ' ') {
+        // 输入的是空格或者删除的字符是空格后的字符
+        curPos += -1;
+      } else {
+        // 输入的不是空格
+        let oldCursor = oldValue.slice(0, curPos); //光标前的字符串，
+        let oldCursorSpaced = paddingSpace(oldCursor.replace(pattern, '')); //光标前的字符串先去掉空格再加上,
+        // 这里针对输入的情况curPos才会变化：如'1234',会变成'1234 ',curPos就会+1，光标往后移一位
+        curPos += oldCursorSpaced.length - oldCursor.length;
+      }
+
+      setTimeout(()=>{
+        elem.focus()
+        elem.setSelectionRange(curPos, curPos);
+      })
+    }
+
+    // 格式化空格
+    function paddingSpace(str) {
+      return str.replace(/\d{4}/g, '$& '); //$&表示正则表达式匹配的文本，匹配到每四个数字后面加个空格
+    }
+  </script>
+</html>
