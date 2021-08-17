@@ -7,4 +7,5 @@
 * [生成平衡二叉搜素树](sortedArrayToBST.md)
 * [判断两个二叉树是否相同](isSameTree.js)
 * [实现前缀树](trie.js)
+* [移除dom树上面的class属性](removeClass.js)
  
