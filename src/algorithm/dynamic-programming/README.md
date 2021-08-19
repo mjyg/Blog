@@ -4,5 +4,5 @@
 * [斐波那契数](fib.md)
 * [求子数组和的最大值](maxSubArray.md)
 * [乘积最大子数组](maxProduct.js)
-
+* [最长递增子序列](lengthOfLIS.js) 
  

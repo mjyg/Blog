@@ -110,7 +110,6 @@
   * [字符串解析](./src/daily-question/analysis-str.js) 
   * [CSS实现左侧宽度固定，右侧自适应布局](./src/daily-question/css-layout.css) 
   * [CSS实现左右侧宽度固定，中间自适应布局](./src/daily-question/css-layout2.css) 
-  * [广度优先查找多叉树](./src/daily-question/wide-traversal.js) 
   * [判断一个对象是数组的不同方式](./src/daily-question/isArray.js) 
   * [检测循环依赖](./src/daily-question/isCircle.js) 
   * [input输入格式化，并调整光标位置](./src/daily-question/formatInput.html) 
