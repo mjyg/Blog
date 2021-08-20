@@ -96,6 +96,7 @@ keys数组变化如下：<br>
 ![](./image/16206966058787.png)
 
 * 用Map实现
+用Map实现就不需要用数组存放key来保存访问顺序了，因为map.keys()是按key的插入顺序返回的
 ```js
 function LRUCache(max) {
  this.cache = new Map()
@@ -143,7 +144,7 @@ function LRUCache(max) {
 }
 
 // 先查找节点是否存在，如果存在则摘下放入头部；
-// 不存在则先直接放如头部，如果链表满了，还需要删除尾部节点
+// 不存在则先直接放到头部，如果链表满了，还需要删除尾部节点
 LRUCache.prototype.put = function (key, value) {
   const node = new LinkNode({ [key]: value });
 
@@ -171,8 +172,6 @@ LRUCache.prototype.put = function (key, value) {
   this.head.pre = node;
   this.head = node;
   this.number++;
-  // console.log(this.head);
-  // console.log('-------------')
 };
 
 // 查找节点是否存在，存在则把节点放入头部，返回该节点；不存在则返回Null
