@@ -127,4 +127,96 @@ LRUCache.prototype.get = function(key) {
 下图截自MDN：<br>
 ![](./image/16206999678183.png)<br>
 
+* 用双向链表实现
+```js
+function LinkNode(value) {
+  this.value = value;
+  this.pre = null;
+  this.next = null;
+}
+
+function LRUCache(max) {
+  this.head = null; //链表头
+  this.tail = null; // 链表尾
+  this.number = 0; //已有节点个数
+  this.max = max; //缓存最大容量
+}
+
+// 先查找节点是否存在，如果存在则摘下放入头部；
+// 不存在则先直接放如头部，如果链表满了，还需要删除尾部节点
+LRUCache.prototype.put = function (key, value) {
+  const node = new LinkNode({ [key]: value });
+
+  if(this.find(key)) {
+    return
+  }
+
+  // 链表还是空的
+  if (!this.number) {
+    this.head = node;
+    this.tail = node;
+    this.number++;
+    return;
+  }
+
+  // 链表已经满了, 删掉最后面的节点
+  if (this.number === this.max) {
+    this.tail = this.tail.pre;
+    this.tail.next = null;
+    this.number --;
+  }
+
+  //把新节点加入头部
+  node.next = this.head;
+  this.head.pre = node;
+  this.head = node;
+  this.number++;
+  // console.log(this.head);
+  // console.log('-------------')
+};
+
+// 查找节点是否存在，存在则把节点放入头部，返回该节点；不存在则返回Null
+LRUCache.prototype.find = function(key) {
+  // 查找节点
+  let cur = this.head;
+  while (cur && !cur.value[key]) {
+    cur = cur.next;
+  }
+
+  // 没找到
+  if (!cur) {
+    return null;
+  }
+
+  // 找到的节点为头结点，直接返回
+  if(!cur.pre) {
+    return cur
+  }
+
+  // 找到的节点为头结点不是头结点，先把找到的节点摘掉
+  if(!cur.next) {
+    // 找到的节点是尾结点
+    this.tail = this.tail.pre;
+    this.tail.next = null
+  } else {
+    // 找到的节点不是尾结点
+    cur.pre.next = cur.next;
+    cur.next.pre = cur.pre;
+  }
+
+  //把找到的节点放到头部
+  cur.next = this.head;
+  this.head.pre = cur;
+  this.head = cur;
+  this.head.pre = null;
+
+  return cur
+}
+
+LRUCache.prototype.get = function (key) {
+  const node = this.find(key)
+  return node ? node.value[key] : -1;
+};
+```
+
 ❀ 参考文章：[前端进阶算法3：从浏览器缓存淘汰策略和Vue的keep-alive学习LRU算法](https://github.com/sisterAn/JavaScript-Algorithms/issues/9)
