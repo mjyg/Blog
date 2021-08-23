@@ -96,7 +96,7 @@ keys数组变化如下：<br>
 ![](./image/16206966058787.png)
 
 * 用Map实现
-用Map实现就不需要用数组存放key来保存访问顺序了，因为map.keys()是按key的插入顺序返回的
+用Map实现就不需要用数组存放key来保存访问顺序了，因为Map能够记住键的原始插入顺序,map.keys()是按key的插入顺序返回的
 ```js
 function LRUCache(max) {
  this.cache = new Map()
