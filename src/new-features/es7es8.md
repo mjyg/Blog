@@ -13,8 +13,8 @@ async function add(num) {  //该函数返回一个promise
 	return num + 2
 }
 add(2).then(res => {
-	console.log(res)  // 3
-}
+	console.log(res)  // 4
+})
 ```
 #### await语法
  
@@ -88,10 +88,6 @@ console.log(Object.values(obj))  //["aa", 4]
 
 ```js
 const obj = {name: 'aa', age:4}
-console.log(Object.keys(obj).map(key => obj[key]))  //["aa", 4]
-console.log(Object.values(obj))  //["aa", 4]
-
-
 console.log(Object.entries(obj))  //  [["name", "aa"],["age", 4]]
 console.log(Object.entries('abc'))  // [["0", "a"], ["1", "b"], ["2", "c"]]
 
