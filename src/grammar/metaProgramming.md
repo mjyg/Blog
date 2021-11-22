@@ -1,5 +1,5 @@
 # JS元编程
-引自MDN：从ECMAScript 2015 开始，JavaScript 获得了 Proxy 和 Reflect 对象的支持，允许你拦截并定义基本语言
+引自MDN：从ES6开始，JavaScript 获得了 Proxy 和 Reflect 对象的支持，允许你拦截并定义基本语言
 操作的自定义行为（例如，属性查找，赋值，枚举，函数调用等）。借助这两个对象，你可以在 JavaScript 元级别
 进行编程。                                 
 
