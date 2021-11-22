@@ -4,6 +4,7 @@
 进行编程。                                 
 
 * 类型转换时拦截获取原始值的方法「Symbol.toPrimitive]
+
 例1：
 ```js
 var a = {
