@@ -42,7 +42,7 @@ console.log(new Functor(3).map((x) => (x + 1)));
 Maybe函子用来处理错误和异常<br>
 用普通的函子当传入空值是可能会出错，如：
 ~~~js
-Functor.of(null).map(s=>s.toUpperCase()
+Functor.of(null).map(s=>s.toUpperCase())
 ~~~
 打印结果：
 
