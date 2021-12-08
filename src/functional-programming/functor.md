@@ -111,7 +111,7 @@ console.log(new Ap((x) => x + 1).ap(new Functor(3)));
 Monad.of(Monad.of(Monad.of({ name: "Alice", number: 12 })))
 ~~~
 * Monad是一种设计模式，表示讲一个运算过程，通过函数拆解成互相连接的多个步骤只要提供下一运算所需要的的函数，整个运算就会自动进行下去
-* Promise就是一种Monad,Monad让我们避开了嵌套低于，可以轻松的进行深度嵌套的函数式编程
+* Promise就是一种Monad,Monad让我们避开了嵌套地狱，可以轻松的进行深度嵌套的函数式编程
 * Monad函子的作用是，总是返回一个单层的函子。它有一个flatMap方法，如果生成了嵌套的函子，它会取出后者内部的值，保证返回的永远是一个单层的容器
 ~~~js
 class Functor {
