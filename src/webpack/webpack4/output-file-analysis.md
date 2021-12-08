@@ -27,6 +27,7 @@ mode值为'production'默认开启以下插件：
 mode值为'development'时，默认开启以下插件：
 * NamedChunksPlugin：以名称固化chunkId；
 * NamedModulesPlugin：以名称固化moduleId<br>
+
 mode值为'none'时，不开启任何插件<br>
 输出到dist文件夹中的 main.js,简化后文件内容如下：
 ```javascript
