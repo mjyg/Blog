@@ -11,7 +11,7 @@
 
 1. vue2通过正则匹配把template替换成with语句(因为with可以提升作用域链)，但是文档匹配次数越多执行越慢
 
-  vue3通过AST(抽象语法树)直接创建vnode,通过词法分析可以直接找到变量
+    vue3通过AST(抽象语法树)直接创建vnode,通过词法分析可以直接找到变量
 
 2.vue2实现双向数据绑定原理，是通过es5的 Object.defineProperty，根据具体的key去读取和修改。
 其中的setter方法来实现数据劫持的，getter实现数据的修改。但是必须先知道想要拦截和修改的key是什么，
