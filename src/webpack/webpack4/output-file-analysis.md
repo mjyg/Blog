@@ -14,6 +14,7 @@ console.log(result)
 ☆tip:
 本例中使用的webpack版本为4.44.1，此处为了更好的分析输出的bundle文件，将mode设置为'development'。<br>
 mode有三个可选值，分别是'none'、'production'、'development'，默认值为'production'<br>
+
 mode值为'production'默认开启以下插件：
 * FlagDependencyUsagePlugin：编译时标记依赖；
 * FlagIncludedChunksPlugin：标记子chunks，防止多次加载依赖；
@@ -22,9 +23,11 @@ mode值为'production'默认开启以下插件：
 * OccurrenceOrderPlugin：给经常使用的ids更短的值；
 * SideEffectsFlagPlugin：识别 package.json 或者 module.rules 的 sideEffects 标志（纯的 ES2015 模块)，安全地删除未用到的 export 导出；
 * TerserPlugin：压缩代码<br>
+
 mode值为'development'时，默认开启以下插件：
 * NamedChunksPlugin：以名称固化chunkId；
 * NamedModulesPlugin：以名称固化moduleId<br>
+
 mode值为'none'时，不开启任何插件<br>
 输出到dist文件夹中的 main.js,简化后文件内容如下：
 ```javascript
