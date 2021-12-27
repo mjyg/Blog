@@ -219,7 +219,7 @@ export function Home(props) {
     <Route path="/about/:id" component={About} />
 </BrowserRouter>
 ```
-当输入url为`http://localhost:3000/about/1`时，在About组件中通过match对象可以去到id：
+当输入url为`http://localhost:3000/about/1`时，在About组件中通过match对象可以拿到id：
 ```js
 import React from 'react'
 
