@@ -15,8 +15,8 @@ function useState(initValue) {
 ```
 
 ## 实现useEffect:
-1.接收两个参数，callback和deps
-2.如果没有deps， callback每次都执行
+1.接收两个参数，callback和deps <br>
+2.如果没有deps， callback每次都执行 <br>
 3.deps有，只有deps发生变化才执行callback
 ```js
 let _deps; //记录effect第二个参数的上~~~~一次状态
