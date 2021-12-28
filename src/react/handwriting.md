@@ -10,6 +10,7 @@ function useState(initValue) {
     state = newState;
     render(); //重新触发一次渲染
   }
+  return [state, setState];
 }
 ```
 
