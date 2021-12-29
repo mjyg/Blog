@@ -12,7 +12,7 @@ redux和react是没有任何关系的，redux是一个独立的状态管理的�
 action: 一个描述发生了什么的对象，动作，行为<br>
 reducer:描述action如何改变state树<br>
 应用中所有的state都以一个对象数的形式存储在一个单一的store中唯一改变state的方式就是派发action,
-过reducer完成state更新<br>
+通过reducer完成state更新<br>
 组件可以派发action，可以订阅state来更新视图
 
 Redux解决的问题：
