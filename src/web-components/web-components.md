@@ -71,7 +71,7 @@ Web Components API 提供了<template>标签，可以在它里面使用 HTML 定
 然后修改NoteBook类，获取<template>节点以后，克隆它的所有子元素,并把note-book上的参数值传进去
 ```js
  class NoteBook extends HTMLElement {
-        //当时一个元素被创建时（好比document.createElement）将会调用构造函数
+        //当一个元素被创建时（好比document.createElement）将会调用构造函数
         constructor() {
           super();
 
