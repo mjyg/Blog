@@ -982,7 +982,7 @@ function reconcileSingleElement(
 * 2.key值不等，不⽤对⽐下去了，节点不能复⽤，跳出
 * 3.判断节点是否存在移动，存在则返回新位置
 * 4.可能存在新的数组⼩于⽼数组的情况，即⽼数组后⾯有剩余的，所以要删除老数组后面剩余的
-* 5.新数组存在新增的节点，创建新阶段
+* 5.新数组存在新增的节点，创建新节点
 * 6.创建⼀个existingChildren代表所有剩余没有匹配掉的节点，然后新的数组根据key从这个 map
 ⾥⾯查找，如果有则复⽤，没有则新建
 ```js
@@ -1778,7 +1778,7 @@ function resolveDispatcher() {
 第一次执行函数体的时候，调用useState会执行mountState，它主要做了以下几件事情:
 * 1.默认值是function，执行function，得到初始state
 * 2.把state存放在memoizedState属性中
-* 3.新建一个quene，存储update的一整次的更新
+* 3.新建一个queue，存储update的一整次的更新
 * 4.把当前fiber和queue传递给dispatch, setName
 * 5.返回默认值和dispatch
 ```js
@@ -1844,7 +1844,7 @@ function mountWorkInProgressHook(): Hook {
 
 具体流程：
 * 1.创建一个update
-* 2.update添加到quene里，在updateState时再处理queue
+* 2.update添加到queue里，在updateState时再处理queue
 * 3.如果当前有时间，提前计算出最新的state，保存在eagerState
 * 4.进入调度流程scheduleUpdateOnFiber
 ```js
@@ -1876,7 +1876,7 @@ function dispatchAction<S, A>(
   };
 
   // Append the update to the end of the list.
-  // 2. update添加到quene里
+  // 2. update添加到queue里
   const pending = queue.pending;
   if (pending === null) {
     // This is the first update. Create a circular list.

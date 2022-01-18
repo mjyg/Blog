@@ -143,5 +143,49 @@ err相同吗？  false
 ```
 可以看出func被忽略了，reg和error复制失败，date复制后变成了字符串，只有基本数据类型、obj和arr深拷贝
 成功。
+有循环引用会报错
 
 > 总结：递归迭代法和序列化反序列化法比较适合平常开发中使用，因为通常不需要考虑对象和数组之外的类型。
+
+## 迭代递归方法（解决闭环问题）
+```js
+function deepCopy(data, hash = new WeakMap()) {
+  if(typeof data !== 'object' || data === null){
+        throw new TypeError('传入参数不是对象')
+    }
+  // 判断传入的待拷贝对象的引用是否存在于hash中
+  if(hash.has(data)) {
+        return hash.get(data)
+    }
+  let newData = {};
+  const dataKeys = Object.keys(data);
+  dataKeys.forEach(value => {
+     const currentDataValue = data[value];
+     // 基本数据类型的值和函数直接赋值拷贝 
+     if (typeof currentDataValue !== "object" || currentDataValue === null) {
+          newData[value] = currentDataValue;
+      } else if (Array.isArray(currentDataValue)) {
+         // 实现数组的深拷贝
+        newData[value] = [...currentDataValue];
+      } else if (currentDataValue instanceof Set) {
+         // 实现set数据的深拷贝
+         newData[value] = new Set([...currentDataValue]);
+      } else if (currentDataValue instanceof Map) {
+         // 实现map数据的深拷贝
+         newData[value] = new Map([...currentDataValue]);
+      } else { 
+         // 将这个待拷贝对象的引用存于hash中
+         hash.set(data,data)
+         // 普通对象则递归赋值
+         newData[value] = deepCopy(currentDataValue, hash);
+      } 
+   }); 
+  return newData;
+}
+```
+比之前的1.0版本多了个存储对象的容器WeakMap，思路就是，初次调用deepCopy时，参数会创建一个WeakMap结构
+的对象，这种数据结构的特点之一是，存储键值对中的健必须是对象类型。首次调用时，weakMap为空，不会走上面
+那个if(hash.has())语句，如果待拷贝对象中有属性也为对象时，则将该待拷贝对象存入weakMap中，此时的健值
+和健名都是对该待拷贝对象的引用然后递归调用该函数再次进入该函数，传入了上一个待拷贝对象的对象属性的引用
+和存储了上一个待拷贝对象引用的weakMap，因为如果是循环引用产生的闭环，那么这两个引用是指向相同的对象的
+，因此会进入if(hash.has())语句内，然后return，退出函数，所以不会一直递归进栈，以此防止栈溢出。
