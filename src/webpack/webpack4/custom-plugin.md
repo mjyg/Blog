@@ -12,7 +12,7 @@ CustomWebpackPlugin1.prototype.apply = function (compiler) {
 }
 module.exports = CustomWebpackPlugin1;
 ```
-使用No1WebpackPlugin（这里用的umi框架）：
+使用CustomWebpackPlugin1（这里用的umi框架）：
 ```js
 const CustomWebpackPlugin1 = require('../plugins/custom-webpack-plugin1')
 config.plugin('custom-webpack-plugin1').use(CustomWebpackPlugin1, [{msg:'hello world'}])
