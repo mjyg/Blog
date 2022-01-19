@@ -99,7 +99,7 @@ No1WebpackPlugin.prototype.apply = function (compiler) {
 function CustomWebpackPlugin2 (options) {
   this.options = options
 }
-CustomWebpackPlugin1.prototype.apply = function (compiler) {
+CustomWebpackPlugin2.prototype.apply = function (compiler) {
   compiler.hooks.compile.tap('No1', () => {
     console.log('compile:', this.options.msg)
   })
@@ -440,6 +440,7 @@ CleanPlugin.prototype.apply = function (compiler) {
 }
 
 module.exports = CleanPlugin;
-
 ```
-
+ 
+📚 参考文章：
+* [霖呆呆的六个自定义Webpack插件详解-自定义plugin篇(3)](https://juejin.cn/post/6844904162405138445#comment)
