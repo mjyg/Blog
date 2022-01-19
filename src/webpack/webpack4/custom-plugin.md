@@ -389,6 +389,57 @@ module.exports = DecideHtmlPlugin
 在每次重新编译之后，都会自动清理掉上一次残余的`dist`文件夹中的内容，不过需要满足以下需求：
 
 - 插件的`options`中有一个属性为`exclude`，为一个数组，用来定义不需要清除的文件列表
-- 每次打包如果文件有修改则会生成新的文件且文件的指纹也会变(文件名以`hash`命名)
+- 每次打包如果文件有修改则会生成新的文件且文件的hash也会变(文件名以`hash`命名)
 - 生成了新的文件，则需要把以前的文件给清理掉。
+
+步骤：
+* 此插件在钩子函数"done"中执行,因为需要既能拿到旧的文件夹内容，又能拿到新的。而在这个阶段，表示已经编译完成了，所以是可以拿到最新的资源了
+* 获取旧的dist文件夹中的所有文件
+* 获取新生成的所有文件，以及options.exclude中的文件名称，并合并为一个无重复项的数组
+* 将旧的所有文件和新的所有文件做一个对比得出需要删除的文件列表
+* 删除被废弃的文件
+
+```js
+const recursiveReadSync = require("recursive-readdir-sync"); //以递归方式同步读取目录路径的内容
+const minimatch = require("minimatch");
+const path = require("path");
+const fs = require("fs");
+const union = require("lodash.union");
+
+function CleanPlugin (options) {
+  this.options = options;
+}
+// 获取不匹配的文件
+function getUnmatchFiles(fromPath, exclude = []) {
+  const unmatchFiles = recursiveReadSync(fromPath).filter(file =>
+    exclude.every(
+      excluded => {
+        return !minimatch(path.relative(fromPath, file), path.join(excluded), {
+          dot: true
+        })
+      }
+    )
+  );
+  return unmatchFiles;
+}
+CleanPlugin.prototype.apply = function (compiler) {
+  const outputPath = compiler.options.output.path;
+  compiler.hooks.done.tap('CleanPlugin', stats => {
+    if (compiler.outputFileSystem.constructor.name !== "NodeOutputFileSystem") {
+      return;
+    }
+    // 获取所有资源
+    const assets = stats.toJson().assets.map(asset => asset.name);
+    // 多数组合并并且去重
+    const newAssets = union(this.options.exclude, assets);
+    // 获取未匹配文件
+    const unmatchFiles = getUnmatchFiles(outputPath, newAssets);
+    // 删除未匹配文件
+    unmatchFiles.forEach(fs.unlinkSync);
+  })
+}
+
+module.exports = CleanPlugin;
+
+```
 
