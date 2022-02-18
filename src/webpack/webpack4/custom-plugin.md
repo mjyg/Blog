@@ -129,8 +129,6 @@ module.exports = CustomWebpackPlugin2;
 
 所以你现在可以看到它俩的区别了，一个是代表了整个构建的过程，一个是代表构建过程中的某个模块。
 
-
-
 `compiler.hooks.compilation`这个钩子，是能够接收一个参数的，这个参数就是一个**Compilation**
 
 ## 第三个例子：在compiler.hooks.compilation钩子里使用Compilation
